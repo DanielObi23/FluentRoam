@@ -1,16 +1,15 @@
-//'use client'
+'use client'
 
-//import { SignUp, useUser } from '@clerk/nextjs'
-
+import { SignUp, useUser } from '@clerk/nextjs'
 import { Button } from "@/components/ui/button";
-import { currentUser } from "@clerk/nextjs/server";
+//import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
-  // const userData = useUser()
-  // const { user } = useUser()
-  const user = await currentUser();
+  const userData = useUser()
+  const { user } = useUser()
+  // const user = await currentUser();
   console.log("User", user?.id)
-  //console.log("UserData", userData)
+  console.log("UserData", userData)
 
   return (
     <>
