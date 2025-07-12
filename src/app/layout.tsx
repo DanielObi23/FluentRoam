@@ -9,7 +9,8 @@ import {
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
-import LandingPage from '@/components/landing_page'
+import AuthPathHandler from "@/components/AuthPathHandler"
+// import LandingPage from '@/components/landing_page'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,7 +37,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <SignedOut>
-            <LandingPage />
+            <AuthPathHandler>{children}</AuthPathHandler>
           </SignedOut>
           <SignedIn>
             <UserButton showName/>
