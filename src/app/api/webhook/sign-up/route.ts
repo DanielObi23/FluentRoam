@@ -1,6 +1,7 @@
 import { Webhook } from "svix"
 import { headers } from "next/headers"
 import { WebhookEvent } from "@clerk/nextjs/server"
+import { supabase, supabaseAdmin } from "@/supabase-client"
 
 // export async function GET() {
 //   return new Response("Webhook route working!", { status: 200 });
@@ -8,7 +9,7 @@ import { WebhookEvent } from "@clerk/nextjs/server"
 
 export async function POST(req: Request) {
     console.log("Webhook endpoint hit!")
-    const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
+    const WEBHOOK_SECRET = process.env.NEXT_PUBLIC_WEBHOOK_SECRET
 
     if (!WEBHOOK_SECRET) {
         throw new Error("Please add webhook secret")
@@ -41,12 +42,23 @@ export async function POST(req: Request) {
         return new Response("Error occured verying webhook", {status: 400})
     }
 
-    const data = event.data
+    
     const eventType = event.type
-    console.log(data)
     //logs
     if (eventType === "user.created"){
-        console.log(data)
+        const user = event.data
+        console.log(user)
+        const created_user = {
+            user_id: user.id,
+            first_name: user.first_name,
+            email: user.email_addresses[0].email_address
+        }
+        const {error} = await supabaseAdmin.from("users").insert(created_user)
+        if (error) {
+            console.error("error updating userbase")
+            console.log(error)
+        }
     }
+
     return new Response("Webhook processed successfully", { status: 200 })
 }

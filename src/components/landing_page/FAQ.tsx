@@ -6,7 +6,7 @@ export default function FAQ() {
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
-                <p className="text-xl text-gray-600">Everything you need to know about Discourse</p>
+                <p className="text-xl text-gray-600">Everything you need to know about PolySermo</p>
             </div>
 
             <Accordion type="single" collapsible className="space-y-4">
@@ -15,7 +15,7 @@ export default function FAQ() {
                     Do I need an account to get started?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4 text-gray-600">
-                    You can try Discourse with a limited free session, but creating an account unlocks full features
+                    You can try PolySermo with a limited free session, but creating an account unlocks full features
                     including conversation history, vocabulary tracking, and personalized learning paths.
                 </AccordionContent>
                 </AccordionItem>
@@ -49,10 +49,10 @@ export default function FAQ() {
 
                 <AccordionItem value="offline" className="bg-white rounded-lg border-0 shadow-sm">
                 <AccordionTrigger className="px-6 py-4 text-left font-semibold">
-                    Can I use Discourse offline?
+                    Can I use PolySermo offline?
                 </AccordionTrigger>
                 <AccordionContent className="px-6 pb-4 text-gray-600">
-                    Discourse requires an internet connection for AI conversations, but you can review your saved vocabulary
+                    PolySermo requires an internet connection for AI conversations, but you can review your saved vocabulary
                     and exported conversations offline anytime.
                 </AccordionContent>
                 </AccordionItem>

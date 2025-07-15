@@ -1,11 +1,11 @@
 import { CheckCircle, Trophy } from "lucide-react"
-export default function WhyDiscourse() {
+export default function WhyPolySermo() {
     return (
         <section className="py-20 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
                 <div>
-                <h2 className="text-4xl font-bold text-gray-900 mb-6">Why choose Discourse?</h2>
+                <h2 className="text-4xl font-bold text-gray-900 mb-6">Why choose PolySermo?</h2>
                 <div className="space-y-6">
                     <div className="flex items-start space-x-4">
                     <div className="w-6 h-6 bg-indigo-600 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
@@ -66,7 +66,7 @@ export default function WhyDiscourse() {
                     <Trophy className="h-12 w-12 mb-6" />
                     <h3 className="text-2xl font-bold mb-4">Ready to get started?</h3>
                     <p className="text-indigo-100 mb-6">
-                    Join thousands of learners who are already talking smarter and learning faster with Discourse.
+                    Join thousands of learners who are already talking smarter and learning faster with PolySermo.
                     </p>
                     <div className="flex items-center space-x-4 text-sm">
                     <div className="flex items-center space-x-2">

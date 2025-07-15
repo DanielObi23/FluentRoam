@@ -1,16 +1,13 @@
 import { type Metadata } from 'next'
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
   SignedIn,
-  SignedOut,
-  UserButton,
+  SignedOut
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import AuthPathHandler from "@/components/AuthPathHandler"
-// import LandingPage from '@/components/landing_page'
+import Navigation from '@/components/Navigation'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -23,8 +20,11 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Discourse',
-  description: 'AI powered discussion platform',
+  title: {
+    default: "PolySermo",
+    template: "%s | PolySermo"
+  },
+  description: 'AI powered language learning platform',
 }
 
 export default function RootLayout({
@@ -40,7 +40,7 @@ export default function RootLayout({
             <AuthPathHandler>{children}</AuthPathHandler>
           </SignedOut>
           <SignedIn>
-            <UserButton showName/>
+            <Navigation />
             {children}
           </SignedIn>
         </body>

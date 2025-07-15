@@ -12,7 +12,7 @@ export default function Footer() {
                     Ready to transform how you learn and think?
                 </h2>
                 <p className="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">
-                    Join thousands of learners and creators who are already using Discourse to unlock their potential through
+                    Join thousands of learners and creators who are already using PolySermo to unlock their potential through
                     AI-powered conversations.
                 </p>
                 <Button
@@ -33,7 +33,7 @@ export default function Footer() {
                     <div>
                     <div className="flex items-center space-x-2 mb-4">
                         <MessageCircle className="h-6 w-6 text-indigo-400" />
-                        <span className="text-xl font-bold">Discourse</span>
+                        <span className="text-xl font-bold">PolySermo</span>
                     </div>
                     <p className="text-gray-400">AI-powered conversations for language learning and creative thinking.</p>
                     </div>
@@ -99,7 +99,7 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-                    <p>&copy; {currentYear} Discourse. All rights reserved.</p>
+                    <p>&copy; {currentYear} PolySermo. All rights reserved.</p>
                 </div>
                 </div>
             </footer>

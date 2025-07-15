@@ -2,6 +2,7 @@
 
 // import { SignUp, useUser } from '@clerk/nextjs'
 import { Button } from "@/components/ui/button";
+import { PricingTable } from "@clerk/nextjs";
 //import { currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
@@ -17,6 +18,7 @@ export default async function Home() {
       <Button className="cursor-pointer">
         Click Me
       </Button>
+      <PricingTable />
     </>
   );
 }
