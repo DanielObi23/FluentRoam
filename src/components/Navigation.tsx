@@ -1,7 +1,6 @@
 import { UserButton } from '@clerk/nextjs'
 import Image from "next/image"
 import logo from "../../public/discourse logo.jpeg"
-import { Button } from "@/components/ui/button"
 
 export default function Navigation() {
     return (

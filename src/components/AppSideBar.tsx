@@ -15,6 +15,7 @@ import {
 import { UserButton } from "@clerk/nextjs"
 import Image from "next/image"
 import logo from "../../public/discourse logo.jpeg"
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 // Menu items.
 const items = [
@@ -71,6 +72,9 @@ export default function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <SidebarMenuItem>
+                <ThemeToggle />
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

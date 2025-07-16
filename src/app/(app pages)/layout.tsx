@@ -9,6 +9,7 @@ import '../globals.css'
 import AuthPathHandler from "@/components/AuthPathHandler"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import AppSidebar from "@/components/AppSideBar"
+import { ThemeProvider } from '../providers/ThemeProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,14 +37,16 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <SidebarProvider>
-        <html lang="en">
+        <html lang="en" suppressHydrationWarning>
           <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
             <SignedOut>
               <AuthPathHandler>{children}</AuthPathHandler>
             </SignedOut>
             <SignedIn>
-              <AppSidebar />
-              {children}
+              <ThemeProvider>
+                <AppSidebar />
+                {children}
+              </ThemeProvider>
             </SignedIn>
           </body>
         </html>
