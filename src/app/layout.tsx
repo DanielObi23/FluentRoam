@@ -5,11 +5,11 @@ import {
   SignedOut
 } from '@clerk/nextjs'
 import { Geist, Geist_Mono } from 'next/font/google'
-import '../globals.css'
+import './globals.css'
 import AuthPathHandler from "@/components/AuthPathHandler"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import AppSidebar from "@/components/AppSideBar"
-import { ThemeProvider } from '../providers/ThemeProvider'
+import { ThemeProvider } from "next-themes"
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,21 +36,26 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <SidebarProvider>
-        <html lang="en" suppressHydrationWarning>
-          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <SignedOut>
-              <AuthPathHandler>{children}</AuthPathHandler>
-            </SignedOut>
-            <SignedIn>
-              <ThemeProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          <SignedOut>
+            <AuthPathHandler>{children}</AuthPathHandler>
+          </SignedOut>
+          <SignedIn>
+            <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            >
+              <SidebarProvider>
                 <AppSidebar />
                 {children}
-              </ThemeProvider>
-            </SignedIn>
-          </body>
-        </html>
-      </SidebarProvider>
+              </SidebarProvider>
+            </ThemeProvider>
+          </SignedIn>
+        </body>
+      </html>
     </ClerkProvider>
   )
 }

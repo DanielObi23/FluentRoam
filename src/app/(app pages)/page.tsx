@@ -1,6 +1,6 @@
 'use client'
 
-import { SidebarTrigger } from "@/components/ui/sidebar"
+import Navigation from "@/components/Navigation";
 //import { currentUser } from "@clerk/nextjs/server";
 
 export default function Home() {
@@ -11,11 +11,12 @@ export default function Home() {
   // console.log("UserData", userData)
 
   return (
-    <>
-      <main className="w-full min-h-screen p-3 bg-primary">
-        <div className="inline"><SidebarTrigger/> <h1>Hello world</h1></div>
-        <div className="size-20 bg-red-800 rounded-full"></div>
+    <div className="w-full">
+      <Navigation page="HomePage"/>
+      <main className="w-full min-h-screen p-3 bg-primary-900">
+        <div className="inline text-secondary-800"> <h1>Hello world</h1></div>
+        <div className="size-20 bg-accent-600 rounded-full"></div>
       </main>
-    </>
+    </div>
   );
 }

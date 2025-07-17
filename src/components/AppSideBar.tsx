@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/sidebar"
 import { UserButton } from "@clerk/nextjs"
 import Image from "next/image"
-import logo from "../../public/discourse logo.jpeg"
-import { ThemeToggle } from "@/components/ThemeToggle";
+import logo from "../../public/polysermo.png"
+import { ModeToggle } from "./ModeToggle"
 
 // Menu items.
 const items = [
@@ -48,12 +48,12 @@ const items = [
 
 export default function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar className="">
         <SidebarHeader>
-            <nav className="flex items-center justify-center gap-1 md:gap-2 bg-slate-900 px-1 py-2">
-                <Image src={logo} alt="Discourse - AI language learning and brainstorming platform" height={40} width={40} />
+            <nav className="flex items-center justify-center gap-1 bg-slate-90 px-1 py-2">
+                <Image src={logo} alt="Discourse - AI language learning and brainstorming platform" height={45} width={45} />
                 <h1 className="font-bold text-lg md:text-xl">
-                    <span className='text-brick-500'>Poly</span><span className='text-mint-500'>Sermo</span>
+                    <span className='text-secondary-500'>Poly</span><span className='text-primary-500'>Sermo</span>
                 </h1>
             </nav>
         </SidebarHeader>
@@ -73,7 +73,7 @@ export default function AppSidebar() {
                 </SidebarMenuItem>
               ))}
               <SidebarMenuItem>
-                <ThemeToggle />
+                <ModeToggle />
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
