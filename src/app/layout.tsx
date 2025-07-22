@@ -4,21 +4,33 @@ import {
   SignedIn,
   SignedOut
 } from '@clerk/nextjs'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Inter, Noto_Sans, Source_Serif_4 } from 'next/font/google'
 import './globals.css'
 import AuthPathHandler from "@/components/AuthPathHandler"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import AppSidebar from "@/components/AppSideBar"
 import { ThemeProvider } from "next-themes"
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// Primary font for UI and most content
+const inter = Inter({
+  variable: '--font-inter',
   subsets: ['latin'],
+  display: 'swap',
 })
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+// Comprehensive multilingual support for language learning content
+const notoSans = Noto_Sans({
+  variable: '--font-noto-sans',
+  subsets: ['latin', 'latin-ext'], // Add more subsets as needed: 'cyrillic', 'arabic', 'chinese-simplified', etc.
+  display: 'swap',
+})
+
+// For longer reading content and generated stories
+const sourceSerif = Source_Serif_4({
+  variable: '--font-source-serif',
   subsets: ['latin'],
+  weight: ['400', '600'],
+  display: 'swap',
 })
 
 export const metadata: Metadata = {
@@ -37,7 +49,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <body className={`${inter.variable} ${notoSans.variable} ${sourceSerif.variable} antialiased`}>
           <SignedOut>
             <AuthPathHandler>{children}</AuthPathHandler>
           </SignedOut>

@@ -1,21 +1,20 @@
+"use client"
+
 import { Home, MessageSquare, Brain, BookA, BookOpenText } from "lucide-react"
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
   SidebarHeader
 } from "@/components/ui/sidebar"
-import { UserButton } from "@clerk/nextjs"
 import Image from "next/image"
 import logo from "../../public/polysermo.png"
-import { ModeToggle } from "./ModeToggle"
+import { usePathname } from "next/navigation"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 // Menu items.
 const items = [
@@ -31,57 +30,50 @@ const items = [
   },
   {
     title: "Vocabulary list",
-    url: "#",
+    url: "/vocabulary",
     icon: BookA,
   },
   {
     title: "Quiz",
-    url: "#",
+    url: "/quiz",
     icon: BookOpenText,
   },
   {
     title: "BrainStorm",
-    url: "#",
+    url: "/brainstorm",
     icon: Brain,
   },
 ]
 
 export default function AppSidebar() {
+  const pathname = usePathname()
   return (
-    <Sidebar className="">
-        <SidebarHeader>
-            <nav className="flex items-center justify-center gap-1 bg-slate-90 px-1 py-2">
-                <Image src={logo} alt="Discourse - AI language learning and brainstorming platform" height={45} width={45} />
-                <h1 className="font-bold text-lg md:text-xl">
-                    <span className='text-secondary-500'>Poly</span><span className='text-primary-500'>Sermo</span>
-                </h1>
-            </nav>
-        </SidebarHeader>
+    <Sidebar className="bg-muted">
+      <SidebarHeader>
+          <nav className="flex items-center justify-center gap-1 bg-slate-90 px-1 py-2">
+              <Image src={logo} alt="Discourse - AI language learning and brainstorming platform" height={45} width={45} />
+              <h1 className="font-bold text-lg md:text-xl">
+                  <span className='text-secondary-600'>Poly</span><span className='text-primary-700'>Sermo</span>
+              </h1>
+          </nav>
+      </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <ModeToggle />
+        <SidebarMenu className="flex justify-center items-center gap-2.5 w-full">
+          {items.map((item) => {
+            const isActive = pathname === item.url;
+            return (
+              <SidebarMenuItem key={item.title} className="w-6/7">
+                <SidebarMenuButton asChild className="p-3 h-full w-full">
+                  <Link href={item.url} className={cn(isActive && "bg-muted-foreground text-white transition-all duration-700 fade-in-5 fade-out-5")}>
+                    <item.icon className="!size-5"/>
+                    <span className="font-semibold text-lg">{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+            );
+          })}
+        </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
-        <UserButton showName/>
-      </SidebarFooter>
     </Sidebar>
   )
 }

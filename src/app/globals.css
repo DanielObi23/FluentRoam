@@ -90,7 +90,7 @@
 }
 
 /* ✅ Map CSS variables to Tailwind color classes */
-@theme {
+@theme inline {
   --color-primary-50:  oklch(var(--primary-50));
   --color-primary-100: oklch(var(--primary-100));
   --color-primary-200: oklch(var(--primary-200));
@@ -146,6 +146,10 @@
   --color-border: oklch(var(--border));
   --color-input: oklch(var(--input));
   --color-ring: oklch(var(--ring));
+
+  --font-ui: var(--font-inter); /* Primary interface font - buttons, navigation, sidebar, dashboards, forms, controls */
+  --font-content: var(--font-noto-sans); /* Multilingual learning content - vocabulary lists, conversations, translations, phonetics */
+  --font-reading: var(--font-source-serif); /* Extended reading material - AI stories, articles, essays, formal explanations */
 }
 
 /* ✅ Base styles */
