@@ -4,13 +4,16 @@ import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import Vapi from '@vapi-ai/web';
 import Image from "next/image";
-import portrait from "../../../../public/portrait.jpg"
+import portrait from "../../../../public/spanish/male_spanish.jpeg"
+import defaultProfile from "../../../../public/default_profile.jpg"
 import {useRouter} from "next/navigation"
 
 import {Mic, RotateCcw} from "lucide-react"
+import { useUser } from "@clerk/nextjs";
 
 export default function Session() {
     const vapi = new Vapi('48c46a80-d52f-482f-91ae-6c8fbeb10b00');
+    const { user } = useUser()
     const router = useRouter()
     {/* <Button className="cursor-pointer mr-5 bg-background" onClick={() => vapi.start('e3fbfb66-b32e-4c74-b456-c6ea5fb15663')}>
                 <span className="text-foreground">Start convo</span>
@@ -32,15 +35,17 @@ export default function Session() {
                             alt="Anna portrait" 
                             className="w-40 h-40 rounded-lg object-cover"
                         />
-                        <h3 className="text-xl font-semibold">Anna</h3>
+                        <h3 className="text-xl font-semibold">José</h3>
                     </div>
                     <div className="self-end flex flex-col items-center justify-center">
                         <Image
-                            src={portrait} 
-                            alt="Anna portrait" 
+                            src={user?.imageUrl || defaultProfile} 
+                            alt={`${user?.firstName} portrait`} 
+                            width={40}
+                            height={40}
                             className="w-40 h-40 rounded-lg object-cover"
                         />
-                        <h3 className="text-xl font-semibold">Anna</h3>
+                        <h3 className="text-xl font-semibold">{user?.firstName || "user"}</h3>
                     </div>
                 </div>
                 
@@ -57,7 +62,7 @@ export default function Session() {
                 </div>
                 
                 {/* End Lesson Button */}
-                <Button variant="destructive" className="w-full py-3" onClick={()=>router.push("/conversation")}>
+                <Button variant="destructive" className="w-full py-3" onClick={()=>router.replace("/conversation")}>
                     End Lesson
                 </Button>
             </div>

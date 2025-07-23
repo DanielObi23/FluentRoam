@@ -60,7 +60,10 @@ export default function AppSidebar() {
       <SidebarContent>
         <SidebarMenu className="flex justify-center items-center gap-2.5 w-full">
           {items.map((item) => {
-            const isActive = pathname === item.url;
+            const isActive = item.url === "/" 
+                    ? pathname === "/" 
+                    : pathname.startsWith(item.url);
+                    
             return (
               <SidebarMenuItem key={item.title} className="w-6/7">
                 <SidebarMenuButton asChild className="p-3 h-full w-full">
