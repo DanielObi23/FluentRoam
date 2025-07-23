@@ -8,7 +8,7 @@ import { Inter, Noto_Sans, Source_Serif_4 } from 'next/font/google'
 import './globals.css'
 import AuthPathHandler from "@/components/AuthPathHandler"
 import { SidebarProvider } from "@/components/ui/sidebar"
-import AppSidebar from "@/components/AppSideBar"
+import AppSidebar from "@/components/app_layout/AppSideBar"
 import { ThemeProvider } from "next-themes"
 
 // Primary font for UI and most content

@@ -1,6 +1,6 @@
 "use client"
 
-import Navigation from "@/components/Navigation";
+import Navigation from "@/components/app_layout/Navigation";
 import { Button } from "@/components/ui/button";
 import Vapi from '@vapi-ai/web';
 import Image from "next/image";

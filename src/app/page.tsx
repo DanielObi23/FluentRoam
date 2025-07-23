@@ -1,6 +1,6 @@
 'use client'
 
-import Navigation from "@/components/Navigation";
+import Navigation from "@/components/app_layout/Navigation";
 import { useTranslation } from "react-i18next";
 //import { currentUser } from "@clerk/nextjs/server";
 

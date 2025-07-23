@@ -22,8 +22,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Textarea } from "./ui/textarea"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Textarea } from "../ui/textarea"
 import {useRouter} from "next/navigation"
+import { Info } from "lucide-react"
+import { Input } from "../ui/input"
+import { useState } from "react"
 
 
 const formSchema = z.object({
@@ -42,6 +50,8 @@ const formSchema = z.object({
 
 export default function LanguageSessionForm() {
     const router = useRouter()
+    const [currentDuration, setCurrentDuration] = useState(15)
+    
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
@@ -61,19 +71,22 @@ export default function LanguageSessionForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-10 p-4 w-2/3 h-5/7 justify-center bg-background rounded-4xl shadow-teal-900 shadow-2xl overflow-auto">
                 <FormField
                     control={form.control}
                     name="scenario"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Role-Play Scenario</FormLabel>
+                            <FormLabel>
+                                Role-Play Scenario
+                                <Popover>
+                                    <PopoverTrigger><Info className="cursor-pointer"/></PopoverTrigger>
+                                    <PopoverContent>Just a few words is fine - our AI will create the full scenario or type "Random" if you want a random scenario</PopoverContent>
+                                </Popover>
+                            </FormLabel>
                             <FormControl>
                                 <Textarea placeholder="e.g., Ordering food at a restaurant, job interview, meeting a new neighbor, booking a vacation resort for a family of 4..." {...field} />
                             </FormControl>
-                            <FormDescription>
-                                Just a few words is fine - our AI will create the full scenario or type "Random" if you want a random scenario
-                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -167,7 +180,43 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+                <FormField
+                    control={form.control}
+                    name="duration"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="flex items-center justify-between">
+                                <span>Session Duration</span>
+                                <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                                    {currentDuration} minutes
+                                </span>
+                            </FormLabel>
+                            <FormControl>
+                                <div className="px-2">
+                                    <Input 
+                                        type="range" 
+                                        min={15} 
+                                        max={60} 
+                                        step={5}
+                                        value={currentDuration}
+                                        onChange={(e) => {
+                                            const value = parseInt(e.target.value);
+                                            setCurrentDuration(value);
+                                            field.onChange(value);
+                                        }}
+                                        className="h-2 bg-muted rounded-lg appearance-none cursor-pointer p-0"
+                                    />
+                                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                                        <span>15 min</span>
+                                        <span>60 min</span>
+                                    </div>
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <Button type="submit">Start session</Button>
             </form>
         </Form>
     )

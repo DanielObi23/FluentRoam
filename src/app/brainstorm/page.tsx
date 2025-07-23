@@ -1,6 +1,6 @@
 "use client"
 
-import Navigation from "@/components/Navigation";
+import Navigation from "@/components/app_layout/Navigation";
 import { parseAsString, useQueryState } from "nuqs"
 
 export default function BrainStorm() {
