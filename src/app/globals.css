@@ -150,6 +150,9 @@
   --font-ui: var(--font-inter); /* Primary interface font - buttons, navigation, sidebar, dashboards, forms, controls */
   --font-content: var(--font-noto-sans); /* Multilingual learning content - vocabulary lists, conversations, translations, phonetics */
   --font-reading: var(--font-source-serif); /* Extended reading material - AI stories, articles, essays, formal explanations */
+  /* --no-scrollbar::-webkit-scrollbar {
+    display: none
+  } */
 }
 
 /* ✅ Base styles */
@@ -159,5 +162,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .hide-scrollbar {
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    &::-webkit-scrollbar {
+      display: none;
+    }
   }
 }

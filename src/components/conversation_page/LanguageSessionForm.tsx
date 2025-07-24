@@ -1,4 +1,5 @@
 "use client"
+//TODO: stop conversation once the page is left, whether back button or end conversation
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -34,6 +35,7 @@ import { Input } from "../ui/input"
 import { useState } from "react"
 
 
+
 const formSchema = z.object({
   scenario: z.string().min(3, {
     message: "Scenario must be at least 3 characters.",
@@ -44,13 +46,15 @@ const formSchema = z.object({
   style: z.string(),
   response: z.string(),
   proficiency: z.string(),
-  duration: z.number()
+  duration: z.number(),
+  speed: z.number()
 })
 
 
 export default function LanguageSessionForm() {
     const router = useRouter()
     const [currentDuration, setCurrentDuration] = useState(15)
+    const [currentSpeed, setCurrentSpeed] = useState(1)
     
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
@@ -60,7 +64,8 @@ export default function LanguageSessionForm() {
                 style: "casual",
                 response: "brief",
                 proficiency: "B1",
-                duration: 20
+                duration: 20,
+                speed: 1,
             },
         })
     
@@ -140,7 +145,13 @@ export default function LanguageSessionForm() {
                     name="response"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Response Style</FormLabel>
+                            <FormLabel>
+                                Response Length
+                                <Popover>
+                                    <PopoverTrigger><Info className="cursor-pointer"/></PopoverTrigger>
+                                    <PopoverContent>Select "Brief responses" to speak more than you listen and vice versa</PopoverContent>
+                                </Popover>
+                            </FormLabel>
                             <FormControl>
                                 <RadioGroup defaultValue={field.value} className="flex" onValueChange={field.onChange}>
                                     <div className="flex items-center space-x-2">
@@ -170,7 +181,6 @@ export default function LanguageSessionForm() {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="A1">Absolute Beginner (A1)</SelectItem>
                                     <SelectItem value="A2">Beginner (A2)</SelectItem>
                                     <SelectItem value="B1">Intermediate (B1)</SelectItem>
                                     <SelectItem value="B2">Advanced (B2)</SelectItem>
@@ -209,6 +219,42 @@ export default function LanguageSessionForm() {
                                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
                                         <span>15 min</span>
                                         <span>60 min</span>
+                                    </div>
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="speed"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="flex items-center justify-between">
+                                <span>Speaking Speed</span>
+                                <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                                    {currentSpeed}
+                                </span>
+                            </FormLabel>
+                            <FormControl>
+                                <div className="px-2">
+                                    <Input 
+                                        type="range" 
+                                        min={0.7} 
+                                        max={1.2} 
+                                        step={0.1}
+                                        value={currentDuration}
+                                        onChange={(e) => {
+                                            const value = parseInt(e.target.value);
+                                            setCurrentSpeed(value);
+                                            field.onChange(value);
+                                        }}
+                                        className="h-2 bg-muted rounded-lg appearance-none cursor-pointer p-0"
+                                    />
+                                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                                        <span>Slower</span>
+                                        <span>Faster</span>
                                     </div>
                                 </div>
                             </FormControl>
