@@ -10,6 +10,7 @@ import AuthPathHandler from "@/components/AuthPathHandler"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import AppSidebar from "@/components/app_layout/AppSideBar"
 import { ThemeProvider } from "next-themes"
+import { Toaster } from '@/components/ui/sonner'
 
 // Primary font for UI and most content
 const inter = Inter({
@@ -63,6 +64,7 @@ export default function RootLayout({
               <SidebarProvider>
                 <AppSidebar />
                 {children}
+                <Toaster />
               </SidebarProvider>
             </ThemeProvider>
           </SignedIn>

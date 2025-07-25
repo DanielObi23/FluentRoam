@@ -13,8 +13,8 @@ export default function Conversation() {
     return (
       <div className="h-screen flex flex-col w-full bg-background">
           <Navigation page="Conversation"/>
-          <div className="w-full h-full flex bg-linear-to-br from-bg-primary-400 to-primary-800">
-            <div className="h-full w-2/3 grid grid-cols-12 gap-3 p-3 overflow-y-scroll hide-scrollbar">
+          <main className="w-full h-full flex bg-linear-to-br from-bg-primary-400 to-primary-800">
+            <section className="h-full w-2/3 grid grid-cols-12 gap-3 p-3 overflow-y-scroll hide-scrollbar">
               <Input className="col-span-12 border-primary-400"/>
               {user_sessions.map(session => (
                 <LanguageSessionCard 
@@ -27,12 +27,12 @@ export default function Conversation() {
                   scenario={session.role_scenario}
                   />
               ))}
-            </div>
+            </section>
 
-            <div className="h-full w-1/3 flex justify-center items-center">
+            <section className="h-full w-1/3 flex justify-center items-center">
                 <LanguageSessionForm />
-            </div>
-          </div>
+            </section>
+          </main>
       </div>
     )
 }

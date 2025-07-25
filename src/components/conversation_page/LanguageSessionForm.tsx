@@ -59,7 +59,7 @@ export default function LanguageSessionForm() {
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
-                scenario: "",
+                scenario: "random",
                 voice: "male",
                 style: "casual",
                 response: "brief",
@@ -70,8 +70,15 @@ export default function LanguageSessionForm() {
         })
     
     function onSubmit(values: z.infer<typeof formSchema>) {
-            console.log(values)
-            router.push("/conversation/session")
+        navigator.mediaDevices.getUserMedia({ audio: true })
+            .then((stream) => {
+                console.log("Microphone access granted:", stream);
+                console.log(values)
+                router.push("/conversation/session")
+            })
+            .catch((error) => {
+                console.error("Microphone access denied:", error);
+            });
         }
 
     return (
@@ -255,6 +262,42 @@ export default function LanguageSessionForm() {
                                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
                                         <span>Slower</span>
                                         <span>Faster</span>
+                                    </div>
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="speed"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="flex items-center justify-between">
+                                <span>Reply wait time</span>
+                                <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                                    {currentSpeed}
+                                </span>
+                            </FormLabel>
+                            <FormControl>
+                                <div className="px-2">
+                                    <Input 
+                                        type="range" 
+                                        min={1} 
+                                        max={5} 
+                                        step={0.5}
+                                        value={currentDuration}
+                                        onChange={(e) => {
+                                            const value = parseInt(e.target.value);
+                                            setCurrentSpeed(value);
+                                            field.onChange(value);
+                                        }}
+                                        className="h-2 bg-muted rounded-lg appearance-none cursor-pointer p-0"
+                                    />
+                                    <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                                        <span>Shorter</span>
+                                        <span>Longer</span>
                                     </div>
                                 </div>
                             </FormControl>
