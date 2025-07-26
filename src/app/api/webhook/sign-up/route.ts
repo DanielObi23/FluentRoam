@@ -1,7 +1,7 @@
 import { Webhook } from "svix"
 import { headers } from "next/headers"
 import { WebhookEvent } from "@clerk/nextjs/server"
-import { supabase, supabaseAdmin } from "@/supabase-client"
+import { supabase, supabaseAdmin } from "@/lib/supabase-client"
 
 // export async function GET() {
 //   return new Response("Webhook route working!", { status: 200 });

@@ -22,12 +22,12 @@ type Message = {
 
 export default function Session() {
     const [messages, setMessages] = useState<Message[]>([]);
-    //const [aiMessage, setAiMessage] = useState("");
+    //const [userMessage, setUserMessage] = useState("");
+    let userMessage: string = "";
     const scenario = "hell"
     const char = "male"
     const gender = char === "male"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : ""
     const voiceId = char === "male" ? "burt" : "emma"; 
-    const aiMessage = useRef("")
     
     const router = useRouter()
     const { user } = useUser()
@@ -63,29 +63,40 @@ export default function Session() {
                 
                 const lastMessage = prevMessages[prevMessages.length - 1];
                 if (lastMessage.role === "assistant" && message.role === "assistant") {
-                    if (aiMessage.current.length > 0) {
-                        const newMessage = aiMessage.current + " " + message.transcript
-                        const newAIMessage = {
-                            type: message.type,
-                            transcript: newMessage,
-                            role: message.role,
-                            transcriptType: message.transcriptType
-                        };
-                        return [...prevMessages.slice(0, -1), newAIMessage];
-                    }
                     
-                    if (message.transcriptType === "final") {
-                        const newMessage = aiMessage.current + " " + message.transcript
-                        const newAIMessage = {
-                            type: message.type,
-                            transcript: newMessage,
-                            role: message.role,
-                            transcriptType: message.transcriptType
-                        };
-                        aiMessage.current = newMessage
-                        return [...prevMessages.slice(0, -1), newAIMessage];
+                    //console.log({type: "partial", lastMessage: lastMessage.transcript, message: message.transcript});
+                    if (lastMessage.transcriptType === "final") {
+                        // console.log({type: "final", lastMessage: lastMessage.transcript, message: message.transcript});
+                        // // console.log({type: "final", lastMessage: lastMessage.transcript, message: message.transcript});
+                        // // const concatenatedText = lastMessage.transcript.length > 0? lastMessage.transcript + " " + message.transcript : message.transcript;
+                        // const newMessage = lastMessage.transcript + " " + message.transcript
+                        // console.log({newMessage, lastMessage: lastMessage.transcript, message: message.transcript});
+                        // const updatedMessage = {
+                        //     type: message.type,
+                        //     transcript: newMessage,
+                        //     role: message.role,
+                        //     transcriptType: message.transcriptType
+                        // }
+                        // return [...prevMessages.slice(0, -1), updatedMessage];
+                        // const newUserMessage = {
+                        //     type: message.type,
+                        //     transcript: concatenatedText,
+                        //     role: message.role,
+                        //     transcriptType: message.transcriptType
+                        // };
+                        
+                        // return [...prevMessages.slice(0, -1), newUserMessage];
+                        // const newMessage = lastMessage.transcript + " " + message.transcript
+                        // console.log({newMessage, lastMessage: lastMessage.transcript, message: message.transcript});
+                        // const updatedMessage = {
+                        //     type: message.type,
+                        //     transcript: newMessage,
+                        //     role: message.role,
+                        //     transcriptType: message.transcriptType
+                        // }
+                        // return [...prevMessages.slice(0, -1), updatedMessage];
+                        return [...prevMessages, message];
                     }
-                    
                     return [...prevMessages.slice(0, -1), message];
                     
                 } else if (lastMessage.role === "user" && message.role === "user") {
@@ -103,7 +114,6 @@ export default function Session() {
                     return [...prevMessages.slice(0, -1), newUserMessage];
                     
                 } else {
-                    aiMessage.current = ""
                     return [...prevMessages, message];
                 }
             });
@@ -237,4 +247,80 @@ export default function Session() {
             </main>
         </div>
     )
+}
+
+// top level
+import { useRef } from 'react';
+
+export default function Session() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const assistantTextRef = useRef('');   // <-- NEW
+
+  function onMessage(message: Message) {
+    if (
+      message.type !== 'transcript' ||
+      (message.role === 'user' && message.transcriptType === 'partial')
+    )
+      return;
+
+    setMessages(prev => {
+      // -----------------------------------------------
+      // 1. brand-new conversation
+      // -----------------------------------------------
+      if (prev.length === 0) {
+        if (message.role === 'assistant') {
+          assistantTextRef.current = message.transcript; // first final
+        }
+        return [message];
+      }
+
+      const last = prev[prev.length - 1];
+
+      // -----------------------------------------------
+      // 2. role change (assistant ↔ user)
+      // -----------------------------------------------
+      if (last.role !== message.role) {
+        if (message.role === 'assistant') {
+          assistantTextRef.current = message.transcript; // first final of new block
+        } else {
+          assistantTextRef.current = '';                 // clear for next assistant block
+        }
+        return [...prev, message];
+      }
+
+      // -----------------------------------------------
+      // 3. same role
+      // -----------------------------------------------
+      if (message.role === 'assistant') {
+        if (message.transcriptType === 'partial') {
+          // show ref + current partial, do NOT mutate ref yet
+          const merged = (assistantTextRef.current + ' ' + message.transcript).trimStart();
+          return [
+            ...prev.slice(0, -1),
+            { ...message, transcript: merged }
+          ];
+        } else { // final
+          // ref = previous final + this final
+          assistantTextRef.current = (
+            assistantTextRef.current + ' ' + message.transcript
+          ).trimStart();
+          return [
+            ...prev.slice(0, -1),
+            { ...message, transcript: assistantTextRef.current }
+          ];
+        }
+      }
+
+      // -----------------------------------------------
+      // 4. user continues speaking
+      // -----------------------------------------------
+      const merged = (last.transcript + ' ' + message.transcript).trimStart();
+      return [
+        ...prev.slice(0, -1),
+        { ...message, transcript: merged }
+      ];
+    });
+  }
+
+  /* … rest of your component … */
 }
