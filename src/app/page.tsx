@@ -1,7 +1,7 @@
 'use client'
 
 import Navigation from "@/components/app_layout/Navigation";
-import { useTranslation } from "react-i18next";
+//import { useTranslation } from "react-i18next";
 //import { currentUser } from "@clerk/nextjs/server";
 
 export default function Home() {
@@ -10,7 +10,7 @@ export default function Home() {
   // // const user = await currentUser();
   // console.log("User", user?.id)
   // console.log("UserData", userData)
-  const { t } = useTranslation()
+  //const { t } = useTranslation()
   return (
     <div className="w-full">
       <Navigation page="HomePage"/>

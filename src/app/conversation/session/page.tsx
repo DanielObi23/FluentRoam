@@ -13,12 +13,16 @@ import { useUser } from "@clerk/nextjs";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {vapi} from "@/lib/vapi.sdk"
+import { cn } from "@/lib/utils";
+
 type Message = {
     type: string;
     transcript: string;
     role: "assistant" | "user";
     transcriptType: "partial" | "final";
+    input?: string;
 };
+
 
 export default function Session() {
     const [messages, setMessages] = useState<Message[]>([]);
@@ -27,7 +31,7 @@ export default function Session() {
     const char = "male"
     const gender = char === "male"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : ""
     const voiceId = char === "male" ? "burt" : "emma"; 
-    const aiMessage = useRef("")
+    //const aiMessage = useRef("")
     
     const router = useRouter()
     const { user } = useUser()
@@ -53,40 +57,49 @@ export default function Session() {
     };
 
     function onMessage(message: Message) {
-        console.log(message)
-        if (message.type === "transcript" && message.role === "assistant" || 
+        if (message.type === "voice-input") {
+
+            console.log(message)
+        }
+        if (message.type === "voice-input" || 
             message.type === "transcript" && message.role === "user" && message.transcriptType === "final") {
             setMessages(prevMessages => {
                 if (prevMessages.length === 0) {
+                    if (message.type === "voice-input") {
+                        const newMessage = {
+                            type: "voice-input",
+                            transcript: message.input ?? "",
+                            role: "assistant" as const,
+                            transcriptType: "final" as const
+                        }
+                        return [newMessage];  
+                    }
                     return [message];
                 }
                 
                 const lastMessage = prevMessages[prevMessages.length - 1];
-                if (lastMessage.role === "assistant" && message.role === "assistant") {
-                    if (aiMessage.current.length > 0) {
-                        const newMessage = aiMessage.current + " " + message.transcript
-                        const newAIMessage = {
-                            type: message.type,
-                            transcript: newMessage,
-                            role: message.role,
-                            transcriptType: message.transcriptType
-                        };
-                        return [...prevMessages.slice(0, -1), newAIMessage];
-                    }
+                if (message.type === "voice-input") {
                     
-                    if (message.transcriptType === "final") {
-                        const newMessage = aiMessage.current + " " + message.transcript
-                        const newAIMessage = {
-                            type: message.type,
-                            transcript: newMessage,
-                            role: message.role,
-                            transcriptType: message.transcriptType
-                        };
-                        aiMessage.current = newMessage
-                        return [...prevMessages.slice(0, -1), newAIMessage];
+                    if (lastMessage.role === "assistant") {
+                        console.log("next voice-input")
+                        const concatenatedText = lastMessage.transcript + " " + message.input
+                        const newMessage = {
+                            type: "voice-input",
+                            transcript: concatenatedText,
+                            role: "assistant" as const,
+                            transcriptType: "final" as const
+                        }
+                        return [...prevMessages.slice(0, -1), newMessage];  
                     }
-                    
-                    return [...prevMessages.slice(0, -1), message];
+
+                    console.log("first voice-input")
+                    const newMessage = {
+                        type: "voice-input",
+                        transcript: message.input ?? "",
+                        role: "assistant" as const,
+                        transcriptType: "final" as const
+                    }
+                    return [...prevMessages, newMessage];                
                     
                 } else if (lastMessage.role === "user" && message.role === "user") {
                     // Concatenate directly without relying on state
@@ -103,7 +116,16 @@ export default function Session() {
                     return [...prevMessages.slice(0, -1), newUserMessage];
                     
                 } else {
-                    aiMessage.current = ""
+                    if (message.type === "voice-input") {
+                        console.log("new voice-input")
+                       const newMessage = {
+                            type: "voice-input",
+                            transcript: message.input ?? "",
+                            role: "assistant" as const,
+                            transcriptType: "final" as const
+                        }
+                        return [...prevMessages, newMessage]; 
+                    }
                     return [...prevMessages, message];
                 }
             });
@@ -155,7 +177,7 @@ export default function Session() {
 
     function endConversation() {
         vapi.stop()
-        router.replace("/conversation")
+        //router.replace("/conversation")
     }
 
     return (
@@ -211,16 +233,13 @@ export default function Session() {
                     </div>
 
                     {/* 4. render the live transcript */}
-                    <div className="flex-1 p-4 space-y-4 overflow-y-auto">
+                    <div className="flex flex-col p-4 gap-3">
                         {messages?.map((m, i) => (
-                            <div key={i} className="space-y-1">
-                                <div className="text-sm font-medium capitalize"
-                                    style={{color: m.role === 'user' ? 'var(--primary)' : 'var(--accent)'}}>
+                            <div key={i} className={cn(m.role === "assistant"? "self-start bg-blue-600" : "self-end bg-teal-600", "w-5/7 py-1 px-2")}>
+                                <div className="text-sm font-medium capitalize">
                                     {m.role}
                                 </div>
-                                <div className={m.role === 'user'
-                                        ? 'bg-muted rounded-lg p-3 max-w-[80%]'
-                                        : 'text-muted-foreground'}>
+                                <div className={cn(m.role === "assistant"? "text-foreground" : "text-foreground", "w-5/7")}>
                                     {m.transcript}
                                 </div>
                             </div>
