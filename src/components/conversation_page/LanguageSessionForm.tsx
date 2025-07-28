@@ -1,5 +1,5 @@
 "use client"
-//TODO: stop conversation once the page is left, whether back button or end conversation
+//TODO: stop conversation once the page is left, whether back button or end conversation, if microphone access is denied, add toast
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -42,9 +42,9 @@ const formSchema = z.object({
   }).max(500, {
     message: "Scenario must be at less than 500 characters.",
   }),
-  voice: z.string(),
-  style: z.string(),
-  response: z.string(),
+  gender: z.string(),
+  formality: z.string(),
+  response_length: z.string(),
   proficiency: z.string(),
   duration: z.number(),
   speed: z.number()
@@ -59,10 +59,10 @@ export default function LanguageSessionForm() {
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
-                scenario: "random",
-                voice: "male",
-                style: "casual",
-                response: "brief",
+                scenario: "booking a hotel in benidorm over the phone",
+                gender: "male",
+                formality: "casual",
+                response_length: "brief",
                 proficiency: "B1",
                 duration: 20,
                 speed: 1,
@@ -73,8 +73,16 @@ export default function LanguageSessionForm() {
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then((stream) => {
                 console.log("Microphone access granted:", stream);
-                console.log(values)
-                router.push("/conversation/session")
+                const params = new URLSearchParams({
+                    scenario: values.scenario,
+                    gender: values.gender,
+                    formality: values.formality,
+                    response_length: values.response_length,
+                    proficiency: values.proficiency,
+                    duration: values.duration.toString(),
+                    speed: values.speed.toString(),
+                });
+                router.push(`/conversation/session?${params.toString()}`);
             })
             .catch((error) => {
                 console.error("Microphone access denied:", error);
@@ -105,7 +113,7 @@ export default function LanguageSessionForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="voice"
+                    name="gender"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Voice</FormLabel>
@@ -127,7 +135,7 @@ export default function LanguageSessionForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="style"
+                    name="formality"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Style</FormLabel>
@@ -149,7 +157,7 @@ export default function LanguageSessionForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="response"
+                    name="response_length"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>

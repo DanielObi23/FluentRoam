@@ -1,8 +1,8 @@
 "use client"
-//TODO: check max token, as well as speed of speaking and gender change, page reload when mid conversation
+//TODO: check max token, as well as speed of speaking and gender change, page reload when mid conversation. 
+// add speed and duration to type Session later, check out the searchParams
 import Navigation from "@/components/app_layout/Navigation";
 import { Button } from "@/components/ui/button";
-import Vapi from '@vapi-ai/web';
 import Image from "next/image";
 import portrait from "../../../../public/spanish/male_spanish.jpeg"
 import defaultProfile from "../../../../public/default_profile.jpg"
@@ -14,6 +14,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import {vapi} from "@/lib/vapi.sdk"
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 type Message = {
     type: string;
@@ -23,27 +24,48 @@ type Message = {
     input?: string;
 };
 
+type Session = {
+    scenario: string;
+    formality: "casual" | "formal";
+    response_length: "brief" | "detailed";
+    proficiency: "A1" | "A2" | "B1" | "B2";
+    gender: "male" | "female";
+    duration: number;
+    speed: number
+}
 
 export default function Session() {
+    const search = useSearchParams();
     const [messages, setMessages] = useState<Message[]>([]);
-    //const [aiMessage, setAiMessage] = useState("");
-    const scenario = "hell"
+    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [isMuted, setIsMuted] = useState(false);
+
     const char = "male"
     const gender = char === "male"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : ""
-    const voiceId = char === "male" ? "burt" : "emma"; 
-    //const aiMessage = useRef("")
+    // const voiceId = char === "male" ? "burt" : "emma"; 
+    //const scrollToMessage = useRef<HTMLDivElement>(null)
     
     const router = useRouter()
     const { user } = useUser()
+
+    const session: Session = {
+        scenario: search.get("scenario") ?? "",
+        gender: (search.get("gender") ?? "male") as "male" | "female",
+        formality: (search.get("formality") ?? "casual") as "casual" | "formal",
+        response_length: (search.get("response_length") ?? "brief") as "brief" | "detailed",
+        proficiency: (search.get("proficiency") ?? "B1") as "A1" | "A2" | "B1" | "B2",
+        duration: Number(search.get("duration") ?? 20),
+        speed: Number(search.get("speed") ?? 1),
+    };
 
     const assistantOverrides = {
         recordingEnabled: true,
         variableValues: {
             first_message: `Hello ${user?.firstName}, what scenario would you like to start`,
-            scenario: "booking a hotel in benidorm over the phone",
-            formality: "casual",
-            response_length: "brief",
-            proficiency: "B1"
+            scenario: session.scenario,
+            formality: session.formality,
+            response_length: session.response_length,
+            proficiency: session.proficiency
         },
         // voice: {
         //     provider: "11labs",
@@ -57,10 +79,6 @@ export default function Session() {
     };
 
     function onMessage(message: Message) {
-        if (message.type === "voice-input") {
-
-            console.log(message)
-        }
         if (message.type === "voice-input" || 
             message.type === "transcript" && message.role === "user" && message.transcriptType === "final") {
             setMessages(prevMessages => {
@@ -79,9 +97,7 @@ export default function Session() {
                 
                 const lastMessage = prevMessages[prevMessages.length - 1];
                 if (message.type === "voice-input") {
-                    
                     if (lastMessage.role === "assistant") {
-                        console.log("next voice-input")
                         const concatenatedText = lastMessage.transcript + " " + message.input
                         const newMessage = {
                             type: "voice-input",
@@ -92,7 +108,6 @@ export default function Session() {
                         return [...prevMessages.slice(0, -1), newMessage];  
                     }
 
-                    console.log("first voice-input")
                     const newMessage = {
                         type: "voice-input",
                         transcript: message.input ?? "",
@@ -102,10 +117,7 @@ export default function Session() {
                     return [...prevMessages, newMessage];                
                     
                 } else if (lastMessage.role === "user" && message.role === "user") {
-                    // Concatenate directly without relying on state
-                    const concatenatedText = lastMessage.transcript.length > 0? lastMessage.transcript + " " + message.transcript : message.transcript;
-                    // console.log({concatenatedText, lastMessage: lastMessage.transcript, message: message.transcript});
-                    
+                    const concatenatedText = lastMessage.transcript.length > 0? lastMessage.transcript + " " + message.transcript : message.transcript;                    
                     const newUserMessage = {
                         type: message.type,
                         transcript: concatenatedText,
@@ -117,8 +129,7 @@ export default function Session() {
                     
                 } else {
                     if (message.type === "voice-input") {
-                        console.log("new voice-input")
-                       const newMessage = {
+                        const newMessage = {
                             type: "voice-input",
                             transcript: message.input ?? "",
                             role: "assistant" as const,
@@ -129,10 +140,33 @@ export default function Session() {
                     return [...prevMessages, message];
                 }
             });
+            // if (scrollToMessage.current) {
+            //     scrollToMessage.current.scrollIntoView({ behavior: "smooth" });
+            // }
         }
     }
 
-    const onError = (error: Error) => console.log('Error', error);
+    function onError(error: Error) {
+        console.log("Error", error)
+    }
+
+    function onCallStart() {
+        console.log("call-Started")
+    }
+
+    function onCallEnd() {
+        console.log("call ended")
+    }
+
+    function onSpeechStart() {
+        setIsSpeaking(true)
+        console.log("speech started")
+    }
+
+    function onSpeechEnd() {
+        setIsSpeaking(false)
+        console.log("speech ended")
+    }
 
     useEffect(() => {
         if(!user) {
@@ -140,36 +174,29 @@ export default function Session() {
             return
         }
 
-        if(!scenario) {
+        if(!session.scenario) {
             toast("Event has been created")
             router.replace("/conversation")
             return
         }
 
         vapi.start(gender, assistantOverrides)  
+        console.log(vapi)
 
-    //     vapi.on('message', (msg) => {
-    //        if (msg.type === 'transcript' && msg.transcriptType === "final") {
-    //            setMessages((prev) => [...prev, msg]); // append new chunk
-    //        }
-    //    });
-
-       // cleanup on unmount
-       //return () => vapi.off('message');
-        // vapi.on('call-start', onCallStart);
-        // vapi.on('call-end', onCallEnd);
+        vapi.on('call-start', onCallStart);
+        vapi.on('call-end', onCallEnd);
         vapi.on('message', onMessage);
         vapi.on('error', onError);
-        // vapi.on('speech-start', onSpeechStart);
-        // vapi.on('speech-end', onSpeechEnd);
+        vapi.on('speech-start', onSpeechStart);
+        vapi.on('speech-end', onSpeechEnd);
 
         return () => {
-            // vapi.off('call-start', onCallStart);
-            // vapi.off('call-end', onCallEnd);
+            vapi.off('call-start', onCallStart);
+            vapi.off('call-end', onCallEnd);
             vapi.off('message', onMessage);
             vapi.off('error', onError);
-            // vapi.off('speech-start', onSpeechStart);
-            // vapi.off('speech-end', onSpeechEnd);
+            vapi.off('speech-start', onSpeechStart);
+            vapi.off('speech-end', onSpeechEnd);
         }
 
     }, [])
@@ -183,8 +210,8 @@ export default function Session() {
     return (
         <div className="h-screen flex flex-col w-full bg-background">
             <Navigation page="Conversation"/>
-            <main className="w-full flex flex-1 gap-5 p-4">
-                {/* Left Panel - Controls (Image 2) */}
+            <main className="w-full flex h-full gap-5 p-4">
+                {/* Left Panel */}
                 <div className="w-1/3 flex flex-col gap-4">
                     {/* AI Persona Card */}
                     <div className="bg-card rounded-lg p-6 flex flex-col items-center justify-center gap-7 h-6/7">
@@ -227,13 +254,13 @@ export default function Session() {
                 </div>
 
                 {/* Right Panel - Transcript (Image 1) */}
-                <div className="w-2/3 bg-card rounded-lg flex flex-col ">
+                <div className="w-2/3 bg-card rounded-lg flex flex-col">
                     <div className="p-4 border-b">
                         <h2 className="text-xl font-semibold">Call Transcript</h2>
                     </div>
 
                     {/* 4. render the live transcript */}
-                    <div className="flex flex-col p-4 gap-3">
+                    <div className="flex flex-col p-4 gap-3 bg-red-200 overflow-y-scroll hide-scrollbar">
                         {messages?.map((m, i) => (
                             <div key={i} className={cn(m.role === "assistant"? "self-start bg-blue-600" : "self-end bg-teal-600", "w-5/7 py-1 px-2")}>
                                 <div className="text-sm font-medium capitalize">
@@ -244,12 +271,6 @@ export default function Session() {
                                 </div>
                             </div>
                         ))}
-                    </div>
-
-                    <div className="p-4 flex justify-center">
-                        <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center">
-                            <Mic className="w-6 h-6 text-white"/>
-                        </div>
                     </div>
                 </div>
 
