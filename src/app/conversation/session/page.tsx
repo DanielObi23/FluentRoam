@@ -15,13 +15,20 @@ import { toast } from "sonner";
 import {vapi} from "@/lib/vapi.sdk"
 import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
+import { callTranscript } from "@/dummy_data";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { translateText, TranslateText } from "@/lib/deepl";
+import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
+
+type Role = "assistant" | "user"
 
 type Message = {
     type: string;
     transcript: string;
-    role: "assistant" | "user";
+    role: Role;
     transcriptType: "partial" | "final";
     input?: string;
+    translation?: string
 };
 
 type Session = {
@@ -170,11 +177,29 @@ export default function Session() {
         console.log("speech ended")
     }
 
+    async function translate(text: string, role: Role, index: number, type: string) {
+        const targetLanguageCode = "en-GB" as TargetLanguageCode
+        const sourceLanguageCode = "es" as SourceLanguageCode
+        const result = await translateText({text, sourceLanguageCode, targetLanguageCode} as TranslateText);
+        console.log(result)
+        setMessages(prevMessages => {
+            const translation: Message = {
+                type,
+                transcript: result,
+                role,
+                transcriptType: "final",
+                translation: result
+            }
+
+            return [...prevMessages.slice(0, index), translation, ...prevMessages.slice(index + 1)]
+        })
+    }
+
     useEffect(() => {
-        if(!user) {
-            router.replace('/sign-in')
-            return
-        }
+        // if(!user) {
+        //     router.replace('/sign-in')
+        //     return
+        // }
 
         if(!session.scenario) {
             toast("Event has been created")
@@ -265,13 +290,37 @@ export default function Session() {
                     {/* 4. render the live transcript */}
                     <div className="flex flex-col p-4 gap-3 bg-red-200 overflow-y-scroll hide-scrollbar">
                         {messages?.map((m, i) => (
-                            <div key={i} className={cn(m.role === "assistant"? "self-start bg-blue-600" : "self-end bg-teal-600", "w-5/7 py-1 px-2")}>
-                                <div className="text-sm font-medium capitalize">
-                                    {m.role}
+                            <div key={i} className={cn(m.role === "assistant"? 
+                                "self-start justify-start" : 
+                                "self-end justify-end", 
+                                "w-5/7 flex gap-x-0.5")} 
+                                onDoubleClick={
+                                    m.role === "assistant"
+                                        ? () => translate(m.transcript, m.role as Role, i, m.type)
+                                        : undefined
+                                }>
+                                <div className={cn(m.role === "assistant"? "order-2 items-start" : "items-end", "w-full flex flex-col")}>
+                                    <Button 
+                                        variant={"outline"} 
+                                        className={cn(m.role === "assistant"? "ml-3" : "mr-3" , "mb-1", m.translation && "hidden")}
+                                        onClick={() => translate(m.transcript, m.role as Role, i, m.type)}>
+                                            Translate
+                                    </Button>
+                                    <div className={cn(m.role === "assistant"? 
+                                            "text-foreground bg-blue-600 rounded-tr-3xl rounded-br-3xl rounded-tl-3xl" : 
+                                            "text-foreground bg-teal-600 rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl", 
+                                            "w-6/7 font-content text-pretty py-3 px-4 space-y-2.5")}>
+                                        <p>{m.transcript}</p>
+                                        {m.translation && 
+                                        <p className="text-foreground bg-gray-600/40 w-full text-pretty py-3 px-4 rounded-tr-xl rounded-br-xl rounded-tl-xl rounded-bl-xl">
+                                            {m.translation}
+                                        </p>}
+                                    </div>
                                 </div>
-                                <div className={cn(m.role === "assistant"? "text-foreground" : "text-foreground", "w-5/7")}>
-                                    {m.transcript}
-                                </div>
+                                <Avatar className={cn(m.role === "assistant"? "self-end order-1" : "self-end", "")}>
+                                    <AvatarImage src={m.role === "assistant"? portrait.src : user?.imageUrl || defaultProfile.src} />
+                                    <AvatarFallback>YOU</AvatarFallback>
+                                </Avatar>
                             </div>
                         ))}
                     </div>
