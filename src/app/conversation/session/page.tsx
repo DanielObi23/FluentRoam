@@ -36,17 +36,19 @@ type Session = {
 
 export default function Session() {
     const search = useSearchParams();
+    const router = useRouter()
+    const { user } = useUser()
+    const callId = useRef("")
     const [messages, setMessages] = useState<Message[]>([]);
     const [isSpeaking, setIsSpeaking] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
+
 
     const char = "male"
     const gender = char === "male"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : ""
     // const voiceId = char === "male" ? "burt" : "emma"; 
     //const scrollToMessage = useRef<HTMLDivElement>(null)
     
-    const router = useRouter()
-    const { user } = useUser()
 
     const session: Session = {
         scenario: search.get("scenario") ?? "",
@@ -180,8 +182,9 @@ export default function Session() {
             return
         }
 
-        vapi.start(gender, assistantOverrides)  
-        console.log(vapi)
+        vapi.start(gender, assistantOverrides).then(call => {
+            callId.current = call?.id || ""  //Adding call-id so it can be added to database and user can reference it for later
+        });  
 
         vapi.on('call-start', onCallStart);
         vapi.on('call-end', onCallEnd);
