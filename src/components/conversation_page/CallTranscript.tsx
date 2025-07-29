@@ -2,22 +2,39 @@ import { callTranscript } from "@/dummy_data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
 
 type Role = "assistant" | "user"
+type Message = {
+    type: string;
+    transcript: string;
+    role: Role;
+    transcriptType: "partial" | "final";
+    input?: string;
+    translation?: string
+};
+
 type Transcript = {
     translate: (text: string, role: Role, index: number, type: string) => Promise<void>;
+    toggleDisplay: VoidFunction;
     aiImage: string;
-    userImage: string
+    userImage: string;
+    messages: Message[]
 }
-export default function CallTranscript({translate, aiImage, userImage}: Transcript) {
+export default function CallTranscript({translate, toggleDisplay, aiImage, userImage, messages}: Transcript) {
+    const scrollRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+    }, [messages]);
     return (
-        <div className="w-full md:w-2/3 bg-card rounded-lg flex flex-col">
-            <div className="p-4 border-b">
+        <div className="w-full max-h-screen md:w-2/3 bg-card rounded-lg flex flex-col">
+            <div className="p-4 border-b flex justify-between">
                 <h2 className="text-xl font-semibold">Call Transcript</h2>
+                <Button onClick={toggleDisplay}>Toggle Display</Button>
             </div>
 
             {/* 4. render the live transcript */}
-            <div className="flex flex-col p-4 gap-3 bg-card h-full overflow-y-scroll hide-scrollbar">
+            <div ref={scrollRef} className="flex flex-col p-4 gap-3 bg-card h-full overflow-y-scroll hide-scrollbar">
                 {callTranscript?.map((m, i) => (
                     <div key={i} className={cn(m.role === "assistant"? 
                         "self-start justify-start" : 

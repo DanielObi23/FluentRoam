@@ -1,19 +1,22 @@
 "use client"
 //TODO: check max token, as well as speed of speaking and gender change, page reload when mid conversation. 
-// add speed and duration to type Session later, check out the searchParams
+// add speed and duration to type Session later, check out the searchParams, optimise the number of states in the component, there is too many being rerendered
 
-import { useEffect, useRef, useState } from "react";
+import { ReactElement, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams} from "next/navigation"
 import { useUser } from "@clerk/nextjs";
 import Navigation from "@/components/app_layout/Navigation";
 import VideoCall from "@/components/conversation_page/VideoCall";
 import CallTranscript from "@/components/conversation_page/CallTranscript";
+import { Button } from "@/components/ui/button";
 import portrait from "../../../../public/spanish/male_spanish.jpeg"
 import defaultProfile from "../../../../public/default_profile.jpg"
 import {vapi} from "@/lib/vapi.sdk"
 import { toast } from "sonner";
 import { translateText, TranslateText } from "@/lib/deepl";
 import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
+import { ArrowUp } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Role = "assistant" | "user"
 
@@ -49,9 +52,12 @@ export default function Session() {
     const router = useRouter()
     const { user } = useUser()
     const callId = useRef("")
+    const videoCall = useRef<HTMLDivElement>(null)
     const [messages, setMessages] = useState<Message[]>([]);
     const [currentCallStatus, setCurrentCallStatus] = useState(CallStatus.INACTIVE)
     const [isAISpeaking, setIsAISpeaking] = useState(false);
+    const [transcript, setTranscript] = useState("")
+    const [display, setDisplay] = useState<"CALL" | "TRANSCRIPT">("CALL")
     const [isMuted, setIsMuted] = useState(false);
 
 
@@ -97,6 +103,7 @@ export default function Session() {
             setMessages(prevMessages => {
                 if (prevMessages.length === 0) {
                     if (message.type === "voice-input") {
+                        setTranscript(message.input ?? "")
                         const newMessage = {
                             type: "voice-input",
                             transcript: message.input ?? "",
@@ -118,6 +125,7 @@ export default function Session() {
                             role: "assistant" as const,
                             transcriptType: "final" as const
                         }
+                        setTranscript(concatenatedText)
                         return [...prevMessages.slice(0, -1), newMessage];  
                     }
 
@@ -127,6 +135,7 @@ export default function Session() {
                         role: "assistant" as const,
                         transcriptType: "final" as const
                     }
+                    setTranscript(message.input ?? "")
                     return [...prevMessages, newMessage];                
                     
                 } else if (lastMessage.role === "user" && message.role === "user") {
@@ -187,15 +196,9 @@ export default function Session() {
         const result = await translateText({text, sourceLanguageCode, targetLanguageCode} as TranslateText);
         console.log(result)
         setMessages(prevMessages => {
-            const translation: Message = {
-                type,
-                transcript: result,
-                role,
-                transcriptType: "final",
-                translation: result
-            }
-
-            return [...prevMessages.slice(0, index), translation, ...prevMessages.slice(index + 1)]
+            const newMsgs = [...prevMessages];
+            newMsgs[index] = { ...newMsgs[index], translation: result };
+            return newMsgs;
         })
     }
 
@@ -242,28 +245,79 @@ export default function Session() {
         //router.replace("/conversation")
     }
 
+    const isVisibleInViewport = (element: HTMLElement) => {
+        const rect = element.getBoundingClientRect()
+        return (
+            rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+        )
+    }
+
+    const [clock, setClock] = useState("00:00")
+    const [seconds, setSeconds] = useState(0);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setSeconds((prev) => {
+                const next = prev + 1;
+                const mins = Math.floor(next / 60);
+                const secs = next % 60;
+                setClock(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
+                return next;
+            });
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
+
+    // const duration = useRef(0)
+    // function updateDuration() {
+    //     duration.current++;
+    //     const minutes = Math.floor(duration.current / 60);
+    //     const seconds = duration.current % 60;
+    //     setClock(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`)
+    // }
+
+    // setInterval(updateDuration, 1000);
+
+    function toggleDisplay() {
+        setDisplay(prev => prev === "CALL"? "TRANSCRIPT" : "CALL")
+    }
     return (
         <div className="h-screen flex flex-col w-full bg-background">
             <Navigation page="Conversation"/>
-            <main className="w-full flex flex-col md:flex-row h-full gap-5 p-4">
+            <main className="w-full flex flex-col md:flex-row gap-5 p-4">
                 {/* Left Panel */}
-                <VideoCall 
-                    userImage={user?.imageUrl || defaultProfile.src}
-                    aiImage={portrait.src}
-                    userFirstName={user?.firstName || "user"}
-                    startSession={startSession}
-                    endSession={endSession}
-                    callStatus={currentCallStatus}
-                    isAISpeaking={isAISpeaking}
+                {display === "CALL"? 
+                    <VideoCall 
+                        ref={videoCall}
+                        userImage={user?.imageUrl || defaultProfile.src}
+                        startSession={startSession}
+                        endSession={endSession}
+                        toggleDisplay={toggleDisplay}
+                        callStatus={currentCallStatus}
+                        isAISpeaking={isAISpeaking}
+                        timer={clock}
+                        transcript={transcript}
+                    /> :
+                    <CallTranscript 
+                        userImage={user?.imageUrl || defaultProfile.src}
+                        aiImage={portrait.src}
+                        translate={translate}
+                        toggleDisplay={toggleDisplay}
+                        messages={messages}
                     />
+                }
+                
 
                 {/* Right Panel - Transcript (Image 1) */}
-                <CallTranscript 
-                    userImage={user?.imageUrl || defaultProfile.src}
-                    aiImage={portrait.src}
-                    translate={translate}
-                    />
             </main>
+
+            {/*check the visibility toggle*/}
+            <Button className={cn(videoCall.current && isVisibleInViewport(videoCall.current)? "hidden": "fixed bottom-2 right-3")} onClick={() => videoCall.current?.scrollIntoView({ behavior: "smooth" })}>
+                <ArrowUp size={28} strokeWidth={2.5} />
+            </Button>
         </div>
     )
 }
