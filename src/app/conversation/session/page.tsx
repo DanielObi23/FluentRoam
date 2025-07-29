@@ -1,22 +1,17 @@
 "use client"
 //TODO: check max token, as well as speed of speaking and gender change, page reload when mid conversation. 
 // add speed and duration to type Session later, check out the searchParams
+
+import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams} from "next/navigation"
+import { useUser } from "@clerk/nextjs";
 import Navigation from "@/components/app_layout/Navigation";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import VideoCall from "@/components/conversation_page/VideoCall";
+import CallTranscript from "@/components/conversation_page/CallTranscript";
 import portrait from "../../../../public/spanish/male_spanish.jpeg"
 import defaultProfile from "../../../../public/default_profile.jpg"
-import {useRouter} from "next/navigation"
-
-import {Mic, RotateCcw} from "lucide-react"
-import { useUser } from "@clerk/nextjs";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
 import {vapi} from "@/lib/vapi.sdk"
-import { cn } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
-import { callTranscript } from "@/dummy_data";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { toast } from "sonner";
 import { translateText, TranslateText } from "@/lib/deepl";
 import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
 
@@ -41,13 +36,22 @@ type Session = {
     speed: number
 }
 
+enum CallStatus {
+    INACTIVE = 'INACTIVE',
+    CONNECTING = 'CONNECTING',
+    ACTIVE = 'ACTIVE',
+    FINISHED = 'FINISHED',
+}
+
+
 export default function Session() {
     const search = useSearchParams();
     const router = useRouter()
     const { user } = useUser()
     const callId = useRef("")
     const [messages, setMessages] = useState<Message[]>([]);
-    const [isSpeaking, setIsSpeaking] = useState(false);
+    const [currentCallStatus, setCurrentCallStatus] = useState(CallStatus.INACTIVE)
+    const [isAISpeaking, setIsAISpeaking] = useState(false);
     const [isMuted, setIsMuted] = useState(false);
 
 
@@ -160,20 +164,20 @@ export default function Session() {
     }
 
     function onCallStart() {
-        console.log("call-Started")
+        setCurrentCallStatus(CallStatus.ACTIVE)
     }
 
     function onCallEnd() {
-        console.log("call ended")
+        setCurrentCallStatus(CallStatus.FINISHED)
     }
 
     function onSpeechStart() {
-        setIsSpeaking(true)
+        setIsAISpeaking(true)
         console.log("speech started")
     }
 
     function onSpeechEnd() {
-        setIsSpeaking(false)
+        setIsAISpeaking(false)
         console.log("speech ended")
     }
 
@@ -207,10 +211,6 @@ export default function Session() {
             return
         }
 
-        vapi.start(gender, assistantOverrides).then(call => {
-            callId.current = call?.id || ""  //Adding call-id so it can be added to database and user can reference it for later
-        });  
-
         vapi.on('call-start', onCallStart);
         vapi.on('call-end', onCallEnd);
         vapi.on('message', onMessage);
@@ -229,103 +229,40 @@ export default function Session() {
 
     }, [])
  
+    function startSession() {
+        vapi.start(gender, assistantOverrides).then(call => {
+            callId.current = call?.id || ""  //Adding call-id so it can be added to database and user can reference it for later
+        });  
+        setCurrentCallStatus(CallStatus.CONNECTING)
+    }
 
-    function endConversation() {
-        vapi.stop()
+    function endSession() {
+        setCurrentCallStatus(CallStatus.FINISHED)
+        vapi.say("This is the end of our conversation, goodbye!", true) // or vapi.stop()
         //router.replace("/conversation")
     }
 
     return (
         <div className="h-screen flex flex-col w-full bg-background">
             <Navigation page="Conversation"/>
-            <main className="w-full flex h-full gap-5 p-4">
+            <main className="w-full flex flex-col md:flex-row h-full gap-5 p-4">
                 {/* Left Panel */}
-                <div className="w-1/3 flex flex-col gap-4">
-                    {/* AI Persona Card */}
-                    <div className="bg-card rounded-lg p-6 flex flex-col items-center justify-center gap-7 h-6/7">
-                        <div className="self-start flex flex-col items-center justify-center">
-                            <Image
-                                src={portrait} 
-                                alt="Anna portrait" 
-                                className="w-40 h-40 rounded-lg object-cover"
-                            />
-                            <h3 className="text-xl font-semibold">José</h3>
-                        </div>
-                        <div className="self-end flex flex-col items-center justify-center">
-                            <Image
-                                src={user?.imageUrl || defaultProfile} 
-                                alt={`${user?.firstName} portrait`} 
-                                width={40}
-                                height={40}
-                                className="w-40 h-40 rounded-lg object-cover"
-                            />
-                            <h3 className="text-xl font-semibold">{user?.firstName || "user"}</h3>
-                        </div>
-                    </div>
-                    
-                    {/* Control Buttons */}
-                    <div className="grid grid-cols-2 gap-3">
-                        <Button variant="outline" className="flex flex-col gap-2 h-16">
-                            <Mic className="w-5 h-5" />
-                            <span className="text-sm">Turn off mic</span>
-                        </Button>
-                        <Button variant="outline" className="flex flex-col gap-2 h-16">
-                            <RotateCcw className="w-5 h-5" />
-                            <span className="text-sm">Repeat</span>
-                        </Button>
-                    </div>
-                    
-                    {/* End Lesson Button */}
-                    <Button variant="destructive" className="w-full py-3" onClick={endConversation}>
-                        End Lesson
-                    </Button>
-                </div>
+                <VideoCall 
+                    userImage={user?.imageUrl || defaultProfile.src}
+                    aiImage={portrait.src}
+                    userFirstName={user?.firstName || "user"}
+                    startSession={startSession}
+                    endSession={endSession}
+                    callStatus={currentCallStatus}
+                    isAISpeaking={isAISpeaking}
+                    />
 
                 {/* Right Panel - Transcript (Image 1) */}
-                <div className="w-2/3 bg-card rounded-lg flex flex-col">
-                    <div className="p-4 border-b">
-                        <h2 className="text-xl font-semibold">Call Transcript</h2>
-                    </div>
-
-                    {/* 4. render the live transcript */}
-                    <div className="flex flex-col p-4 gap-3 bg-red-200 overflow-y-scroll hide-scrollbar">
-                        {messages?.map((m, i) => (
-                            <div key={i} className={cn(m.role === "assistant"? 
-                                "self-start justify-start" : 
-                                "self-end justify-end", 
-                                "w-5/7 flex gap-x-0.5")} 
-                                onDoubleClick={
-                                    m.role === "assistant"
-                                        ? () => translate(m.transcript, m.role as Role, i, m.type)
-                                        : undefined
-                                }>
-                                <div className={cn(m.role === "assistant"? "order-2 items-start" : "items-end", "w-full flex flex-col")}>
-                                    <Button 
-                                        variant={"outline"} 
-                                        className={cn(m.role === "assistant"? "ml-3" : "mr-3" , "mb-1", m.translation && "hidden")}
-                                        onClick={() => translate(m.transcript, m.role as Role, i, m.type)}>
-                                            Translate
-                                    </Button>
-                                    <div className={cn(m.role === "assistant"? 
-                                            "text-foreground bg-blue-600 rounded-tr-3xl rounded-br-3xl rounded-tl-3xl" : 
-                                            "text-foreground bg-teal-600 rounded-tl-3xl rounded-bl-3xl rounded-tr-3xl", 
-                                            "w-6/7 font-content text-pretty py-3 px-4 space-y-2.5")}>
-                                        <p>{m.transcript}</p>
-                                        {m.translation && 
-                                        <p className="text-foreground bg-gray-600/40 w-full text-pretty py-3 px-4 rounded-tr-xl rounded-br-xl rounded-tl-xl rounded-bl-xl">
-                                            {m.translation}
-                                        </p>}
-                                    </div>
-                                </div>
-                                <Avatar className={cn(m.role === "assistant"? "self-end order-1" : "self-end", "")}>
-                                    <AvatarImage src={m.role === "assistant"? portrait.src : user?.imageUrl || defaultProfile.src} />
-                                    <AvatarFallback>YOU</AvatarFallback>
-                                </Avatar>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
+                <CallTranscript 
+                    userImage={user?.imageUrl || defaultProfile.src}
+                    aiImage={portrait.src}
+                    translate={translate}
+                    />
             </main>
         </div>
     )
