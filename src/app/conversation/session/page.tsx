@@ -1,12 +1,15 @@
 "use client"
 //TODO: check max token, as well as speed of speaking and gender change, page reload when mid conversation. 
 // add speed and duration to type Session later, check out the searchParams, optimise the number of states in the component, there is too many being rerendered
+// handle user refreshing the page or leaving the page to home or other mid convo
+// handle user starting this page with missing form data
+// update conversations avatar
 
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams} from "next/navigation"
 import { useUser } from "@clerk/nextjs";
 import Navigation from "@/components/app_layout/Navigation";
-import VideoCall from "@/components/conversation_page/VideoCall";
+import Call from "@/components/conversation_page/Call";
 import CallTranscript from "@/components/conversation_page/CallTranscript";
 import { Button } from "@/components/ui/button";
 import portrait from "../../../../public/spanish/male_spanish.jpeg"
@@ -17,6 +20,7 @@ import { translateText, TranslateText } from "@/lib/deepl";
 import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type Role = "assistant" | "user"
 
@@ -57,7 +61,6 @@ export default function Session() {
     const [currentCallStatus, setCurrentCallStatus] = useState(CallStatus.INACTIVE)
     const [isAISpeaking, setIsAISpeaking] = useState(false);
     const [transcript, setTranscript] = useState("")
-    const [display, setDisplay] = useState<"CALL" | "TRANSCRIPT">("CALL")
     const [isMuted, setIsMuted] = useState(false);
 
 
@@ -146,7 +149,6 @@ export default function Session() {
                         role: message.role,
                         transcriptType: message.transcriptType
                     };
-                    
                     return [...prevMessages.slice(0, -1), newUserMessage];
                     
                 } else {
@@ -237,6 +239,7 @@ export default function Session() {
             callId.current = call?.id || ""  //Adding call-id so it can be added to database and user can reference it for later
         });  
         setCurrentCallStatus(CallStatus.CONNECTING)
+        
     }
 
     function endSession() {
@@ -281,43 +284,62 @@ export default function Session() {
 
     // setInterval(updateDuration, 1000);
 
-    function toggleDisplay() {
-        setDisplay(prev => prev === "CALL"? "TRANSCRIPT" : "CALL")
-    }
     return (
         <div className="h-screen flex flex-col w-full bg-background">
             <Navigation page="Conversation"/>
-            <main className="w-full flex flex-col md:flex-row gap-5 p-4">
-                {/* Left Panel */}
-                {display === "CALL"? 
-                    <VideoCall 
-                        ref={videoCall}
-                        userImage={user?.imageUrl || defaultProfile.src}
-                        startSession={startSession}
-                        endSession={endSession}
-                        toggleDisplay={toggleDisplay}
-                        callStatus={currentCallStatus}
-                        isAISpeaking={isAISpeaking}
-                        timer={clock}
-                        transcript={transcript}
-                    /> :
-                    <CallTranscript 
-                        userImage={user?.imageUrl || defaultProfile.src}
-                        aiImage={portrait.src}
-                        translate={translate}
-                        toggleDisplay={toggleDisplay}
-                        messages={messages}
-                    />
-                }
-                
+            {/* DESKTOP VIEW */}
+            <main className="w-full h-[calc(100vh-80px)] sm:flex sm:flex-row gap-5 p-4 hidden">
+                <Call 
+                    ref={videoCall}
+                    startSession={startSession}
+                    endSession={endSession}
+                    callStatus={currentCallStatus}
+                    isAISpeaking={isAISpeaking}
+                    timer={clock}
+                    transcript={transcript}
+                    vapi={vapi}
+                />
+                <CallTranscript 
+                    userImage={user?.imageUrl || defaultProfile.src}
+                    aiImage={portrait.src}
+                    translate={translate}
+                    messages={messages}
+                />
+            </main>
 
-                {/* Right Panel - Transcript (Image 1) */}
+            {/* MOBILE VIEW */}
+            <main className="w-full h-[calc(100vh-80px)] flex flex-col md:flex-row gap-5 p-4 sm:hidden">
+                <Tabs defaultValue="call" className="w-full h-full">
+                    <TabsList className="w-full h-10">
+                        <TabsTrigger value="call">Call</TabsTrigger>
+                        <TabsTrigger value="transcript">Transcript</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="call" className="w-full flex flex-col md:flex-row gap-5 p-2 h-[calc(100%-40px)]">
+                        <Call 
+                            ref={videoCall}
+                            startSession={startSession}
+                            endSession={endSession}
+                            callStatus={currentCallStatus}
+                            isAISpeaking={isAISpeaking}
+                            timer={clock}
+                            transcript={transcript}
+                        /> 
+                    </TabsContent>
+                    <TabsContent value="transcript" className="w-full flex flex-col md:flex-row gap-5 p-2 h-[calc(100%-40px)]">
+                        <CallTranscript 
+                            userImage={user?.imageUrl || defaultProfile.src}
+                            aiImage={portrait.src}
+                            translate={translate}
+                            messages={messages}
+                        />
+                    </TabsContent>
+                </Tabs>
             </main>
 
             {/*check the visibility toggle*/}
-            <Button className={cn(videoCall.current && isVisibleInViewport(videoCall.current)? "hidden": "fixed bottom-2 right-3")} onClick={() => videoCall.current?.scrollIntoView({ behavior: "smooth" })}>
+            {/* <Button className={cn(videoCall.current && isVisibleInViewport(videoCall.current)? "hidden": "fixed bottom-2 right-3")} onClick={() => videoCall.current?.scrollIntoView({ behavior: "smooth" })}>
                 <ArrowUp size={28} strokeWidth={2.5} />
-            </Button>
+            </Button> */}
         </div>
     )
 }
