@@ -14,7 +14,13 @@ export type TranslateText = {
 
 const deeplClient = new deepl.DeepLClient(process.env.NEXT_PUBLIC_DEEPL_AUTH_KEY!);
 export async function translateText({text, targetLanguageCode, sourceLanguageCode}: TranslateText) {
-    const result = await deeplClient.translateText(text, sourceLanguageCode, targetLanguageCode);
-    console.log("server: " + result.text)
-    return result.text
+    try {
+        const result = await deeplClient.translateText(text, sourceLanguageCode, targetLanguageCode);
+        console.log("server: " + result.text)
+        return {status: 200, message: result.text}
+    } catch (err) {
+        console.error("Error translating the text")
+        return {status: 404, message: "error translating"}
+    }
+    
 }

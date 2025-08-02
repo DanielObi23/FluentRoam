@@ -1,5 +1,4 @@
 "use client"
-//TODO: stop conversation once the page is left, whether back button or end conversation, if microphone access is denied, add toast
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -59,10 +58,10 @@ export default function LanguageSessionForm() {
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
             defaultValues: {
-                scenario: "booking a hotel in benidorm over the phone",
+                scenario: "i, the user, am chatting with you, a female friend about your new boyfriend, after a chance encounter on the street",
                 gender: "male",
                 formality: "casual",
-                response_length: "brief",
+                response_length: "detailed",
                 proficiency: "B1",
                 duration: 20,
                 speed: 1,
@@ -91,12 +90,12 @@ export default function LanguageSessionForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-10 p-4 w-2/3 h-5/7 justify-center bg-background rounded-4xl shadow-teal-900 shadow-2xl overflow-auto">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 md:gap-7 shrink p-4 w-full h-full justify-center bg-background  shadow-teal-900 shadow-2xl overflow-auto">
                 <FormField
                     control={form.control}
                     name="scenario"
                     render={({ field }) => (
-                        <FormItem>
+                        <FormItem className="mt-6 sm:mt-0">
                             <FormLabel>
                                 Role-Play Scenario
                                 <Popover>
@@ -105,7 +104,7 @@ export default function LanguageSessionForm() {
                                 </Popover>
                             </FormLabel>
                             <FormControl>
-                                <Textarea placeholder="e.g., Ordering food at a restaurant, job interview, meeting a new neighbor, booking a vacation resort for a family of 4..." {...field} />
+                                <Textarea  placeholder="e.g., Ordering food at a restaurant, meeting a new neighbor..." {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

@@ -1,15 +1,21 @@
 "use client"
 //TODO: check max token, as well as speed of speaking and gender change, page reload when mid conversation. 
 // add speed and duration to type Session later, check out the searchParams, optimise the number of states in the component, there is too many being rerendered
+// handle user refreshing the page or leaving the page to home or other mid convo
+// handle user starting this page with missing form data
+// update conversations avatar
+// find a different way to pass the data besides query parameter
+//TODO: stop conversation once the page is left, whether back button or end conversation, if microphone access is denied, add toast
+// fix the prompting for the vapi scenario7
+// fix UI for when device is tilted: mobile 
 
-import { ReactElement, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams} from "next/navigation"
 import { useUser } from "@clerk/nextjs";
 import Navigation from "@/components/app_layout/Navigation";
-import VideoCall from "@/components/conversation_page/VideoCall";
+import Call from "@/components/conversation_page/Call";
 import CallTranscript from "@/components/conversation_page/CallTranscript";
 import { Button } from "@/components/ui/button";
-import portrait from "../../../../public/spanish/male_spanish.jpeg"
 import defaultProfile from "../../../../public/default_profile.jpg"
 import {vapi} from "@/lib/vapi.sdk"
 import { toast } from "sonner";
@@ -17,6 +23,8 @@ import { translateText, TranslateText } from "@/lib/deepl";
 import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
 import { ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import azureTranslate from "@/lib/azureTranslate";
 
 type Role = "assistant" | "user"
 
@@ -51,21 +59,9 @@ export default function Session() {
     const search = useSearchParams();
     const router = useRouter()
     const { user } = useUser()
-    const callId = useRef("")
-    const videoCall = useRef<HTMLDivElement>(null)
     const [messages, setMessages] = useState<Message[]>([]);
-    const [currentCallStatus, setCurrentCallStatus] = useState(CallStatus.INACTIVE)
-    const [isAISpeaking, setIsAISpeaking] = useState(false);
     const [transcript, setTranscript] = useState("")
-    const [display, setDisplay] = useState<"CALL" | "TRANSCRIPT">("CALL")
-    const [isMuted, setIsMuted] = useState(false);
-
-
-    const char = "male"
-    const gender = char === "male"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : ""
-    // const voiceId = char === "male" ? "burt" : "emma"; 
-    //const scrollToMessage = useRef<HTMLDivElement>(null)
-    
+    const translator = "deepl"
 
     const session: Session = {
         scenario: search.get("scenario") ?? "",
@@ -146,7 +142,6 @@ export default function Session() {
                         role: message.role,
                         transcriptType: message.transcriptType
                     };
-                    
                     return [...prevMessages.slice(0, -1), newUserMessage];
                     
                 } else {
@@ -172,32 +167,20 @@ export default function Session() {
         console.log("Error", error)
     }
 
-    function onCallStart() {
-        setCurrentCallStatus(CallStatus.ACTIVE)
-    }
-
-    function onCallEnd() {
-        setCurrentCallStatus(CallStatus.FINISHED)
-    }
-
-    function onSpeechStart() {
-        setIsAISpeaking(true)
-        console.log("speech started")
-    }
-
-    function onSpeechEnd() {
-        setIsAISpeaking(false)
-        console.log("speech ended")
-    }
-
     async function translate(text: string, role: Role, index: number, type: string) {
-        const targetLanguageCode = "en-GB" as TargetLanguageCode
-        const sourceLanguageCode = "es" as SourceLanguageCode
-        const result = await translateText({text, sourceLanguageCode, targetLanguageCode} as TranslateText);
-        console.log(result)
+        // update to "has pro or expert" for pricing
+        let translation: {status: number, message: string};
+        if (translator === "deepl") {
+            const targetLanguageCode = "en-GB" as TargetLanguageCode
+            const sourceLanguageCode = "it" as SourceLanguageCode
+            translation = await translateText({text, sourceLanguageCode, targetLanguageCode} as TranslateText) || {status: 404, message: "error translating"}
+        } else {
+            translation = await azureTranslate("it", "es", text) || {status: 404, message: "error translating"}
+        }
+
         setMessages(prevMessages => {
             const newMsgs = [...prevMessages];
-            newMsgs[index] = { ...newMsgs[index], translation: result };
+            newMsgs[index] = { ...newMsgs[index], translation: translation.message };
             return newMsgs;
         })
     }
@@ -214,110 +197,60 @@ export default function Session() {
             return
         }
 
-        vapi.on('call-start', onCallStart);
-        vapi.on('call-end', onCallEnd);
         vapi.on('message', onMessage);
         vapi.on('error', onError);
-        vapi.on('speech-start', onSpeechStart);
-        vapi.on('speech-end', onSpeechEnd);
 
         return () => {
-            vapi.off('call-start', onCallStart);
-            vapi.off('call-end', onCallEnd);
             vapi.off('message', onMessage);
             vapi.off('error', onError);
-            vapi.off('speech-start', onSpeechStart);
-            vapi.off('speech-end', onSpeechEnd);
         }
 
     }, [])
- 
-    function startSession() {
-        vapi.start(gender, assistantOverrides).then(call => {
-            callId.current = call?.id || ""  //Adding call-id so it can be added to database and user can reference it for later
-        });  
-        setCurrentCallStatus(CallStatus.CONNECTING)
-    }
 
-    function endSession() {
-        setCurrentCallStatus(CallStatus.FINISHED)
-        vapi.say("This is the end of our conversation, goodbye!", true) // or vapi.stop()
-        //router.replace("/conversation")
-    }
-
-    const isVisibleInViewport = (element: HTMLElement) => {
-        const rect = element.getBoundingClientRect()
-        return (
-            rect.top >= 0 &&
-            rect.left >= 0 &&
-            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-        )
-    }
-
-    const [clock, setClock] = useState("00:00")
-    const [seconds, setSeconds] = useState(0);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setSeconds((prev) => {
-                const next = prev + 1;
-                const mins = Math.floor(next / 60);
-                const secs = next % 60;
-                setClock(`${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`);
-                return next;
-            });
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
-
-    // const duration = useRef(0)
-    // function updateDuration() {
-    //     duration.current++;
-    //     const minutes = Math.floor(duration.current / 60);
-    //     const seconds = duration.current % 60;
-    //     setClock(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`)
-    // }
-
-    // setInterval(updateDuration, 1000);
-
-    function toggleDisplay() {
-        setDisplay(prev => prev === "CALL"? "TRANSCRIPT" : "CALL")
-    }
     return (
         <div className="h-screen flex flex-col w-full bg-background">
             <Navigation page="Conversation"/>
-            <main className="w-full flex flex-col md:flex-row gap-5 p-4">
-                {/* Left Panel */}
-                {display === "CALL"? 
-                    <VideoCall 
-                        ref={videoCall}
-                        userImage={user?.imageUrl || defaultProfile.src}
-                        startSession={startSession}
-                        endSession={endSession}
-                        toggleDisplay={toggleDisplay}
-                        callStatus={currentCallStatus}
-                        isAISpeaking={isAISpeaking}
-                        timer={clock}
-                        transcript={transcript}
-                    /> :
-                    <CallTranscript 
-                        userImage={user?.imageUrl || defaultProfile.src}
-                        aiImage={portrait.src}
-                        translate={translate}
-                        toggleDisplay={toggleDisplay}
-                        messages={messages}
-                    />
-                }
-                
-
-                {/* Right Panel - Transcript (Image 1) */}
+            {/* DESKTOP VIEW */}
+            <main className="w-full h-[calc(100vh-80px)] sm:flex sm:flex-row gap-5 p-4 hidden">
+                <Call 
+                    vapi={vapi}
+                    transcript={transcript}
+                    gender={session.gender}
+                    assistantOverrides={assistantOverrides}
+                />
+                <CallTranscript 
+                    userImage={user?.imageUrl || defaultProfile.src}
+                    aiImage={defaultProfile.src}
+                    translate={translate}
+                    messages={messages}
+                />
             </main>
 
-            {/*check the visibility toggle*/}
-            <Button className={cn(videoCall.current && isVisibleInViewport(videoCall.current)? "hidden": "fixed bottom-2 right-3")} onClick={() => videoCall.current?.scrollIntoView({ behavior: "smooth" })}>
-                <ArrowUp size={28} strokeWidth={2.5} />
-            </Button>
+            {/* MOBILE VIEW */}
+            <main className="w-full h-[calc(100vh-80px)] flex flex-col md:flex-row gap-5 p-4 sm:hidden">
+                <Tabs defaultValue="call" className="w-full h-full">
+                    <TabsList className="w-full h-10">
+                        <TabsTrigger value="call">Call</TabsTrigger>
+                        <TabsTrigger value="transcript">Transcript</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="call" className="w-full flex flex-col md:flex-row gap-5 p-2 h-[calc(100%-40px)]">
+                        <Call 
+                            vapi={vapi}
+                            transcript={transcript}
+                            gender={session.gender}
+                            assistantOverrides={assistantOverrides}
+                        /> 
+                    </TabsContent>
+                    <TabsContent value="transcript" className="w-full flex flex-col md:flex-row gap-5 p-2 h-[calc(100%-40px)]">
+                        <CallTranscript 
+                            userImage={user?.imageUrl || defaultProfile.src}
+                            aiImage={defaultProfile.src}
+                            translate={translate}
+                            messages={messages}
+                        />
+                    </TabsContent>
+                </Tabs>
+            </main>
         </div>
     )
 }
