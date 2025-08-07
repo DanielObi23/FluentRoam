@@ -3,7 +3,7 @@
 import axios from "axios"
 import { v4 as uuidv4 } from "uuid";
 
-let key = process.env.NEXT_PUBLIC_AZURE_TRANSLATE_API_KEY
+let key = process.env.AZURE_TRANSLATE_API_KEY
 if (!key) {
     throw new Error("Please add Azure translate API key")
 }

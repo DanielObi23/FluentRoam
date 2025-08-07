@@ -14,6 +14,7 @@ import {
 
 export function ModeToggle() {
   const { setTheme } = useTheme()
+  //localStorage.setItem("theme", "dark")
 
   return (
     <DropdownMenu>

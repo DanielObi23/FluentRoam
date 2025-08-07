@@ -16,8 +16,8 @@ export default function LandingPage() {
             <HowItWorks />
             <WhyPolySermo />
             <FAQ />
-            <Footer />
         </main>
+        <Footer />
    </div>
   )
 }

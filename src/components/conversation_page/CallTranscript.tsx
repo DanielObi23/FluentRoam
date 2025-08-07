@@ -1,8 +1,11 @@
-import { callTranscript } from "@/dummy_data";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
+import { callTranscript } from "@/dummy_data";
+import defaultProfile from "../../../public/default_profile.jpg"
+import fluentroam from "../../../public/logo/fluentroam.jpg"
+import { useUser } from "@clerk/nextjs";
 
 type Role = "assistant" | "user"
 type Message = {
@@ -15,13 +18,12 @@ type Message = {
 };
 
 type Transcript = {
-    translate: (text: string, role: Role, index: number, type: string) => Promise<void>;
-    aiImage: string;
-    userImage: string;
+    translate: (text: string, index: number) => Promise<void>;
     messages: Message[]
 }
-export default function CallTranscript({translate, aiImage, userImage, messages}: Transcript) {
+export default function CallTranscript({translate, messages}: Transcript) {
     const [showTranscript, setShowTranscript] = useState(true)
+    const { user } = useUser()
     const scrollRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
@@ -39,14 +41,14 @@ export default function CallTranscript({translate, aiImage, userImage, messages}
 
             {/* live transcript */}
             <div ref={scrollRef} className="flex flex-col p-4 gap-3 bg-card overflow-y-scroll hide-scrollbar">
-                {showTranscript && messages?.map((m, i) => (
+                {showTranscript && callTranscript?.map((m, i) => (
                     <div key={i} className={cn(m.role === "assistant"? 
                         "self-start justify-start" : 
                         "self-end justify-end", 
                         "w-8/9 md:w-5/7 flex flex-col gap-x-0.5")} 
                         onDoubleClick={
                             m.role === "assistant"
-                                ? () => translate(m.transcript, m.role as Role, i, m.type)
+                                ? () => translate(m.transcript, i)
                                 : undefined
                         }>
                         <div className={cn(m.role === "assistant"? "justify-start" : "justify-end", "w-full flex gap-2")}>
@@ -62,14 +64,14 @@ export default function CallTranscript({translate, aiImage, userImage, messages}
                             </div>
                             
                             <Avatar className={cn(m.role === "assistant"? "self-end" : "self-end", "")}>
-                                <AvatarImage src={m.role === "assistant"? aiImage : userImage} />
-                                <AvatarFallback>YOU</AvatarFallback>
+                                <AvatarImage src={m.role === "assistant"? fluentroam.src : user?.imageUrl ?? defaultProfile.src} />
+                                <AvatarFallback>{m.role === "assistant"? "AI" : "YOU"}</AvatarFallback>
                             </Avatar>
                         </div>
                         <Button 
                             variant={"outline"} 
                             className={cn(m.role === "assistant"? "ml-9 self-start" : "mr-9 self-end" , "mt-1", m.translation && "hidden")}
-                            onClick={() => translate(m.transcript, m.role as Role, i, m.type)}>
+                            onClick={() => translate(m.transcript, i)}>
                                 Translate
                         </Button>
                     </div>

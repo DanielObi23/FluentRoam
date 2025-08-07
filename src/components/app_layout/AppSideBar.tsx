@@ -8,13 +8,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarHeader
+  SidebarHeader,
+  SidebarFooter
 } from "@/components/ui/sidebar"
 import Image from "next/image"
-import logo from "../../../public/polysermo.png"
+import logo from "../../../public/logo/fluentroamTransparent.png"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { Button } from "../ui/button"
 
 // Menu items.
 const items = [
@@ -50,10 +52,10 @@ export default function AppSidebar() {
   return (
     <Sidebar className="bg-muted">
       <SidebarHeader>
-          <nav className="flex items-center justify-center gap-1 bg-slate-90 px-1 py-2">
-              <Image src={logo} alt="Discourse - AI language learning and brainstorming platform" height={45} width={45} />
+          <nav className="flex items-center justify-center bg-slate-90 px-1 py-2">
+              <Image src={logo} alt="FluentRoam logo" height={65} width={65} />
               <h1 className="font-bold text-lg md:text-xl">
-                  <span className='text-secondary-600'>Poly</span><span className='text-primary-700'>Sermo</span>
+                  <span className='text-secondary-600'>Fluent</span><span className='text-primary-700'>Roam</span>
               </h1>
           </nav>
       </SidebarHeader>
@@ -77,6 +79,11 @@ export default function AppSidebar() {
           })}
         </SidebarMenu>
       </SidebarContent>
+      <SidebarFooter>
+        <div className="py-3 px-1.5">
+          <Button>Add an additional language</Button>
+        </div>
+      </SidebarFooter>
     </Sidebar>
   )
 }

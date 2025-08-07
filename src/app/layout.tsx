@@ -37,8 +37,8 @@ const sourceSerif = Source_Serif_4({
 
 export const metadata: Metadata = {
   title: {
-    default: "PolySermo",
-    template: "%s | PolySermo"
+    default: "FluentRoam",
+    template: "%s | FluentRoam"
   },
   description: 'AI powered language learning platform',
 }

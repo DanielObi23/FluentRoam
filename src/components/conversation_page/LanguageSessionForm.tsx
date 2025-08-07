@@ -46,7 +46,8 @@ const formSchema = z.object({
   response_length: z.string(),
   proficiency: z.string(),
   duration: z.number(),
-  speed: z.number()
+  speed: z.number(),
+  delay: z.number()
 })
 
 
@@ -54,6 +55,7 @@ export default function LanguageSessionForm() {
     const router = useRouter()
     const [currentDuration, setCurrentDuration] = useState(15)
     const [currentSpeed, setCurrentSpeed] = useState(1)
+    const [delayLength, setDelayLength] = useState(1)
     
     const form = useForm<z.infer<typeof formSchema>>({
             resolver: zodResolver(formSchema),
@@ -65,6 +67,7 @@ export default function LanguageSessionForm() {
                 proficiency: "B1",
                 duration: 20,
                 speed: 1,
+                delay: 1
             },
         })
     
@@ -278,13 +281,13 @@ export default function LanguageSessionForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="speed"
+                    name="delay"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className="flex items-center justify-between">
                                 <span>Reply wait time</span>
                                 <span className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                                    {currentSpeed}
+                                    {delayLength}
                                 </span>
                             </FormLabel>
                             <FormControl>
@@ -294,10 +297,10 @@ export default function LanguageSessionForm() {
                                         min={1} 
                                         max={5} 
                                         step={0.5}
-                                        value={currentDuration}
+                                        value={delayLength}
                                         onChange={(e) => {
                                             const value = parseInt(e.target.value);
-                                            setCurrentSpeed(value);
+                                            setDelayLength(value);
                                             field.onChange(value);
                                         }}
                                         className="h-2 bg-muted rounded-lg appearance-none cursor-pointer p-0"

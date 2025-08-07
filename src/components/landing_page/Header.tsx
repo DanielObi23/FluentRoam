@@ -1,6 +1,6 @@
 import {SignInButton, SignUpButton} from '@clerk/nextjs'
 import Image from "next/image"
-import logo from "../../../public/discourse logo.jpeg"
+import logo from "../../../public/logo/fluentroamTransparent.png"
 import { Button } from "@/components/ui/button"
 
 export default function Header() {

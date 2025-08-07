@@ -4,7 +4,7 @@ import {Mic, MicOff, Captions, CaptionsOff} from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Lottie, {LottieRefCurrentProps} from "lottie-react"
-import animationData from "../../../public/Sound Waves.json"
+import animationData from "../../../public/lottie-animation/Sound Waves.json"
 import { useEffect, useRef, useState } from "react";
 import Vapi from "@vapi-ai/web";
 import { AssistantOverrides } from "@vapi-ai/web/dist/api";
@@ -43,7 +43,7 @@ export default function Call({vapi, transcript, gender, assistantOverrides}: Cal
     }
 
     function startSession() {
-        const voiceGender = gender === "female"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : "0a7e23ff-2173-4722-9473-e86aa8afb45e"
+        const voiceGender = gender === "male"? 'e3fbfb66-b32e-4c74-b456-c6ea5fb15663' : "0a7e23ff-2173-4722-9473-e86aa8afb45e"
         vapi.start(voiceGender, assistantOverrides).then(call => {
             callId.current = call?.id || ""  //Adding call-id so it can be added to database and user can reference it for later
         });  

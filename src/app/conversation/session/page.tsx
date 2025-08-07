@@ -8,24 +8,20 @@
 //TODO: stop conversation once the page is left, whether back button or end conversation, if microphone access is denied, add toast
 // fix the prompting for the vapi scenario7
 // fix UI for when device is tilted: mobile 
+// check use-mobile in hooks, then check to use for conditionally rendering which UI
+// put vapi assistant id and change vapi web token from next_public in env
 
-import { useEffect, useRef, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams} from "next/navigation"
 import { useUser } from "@clerk/nextjs";
 import Navigation from "@/components/app_layout/Navigation";
 import Call from "@/components/conversation_page/Call";
 import CallTranscript from "@/components/conversation_page/CallTranscript";
-import { Button } from "@/components/ui/button";
-import defaultProfile from "../../../../public/default_profile.jpg"
 import {vapi} from "@/lib/vapi.sdk"
 import { toast } from "sonner";
-import { translateText, TranslateText } from "@/lib/deepl";
-import { SourceLanguageCode, TargetLanguageCode } from 'deepl-node';
-import { ArrowUp } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import azureTranslate from "@/lib/azureTranslate";
-
+import axios from "axios"
 type Role = "assistant" | "user"
 
 type Message = {
@@ -61,7 +57,6 @@ export default function Session() {
     const { user } = useUser()
     const [messages, setMessages] = useState<Message[]>([]);
     const [transcript, setTranscript] = useState("")
-    const translator = "deepl"
 
     const session: Session = {
         scenario: search.get("scenario") ?? "",
@@ -167,16 +162,14 @@ export default function Session() {
         console.log("Error", error)
     }
 
-    async function translate(text: string, role: Role, index: number, type: string) {
-        // update to "has pro or expert" for pricing
-        let translation: {status: number, message: string};
-        if (translator === "deepl") {
-            const targetLanguageCode = "en-GB" as TargetLanguageCode
-            const sourceLanguageCode = "it" as SourceLanguageCode
-            translation = await translateText({text, sourceLanguageCode, targetLanguageCode} as TranslateText) || {status: 404, message: "error translating"}
-        } else {
-            translation = await azureTranslate("it", "es", text) || {status: 404, message: "error translating"}
-        }
+    async function translate(text: string, index: number) {
+        const response = await axios.post("/api/translate",{
+            text,
+            from: "it",
+            to: "es"
+        })
+
+        const translation = response.data
 
         setMessages(prevMessages => {
             const newMsgs = [...prevMessages];
@@ -219,8 +212,6 @@ export default function Session() {
                     assistantOverrides={assistantOverrides}
                 />
                 <CallTranscript 
-                    userImage={user?.imageUrl || defaultProfile.src}
-                    aiImage={defaultProfile.src}
                     translate={translate}
                     messages={messages}
                 />
@@ -243,8 +234,6 @@ export default function Session() {
                     </TabsContent>
                     <TabsContent value="transcript" className="w-full flex flex-col md:flex-row gap-5 p-2 h-[calc(100%-40px)]">
                         <CallTranscript 
-                            userImage={user?.imageUrl || defaultProfile.src}
-                            aiImage={defaultProfile.src}
                             translate={translate}
                             messages={messages}
                         />
