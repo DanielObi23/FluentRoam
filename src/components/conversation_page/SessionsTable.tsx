@@ -12,10 +12,12 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import { Input } from "../ui/input"
 import { useRouter } from "next/navigation";
-import { userSessions } from "@/dummy_data";
+import { userSessions } from "@/userSessions";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogDescription} from "@/components/ui/dialog"
 import { parseAsInteger, parseAsString ,useQueryState } from "nuqs";
 import Link from "next/link";
+import { CircleXIcon, Search, X } from "lucide-react";
+import { Label } from "@/components/ui/label"
 
 
 type Session = {
@@ -51,14 +53,45 @@ export default function SessionsTable() {
     const sessionPage = page === 1? filteredSessions.slice(0, 10) : filteredSessions.slice(num1, num1 + 10)
     return (
         <>
-            <div className="w-full flex justify-between items-center">
-                <Input 
-                    defaultValue={search} 
-                    onChange={(e) => {
-                        setSearch(e.target.value); 
-                        setPage(1)}} 
-                    className="md:w-3/7 md:self-start"/>
-                <Button onClick={() => router.push("/conversation/form")}>Create Session</Button>
+            <div className="w-full flex justify-between items-center gap-2">
+                <div className="md:w-3/7 md:self-start flex gap-2 items-center justify-center">
+                    <div className='w-full max-w-xs space-y-2'>
+                        <Label htmlFor={"search"}>Search</Label>
+                        <div className='relative'>
+                            <div className='text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50'>
+                                <Search className='size-4' />
+                                <span className='sr-only'>Search</span>
+                            </div>
+                            <Input 
+                                defaultValue={search} 
+                                id="search"
+                                type="text"
+                                onChange={(e) => {
+                                    setSearch(e.target.value); 
+                                    setPage(1)}} 
+                                className="placeholder:text-white peer ps-9"
+                                placeholder="Type something..."
+                            />
+                            {search && (
+                                <Button
+                                    variant='ghost'
+                                    size='icon'
+                                    onClick={() => {
+                                        setSearch(""); 
+                                        setPage(1);
+                                        (document.getElementById("search") as HTMLInputElement).value = "";
+                                    }}
+                                    className='text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 end-0 rounded-s-none hover:bg-transparent'
+                                >
+                                    <CircleXIcon />
+                                    <span className='sr-only'>Clear search input</span>
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <Button onClick={() => router.push("/conversation/form")} className="md:hidden">Create Session</Button>
             </div>
             <Table>
                 <TableHeader>

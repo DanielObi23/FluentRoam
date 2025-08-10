@@ -64,7 +64,7 @@ export default function CallTranscript({translate, messages}: Transcript) {
                             </div>
                             
                             <Avatar className={cn(m.role === "assistant"? "self-end" : "self-end", "")}>
-                                <AvatarImage src={m.role === "assistant"? fluentroam.src : user?.imageUrl ?? defaultProfile.src} />
+                                <AvatarImage src={m.role === "assistant"? fluentroam.src : user?.imageUrl ?? defaultProfile.src}  className="object-cover"/>
                                 <AvatarFallback>{m.role === "assistant"? "AI" : "YOU"}</AvatarFallback>
                             </Avatar>
                         </div>
