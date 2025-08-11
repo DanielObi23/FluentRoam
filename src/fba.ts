@@ -551,7 +551,54 @@ export const userSessions = [
   }
 ]
 
-
+// {
+//     "id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+//     "session_id": "vapi_call_001_tapas_order",
+//     "user_id": "clerk_user_123",
+//     "title": "Ordering Tapas at a Busy Bar in Seville",
+//     "role_scenario": "I want to practice ordering several tapas dishes and asking for recommendations.",
+//     "feedback": "## 🍷 Ordering Tapas Feedback\n\n¡Buen trabajo con tu pedido! Vamos a refinarlo un poco:\n\n### Error highlighting:\n❌ *\"Quiero una tapa de jamón\"* suena demasiado directo en España.\n✅ **Corrección:** *\"¿Me pone una tapa de jamón, por favor?\"* \n\n❌ *\"Traeme otra cerveza\"* también es demasiado directo.\n✅ **Corrección:** *\"¿Me trae otra cerveza, por favor?\"* \n\n### Cultural Insights:\n- En España, generalmente **no pides la cuenta** hasta que has terminado. El camarero pasará con la cuenta cuando vea que has acabado.\n- Es común **compartir tapas** en grupo.\n- En muchos bares de Sevilla, las tapas vienen **gratis con la bebida** si pides en barra.\n\n### Pronunciation Tips:\n- *jamón* → /xaˈmon/ (el /j/ suena como el /h/ en inglés)\n- *cerveza* → /θerˈβesa/ (el /c/ suena como /θ/)\n\n### Suggestions for Improvement:\n- Usa **¿Me pone...?** o **¿Me trae...?** para sonar más amable.\n- Pregunta **¿Tienen algo para compartir?** para pedir tapas grupales.\n- Cuando termines, di **\"La cuenta, por favor\"**.\n\n### Conversation Flow:\n**Tú:** Buenos días, ¿me pone una tapa de jamón, por favor?\n**Camarero:** Claro, ¿algo más?\n**Tú:** Sí, ¿me recomienda algo del día?\n**Camarero:** Tenemos croquetas de jamón y salmorejo.\n**Tú:** Perfecto, ¿me pone croquetas también?\n**Camarero:** ¿Algo para beber?\n**Tú:** Sí, una caña de cerveza, por favor.\n**Camarero:** Muy bien, enseguida le traigo todo.\n\n¡Sigue practicando! Tu pronunciación mejorará con la práctica y recuerda siempre ser amable con el personal.",
+//     feedback must be properly formatted with the style perfectly done
+//      "target_vocabulary": [
+//       {
+//         "vocab": "pedir",
+//         "part_of_speech": "verb",
+//         "meaning": ["to ask for", "to order"],
+//         "tone": "Neutral",
+//         "regional_variations": [
+//           {
+//             "country": "Mexico",
+//             "word": "ordenar",
+//             "part_of_speech": "verb",
+//             "meaning": ["to order"],
+//             "example": {
+//               "sentence": "¿Ya ordenaste tus tacos?",
+//               "translation": "Did you already order your tacos?"
+//             }
+//           }
+//            multiple variations if applicable
+//         ],
+//         "examples": [
+//           {
+//             "sentence": "❌ Quiero una tapa de jamón. ✅ ¿Me pone una tapa de jamón, por favor?",
+//             "translation": "I'd like a tapa of ham."
+//           },
+//           {
+//             "sentence": "Voy a pedir una cerveza bien fría.",
+//             "translation": "I'm going to order an ice-cold beer."
+//           },
+//           {
+//             "sentence": "¿Me trae la cuenta, por favor?",
+//             "translation": "Could I have the bill, please?"
+//           }
+//         ],
+//         "idioms": [
+//           { "phrase": "pedir peras al olmo", "meaning": "to ask for the impossible", "region": "region where it's used" }
+//            multiple idioms if applicable
+//         ],
+//         "synonyms": ["solicitar", "encargar"],
+//         "antonyms": ["ofrecer", "dar"]
+//       }
 
 // const userSessions = [{
 //   "id": "uuid",

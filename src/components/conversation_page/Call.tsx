@@ -1,4 +1,4 @@
-// TODO: Fix mic toggle
+// TODO: Fix mic toggle, assistant id, remove
 
 import {Mic, MicOff, Captions, CaptionsOff} from "lucide-react"
 import { Button } from "@/components/ui/button";

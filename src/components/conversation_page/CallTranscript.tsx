@@ -41,7 +41,7 @@ export default function CallTranscript({translate, messages}: Transcript) {
 
             {/* live transcript */}
             <div ref={scrollRef} className="flex flex-col p-4 gap-3 bg-card overflow-y-scroll hide-scrollbar">
-                {showTranscript && callTranscript?.map((m, i) => (
+                {showTranscript && messages?.map((m, i) => (
                     <div key={i} className={cn(m.role === "assistant"? 
                         "self-start justify-start" : 
                         "self-end justify-end", 
