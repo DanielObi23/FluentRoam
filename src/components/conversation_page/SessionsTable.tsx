@@ -1,4 +1,5 @@
 //TODO: use react query to query first 50 pages, then cache it
+// IMPROVE PAGINATION UI, GET FROM SHADCNUI 
 
 import {
   Table,

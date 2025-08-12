@@ -7,14 +7,15 @@ import { parseAsString, useQueryState } from "nuqs"
 import { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import defaultProfile from "../../../public/default_profile.jpg"
-import fluentroam from "../../../public/logo/fluentroam.jpg"
+import defaultProfile from "../../../../../public/default_profile.jpg"
+import fluentroam from "../../../../../public/logo/fluentroam.jpg"
 import { useUser } from "@clerk/nextjs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SendHorizontal } from "lucide-react";
 import axios from "axios";
 import { chatMessages } from "@/dummy_data";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ChatMessage {
   role: 'user' | 'assistant';
@@ -82,12 +83,24 @@ export default function Page() {
     //     //console.log(localStorage.getItem("chatHistory") as string);
     // }, [chatIdRef.current])
 
+    async function translate() {
+        const text = (document.getElementById("text-to-translate") as HTMLTextAreaElement).value
+        const response = await axios.post("/api/translate",{
+            text,
+            from: "en",
+            to: "es"
+        });
+
+        //const translation: string = response.data
+        (document.getElementById("translated-text") as HTMLTextAreaElement).value = response.data.message
+    }
+
     return(
         <div className="w-full min-h-screen bg-background">
             <Navigation page="Chat"/>
-            <main className="flex h-[calc(100vh-80px)]">
-                <section className="w-3/5 h-[calc(100vh-80px)] bg-accent">
-                    <div className="flex flex-col p-4 gap-3 h-[calc(100vh-80px-80px)] overflow-y-scroll hide-scrollbar">
+            <main className="flex h-[calc(100vh-5rem)]">
+                <section className="w-3/5 h-[calc(100vh-5rem)] bg-accent">
+                    <div className="flex flex-col p-4 gap-3 h-[calc(100vh-10rem)] overflow-y-scroll hide-scrollbar">
                         {messages?.map((m, i) => (
                             <div key={i} className={cn(m.role === "assistant"? 
                                 "self-start justify-start" : 
@@ -130,15 +143,22 @@ export default function Page() {
                     <div className="w-2/3 h-4/7 flex flex-col items-center gap-3">
                         <div className="w-full h-full flex">
                             <div className="w-1/2 bg-primary h-full">
-                                <div className="bg-secondary">English</div>
+                                <div className="bg-secondary h-10">English</div>
+                                <Textarea id="text-to-translate" className="w-full max-h-[calc(100%-2.5rem)] min-h-[calc(100%-2.5rem)]"/>
                             </div>
                             <div className="w-1/2 bg-secondary h-full">
-                                <div className="bg-primary">Spanish</div>
+                                <div className="bg-primary h-10">Spanish</div>
+                                <Textarea id="translated-text" className="w-full max-h-[calc(100%-2.5rem)] min-h-[calc(100%-2.5rem)]"/>
                             </div>
                         </div>
-                        <Button>
-                            Add to vocab
-                        </Button>
+                        <div className="flex justify-between items-center w-full">
+                            <Button>
+                                Add to vocab
+                            </Button>
+                            <Button onClick={translate}>
+                                Translate
+                            </Button>
+                        </div>
                     </div>
                     <div className="bg-green-400 w-3/5 h-3/7">
                         <div className="bg-blue-700">

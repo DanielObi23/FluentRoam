@@ -1,5 +1,10 @@
 import Groq from "groq-sdk";
-import { vapiClient } from "@/lib/vapi.sdk";
+import { VapiClient } from "@vapi-ai/server-sdk";
+
+if (!process.env.VAPI_API_KEY) {
+    throw new Error("Please add missing vapi api key")
+}
+export const vapiClient = new VapiClient({ token: process.env.VAPI_API_KEY });
 
 
 export async function GET() {

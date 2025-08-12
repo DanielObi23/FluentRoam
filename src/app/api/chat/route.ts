@@ -52,6 +52,9 @@ async function sendChatMessage(
 
 // FIX THE ERROR HANDLING
 export async function POST(req: Request) {
+  if (!process.env.VAPI_API_KEY) {
+    throw new Error("Please add missing vapi api key")
+  }
   const {chatId, message} = await req.json()
 
   if (message.trim().length === 0 || !message) {

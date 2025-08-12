@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, MessagesSquare, MessageCircle, Brain, BookA, BookOpenText } from "lucide-react"
+import { Home, MessagesSquare, ScrollText, BookA, BookOpenText } from "lucide-react"
 
 import {
   Sidebar,
@@ -26,29 +26,24 @@ const items = [
     icon: Home,
   },
   {
-    title: "Chat",
-    url: "/chat",
-    icon: MessagesSquare,
-  },
-  {
     title: "Conversation",
     url: "/conversation",
-    icon: MessageCircle,
+    icon: MessagesSquare,
   },
   {
     title: "Story",
     url: "/story",
-    icon: Brain,
+    icon: ScrollText,
+  },
+  {
+    title: "Grammar",
+    url: "/grammar",
+    icon: BookOpenText,
   },
   {
     title: "Vocabulary list",
     url: "/vocabulary",
     icon: BookA,
-  },
-  {
-    title: "Quiz",
-    url: "/quiz",
-    icon: BookOpenText,
   },
 ]
 

@@ -27,10 +27,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Textarea } from "../ui/textarea"
+import { Textarea } from "../../ui/textarea"
 import {useRouter} from "next/navigation"
 import { Info } from "lucide-react"
-import { Input } from "../ui/input"
+import { Input } from "../../ui/input"
 import { useState } from "react"
 
 
@@ -51,7 +51,7 @@ const formSchema = z.object({
 })
 
 
-export default function LanguageSessionForm() {
+export default function CallSessionForm() {
     const router = useRouter()
     const [currentDuration, setCurrentDuration] = useState(15)
     const [currentSpeed, setCurrentSpeed] = useState(1)
@@ -84,7 +84,7 @@ export default function LanguageSessionForm() {
                     duration: values.duration.toString(),
                     speed: values.speed.toString(),
                 });
-                router.push(`/conversation/session?${params.toString()}`);
+                router.push(`/conversation/call?${params.toString()}`);
             })
             .catch((error) => {
                 console.error("Microphone access denied:", error);
@@ -93,7 +93,11 @@ export default function LanguageSessionForm() {
 
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3 md:gap-7 shrink p-4 w-full h-full justify-center bg-background  shadow-teal-900 shadow-2xl overflow-auto">
+            <form 
+                onSubmit={form.handleSubmit(onSubmit)} 
+                className="flex flex-col gap-3 md:gap-7 shrink p-4 w-full h-full justify-center bg-background  shadow-teal-900 shadow-2xl overflow-auto">
+                    
+                {/* SCENARIO */}
                 <FormField
                     control={form.control}
                     name="scenario"
@@ -113,6 +117,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* GENDER */}
                 <FormField
                     control={form.control}
                     name="gender"
@@ -135,6 +141,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* FORMALITY */}
                 <FormField
                     control={form.control}
                     name="formality"
@@ -157,6 +165,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* RESPONSE LENGTH */}
                 <FormField
                     control={form.control}
                     name="response_length"
@@ -185,6 +195,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* PROFICIENCY */}
                 <FormField
                     control={form.control}
                     name="proficiency"
@@ -207,6 +219,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* DURATION */}
                 <FormField
                     control={form.control}
                     name="duration"
@@ -243,6 +257,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* SPEED */}
                 <FormField
                     control={form.control}
                     name="speed"
@@ -279,6 +295,8 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
+
+                {/* DELAY */}
                 <FormField
                     control={form.control}
                     name="delay"
@@ -315,7 +333,7 @@ export default function LanguageSessionForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Start session</Button>
+                <Button type="submit">START CALL SESSION</Button>
             </form>
         </Form>
     )
