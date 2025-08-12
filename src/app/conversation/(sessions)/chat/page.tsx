@@ -26,6 +26,7 @@ export default function Page() {
     const [name, setName] = useQueryState("name", parseAsString.withDefault("dan"))
     const { user } = useUser()
     const chatIdRef = useRef("")
+    const textMessageRef = useRef<HTMLTextAreaElement>(null)
     const [messages, setMessages] = useState<ChatMessage[]>([])
 
     async function sendMessage(message: string) {
@@ -96,11 +97,11 @@ export default function Page() {
     }
 
     return(
-        <div className="w-full min-h-screen bg-background">
+        <div className="w-full flex flex-col h-screen bg-background">
             <Navigation page="Chat"/>
-            <main className="flex h-[calc(100vh-5rem)]">
-                <section className="w-3/5 h-[calc(100vh-5rem)] bg-accent">
-                    <div className="flex flex-col p-4 gap-3 h-[calc(100vh-10rem)] overflow-y-scroll hide-scrollbar">
+            <main className="flex h-[calc(100vh-5rem)] w-full">
+                <section className="w-3/5 flex flex-col">
+                    <div className="flex flex-col p-4 gap-3 flex-1 overflow-y-scroll hide-scrollbar">
                         {messages?.map((m, i) => (
                             <div key={i} className={cn(m.role === "assistant"? 
                                 "self-start justify-start" : 
@@ -132,23 +133,34 @@ export default function Page() {
                             </div>
                         ))}
                     </div>
-                    <div className="w-full h-20 bg-blue-600 flex">
-                        <Input id="message"/>
-                        <Button onClick={()=>sendMessage((document.getElementById("message") as HTMLInputElement).value)}>
+                        
+                    {/* CHANGE ALL IDs TO useRef */}
+                    <div className="flex items-center gap-2 p-3">
+                        <Textarea
+                            ref={textMessageRef}
+                            id="message"
+                            className="rounded-2xl flex-1 resize-none px-6 text-wrap
+                                        min-h-10 max-h-24 overflow-y-auto hide-scrollbar"
+                            />
+                        <Button 
+                            onClick={()=>sendMessage((document.getElementById("message") as HTMLInputElement).value)}
+                            className=""
+                            >
                             <SendHorizontal/>
                         </Button>
                     </div>
+                    
                 </section>
                 <section className="w-2/5 flex flex-col items-center gap-10 py-10">
                     <div className="w-2/3 h-4/7 flex flex-col items-center gap-3">
                         <div className="w-full h-full flex">
                             <div className="w-1/2 bg-primary h-full">
                                 <div className="bg-secondary h-10">English</div>
-                                <Textarea id="text-to-translate" className="w-full max-h-[calc(100%-2.5rem)] min-h-[calc(100%-2.5rem)]"/>
+                                <Textarea id="text-to-translate" className="w-full resize-none max-h-[calc(100%-2.5rem)] min-h-[calc(100%-2.5rem)]"/>
                             </div>
                             <div className="w-1/2 bg-secondary h-full">
                                 <div className="bg-primary h-10">Spanish</div>
-                                <Textarea id="translated-text" className="w-full max-h-[calc(100%-2.5rem)] min-h-[calc(100%-2.5rem)]"/>
+                                <Textarea id="translated-text" className="w-full resize-none max-h-[calc(100%-2.5rem)] min-h-[calc(100%-2.5rem)]"/>
                             </div>
                         </div>
                         <div className="flex justify-between items-center w-full">
