@@ -110,6 +110,10 @@ export default function ChatSessionForm() {
                                         <RadioGroupItem value="casual" id="casual" />
                                         <Label htmlFor="casual">Casual</Label>
                                     </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem value="slang" id="slang" />
+                                        <Label htmlFor="slang">Casual + Abbreviations</Label>
+                                    </div>
                                 </RadioGroup>
                             </FormControl>
                             <FormMessage />

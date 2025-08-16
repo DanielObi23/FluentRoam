@@ -101,6 +101,9 @@ export default function SessionsTable() {
                            Title
                         </TableHead>
                         <TableHead>
+                            Type
+                        </TableHead>
+                        <TableHead>
                             Details
                         </TableHead>
                     </TableRow>
@@ -112,6 +115,9 @@ export default function SessionsTable() {
                                 <TableRow key={session.id}>
                                     <TableCell className="md:text-2xl">
                                         {session.title}
+                                    </TableCell>
+                                    <TableCell>
+                                        Call
                                     </TableCell>
                                     <TableCell>
                                         <Button 

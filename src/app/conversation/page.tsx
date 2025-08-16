@@ -9,7 +9,7 @@ import SessionsTable from "@/components/conversation_page/SessionsTable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 
-export default function Conversation() {
+export default function Page() {
     return (
       <div className="h-screen flex flex-col w-full bg-background">
           <Navigation page="Conversation"/>

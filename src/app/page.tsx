@@ -10,7 +10,7 @@ import Navigation from "@/components/app_layout/Navigation";
 //import { useTranslation } from "react-i18next";
 //import { currentUser } from "@clerk/nextjs/server";
 
-export default function Home() {
+export default function Page() {
   // const userData = useUser()
   // const { user } = useUser()
   // // const user = await currentUser();

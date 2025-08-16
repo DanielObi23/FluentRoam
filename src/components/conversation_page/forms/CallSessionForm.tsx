@@ -296,7 +296,7 @@ export default function CallSessionForm() {
                     )}
                 />
 
-                {/* DELAY */}
+                {/* DELAY */}{/* SHOULD BE MORE DESCRIPTIVE AND LOOK AT VAPI SETTINGS AGAIN */}
                 <FormField
                     control={form.control}
                     name="delay"

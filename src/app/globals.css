@@ -46,6 +46,19 @@
   --accent-900: 33% 0.48 10;
   --accent-950: 23% 0.52 10;
 
+   /* Purple that complements Azure & Emerald */
+  /* --accent-50:  95% 0.02 300;
+  --accent-100: 92% 0.05 300;
+  --accent-200: 88% 0.08 300;
+  --accent-300: 83% 0.12 300;
+  --accent-400: 76% 0.17 300;
+  --accent-500: 68% 0.24 300;   /* <- main accent */
+  /* --accent-600: 60% 0.28 300;
+  --accent-700: 52% 0.32 300;
+  --accent-800: 44% 0.36 300;
+  --accent-900: 36% 0.40 300;
+  --accent-950: 28% 0.44 300; */ 
+
   /* Semantic */
   --destructive: 65% 0.20 25;
   --warning: 65% 0.17 80;
