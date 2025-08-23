@@ -122,7 +122,7 @@ export default function SessionsTable() {
                                     <TableCell>
                                         <Button 
                                             onClick={() => router.push(`/conversation/feedback/${session.session_id}`)}>
-                                            More details
+                                            <span className="hidden md:inline">View</span> Feedback
                                         </Button>
                                     </TableCell>
                                 </TableRow>

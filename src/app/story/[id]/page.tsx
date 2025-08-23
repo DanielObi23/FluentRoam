@@ -22,6 +22,9 @@ import { BookOpen, HardDriveDownload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { parseAsInteger, useQueryState } from "nuqs"
 
+// ADD A WAY FOR USERS TO JUMP TO ANY PAGE WITHIN THE NUMBER OF POSSIBLE PAGES
+// USE COMBINATION OF SELECT AND PAGINATION
+
 export default function Page() {
     const [audioState, setAudioState] = useState<"NONE" | "PLAYABLE" >("NONE")
     const [currentPage, setCurrentPage] = useQueryState("page", parseAsInteger.withDefault(1))
@@ -139,7 +142,10 @@ export default function Page() {
                         <div className="flex gap-3">
                             <Button onClick={router.back}>Previous Page</Button>
                             <span className="text-lg font-semibold">Page {currentPage}</span>
-                            <Button onClick={()=>router.push(`/story/${id}?page=${currentPage + 1}`)}>
+                            <Button 
+                                onClick={()=>router.push(`/story/${id}?page=${currentPage + 1}`)}
+                                disabled={(storyPage + 1) === currentStory.pages.length}
+                                >
                                 Go to next page
                             </Button>
                         </div>
