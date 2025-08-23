@@ -1,6 +1,6 @@
 "use client"
 
-import { Home, MessagesSquare, ScrollText, BookA, BookOpenText } from "lucide-react"
+import { Home, MessagesSquare, ScrollText, BookA, BookOpenText, Plus } from "lucide-react"
 
 import {
   Sidebar,
@@ -17,6 +17,8 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 import { Button } from "../ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu"
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 
 // Menu items.
 const items = [
@@ -81,7 +83,24 @@ export default function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="py-3 px-1.5">
-          <Button>Add an additional language</Button>
+          {/* Maybe use a selector, then using zustand, make sure that if select value changed, global state is updated, maybe save value in local storage */}
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              Change Language
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                ES Spanish
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                IT Italian
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Plus /> Add language
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Button variant={"outline"}>ES Spanish</Button>
         </div>
       </SidebarFooter>
     </Sidebar>

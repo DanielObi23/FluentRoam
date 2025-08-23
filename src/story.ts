@@ -62,6 +62,7 @@ export interface Story {
 export type StoryFile = Story[];
 
 // tryb to get more idioms and phrases, add "saved" and default to false for all, add pov to metadata (1st, 2nd, 3rd person)
+// Maybe add formatting to story
 export const story = [
     {
         "id": "uuid-flash-1",

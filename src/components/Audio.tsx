@@ -22,12 +22,15 @@ export default function Audio({audioUrl}: {audioUrl: string}) {
     useEffect(() => {
         const audio = audioRef.current;
         if (!audio) return;
-
+        
         const tick = () => {
-            const t = Math.floor(audio.currentTime || 0);
-            const min = Math.floor(t / 60);
-            const sec = t % 60;
+            const time = Math.floor(audio.currentTime || 0);
+            const min = Math.floor(time / 60);
+            const sec = time % 60;
             setCurrentTime(`${min}:${String(sec).padStart(2, "0")}`);
+            if (audio.currentTime === audio.duration) {
+                setAudioState("PLAYABLE")
+            }
         };
 
         audio.addEventListener("timeupdate", tick);
@@ -35,13 +38,12 @@ export default function Audio({audioUrl}: {audioUrl: string}) {
     }, []);
 
     return (
-        // UPDATE SO THAT CURRENT TIME IS A SEPARATE COMPONENT OR HOOK, SO THAT IT'S THE ONLY BEING RERENDERED FOR BETTER PERFORMANCE, DO THE SAME FOR TIME/CLOCK IN CALL
-        <div className="flex flex-col justify-center items-center w-full gap-2">
+        <div className="rounded-2xl border-2 py-5 flex flex-col justify-center items-center w-full gap-4 bg-background">
             <audio ref={audioRef}>
                 <source src={audioUrl} type="audio/mpeg" />
                 Your browser does not support the audio element.
             </audio>
-            <div className="w-full flex justify-center gap-4">
+            <div className="w-full flex justify-center gap-4 text-lg">
                 <span>{currentTime}</span>
                 <Slider 
                     onValueChange={([val]) => {                     
@@ -55,26 +57,26 @@ export default function Audio({audioUrl}: {audioUrl: string}) {
                     `${Math.trunc(audio?.duration/ 60 || 0)}:${audio?.duration % 60 | 0 || "00"}`
                 }</span>
             </div>
-            <div className="space-x-3 mt-3">
-                <button aria-label="rewind" onClick={() => (audioRef.current as HTMLAudioElement).currentTime -= 5} className="cursor-pointer">
-                    <Rewind />
-                </button>
-                <button aria-label={audioState === "PLAYABLE"? "play" : "pause"} onClick={updateAudioState} className="cursor-pointer">
-                    {audioState === "PLAYABLE"? <Play /> : <Pause />}
-                </button>
-                <button aria-label="fast-forward" onClick={() => (audioRef.current as HTMLAudioElement).currentTime += 5} className="cursor-pointer">
-                    <FastForward />
-                </button>
-            </div>
-            <div className="flex justify-around w-full">
-                <a href="/story-audio/flash-fiction.mp3" download>
-                    <Download /><span className="sr-only">download link</span>
+            <div className="flex justify-around items-center w-full">
+                <a href={audioUrl} download>
+                    <Download className="size-8"/><span className="sr-only">download link</span>
                 </a>
+                <div className="flex justify-center items-center gap-3 mt-3">
+                    <button aria-label="rewind" onClick={() => (audioRef.current as HTMLAudioElement).currentTime -= 5} className="cursor-pointer">
+                        <Rewind className="fill-white size-6" />
+                    </button>
+                    <button aria-label={audioState === "PLAYABLE"? "play" : "pause"} onClick={updateAudioState} className="cursor-pointer">
+                        {audioState === "PLAYABLE"? <Play className="fill-white size-10"/> : <Pause className="fill-white size-10"/>}
+                    </button>
+                    <button aria-label="fast-forward" onClick={() => (audioRef.current as HTMLAudioElement).currentTime += 5} className="cursor-pointer">
+                        <FastForward className="fill-white size-6" />
+                    </button>
+                </div>
                 <button 
-                    aria-label="restart" 
+                    aria-label="restart audio" 
                     onClick={() => audio.currentTime = 0} 
                     className="cursor-pointer">
-                        <RotateCcw />
+                        <RotateCcw className="size-8"/>
                 </button>
             </div>
             <div className="flex justify-around w-full">
@@ -82,13 +84,15 @@ export default function Audio({audioUrl}: {audioUrl: string}) {
                     <label 
                         key={`playbackRate-${index}`}
                         className="flex items-center space-x-2 cursor-pointer" 
-                        onClick={() => {audio.playbackRate = playbackRate;  audio.play()}}>
+                        onClick={() => {audio.playbackRate = playbackRate}}>
                         <input
                             type="radio"
                             name="playback"
                             className="peer hidden"
                         />
-                        <span className="peer-checked:text-blue-500">{playbackRate}x</span>
+                        <span 
+                            className="p-3 font-semibold duration-200 transition-discrete transition-all ease-in 
+                            peer-checked:-translate-y-2 peer-checked:font-bold peer-checked:border-2  peer-checked:text-secondary">{playbackRate}x</span>
                     </label>
                 ))}
             </div>

@@ -1,7 +1,7 @@
 "use client"
 
 import Navigation from "@/components/app_layout/Navigation";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { story } from "@/story";
 import {
   Accordion,
@@ -18,24 +18,30 @@ import {
 } from "@/components/ui/collapsible"
 import Audio from "@/components/Audio";
 import { useState } from "react";
-import { HardDriveDownload } from "lucide-react";
+import { BookOpen, HardDriveDownload } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { parseAsInteger, useQueryState } from "nuqs"
 
 export default function Page() {
     const [audioState, setAudioState] = useState<"NONE" | "PLAYABLE" >("NONE")
+    const [currentPage, setCurrentPage] = useQueryState("page", parseAsInteger.withDefault(1))
     const {id} = useParams();
     const currentStory = story.filter((story) => story.id === id)[0]
-    const currentPage = 0
+    const router = useRouter()
+    // const currentPage = 1
+    const storyPage = currentPage - 2 // decide between calling it storyPage and chapter
 
     function retrieveAudio() {
         // retrieve audio from elevenlabs
         setAudioState("PLAYABLE")
     }
 
-    return(
-        <div className="w-full min-h-screen bg-background">
-            <Navigation page="Story"/>
-            <main className="w-full flex">
-                <section className="w-3/4 flex flex-col items-center bg-accent p-2">
+    if (currentPage === 1) {
+        // EXPORT TO COMPONENT AND CALL IT PRELOGUE
+        return (
+            <div className="w-full">
+                <Navigation page="Story"/>
+                <main className="flex flex-col p-3">
                     {/* Figure out what order you want these to be, maybe make into a component */}
                     <Table className="w-2/3">
                         <TableBody>
@@ -86,34 +92,71 @@ export default function Page() {
                             </TableRow>
                         </TableBody>
                     </Table>
+                    <div className="flex gap-3">
+                        <Button onClick={router.back}>Previous Page</Button>
+                        <span className="text-lg font-semibold">Page {currentPage}</span>
+                        <Button onClick={()=>router.push(`/story/${id}?page=${currentPage + 1}`)}>
+                            Go to next page
+                        </Button>
+                    </div>
+                </main>
+            </div>
+        )
+    }
 
-                    <div className="flex flex-col">
-                        <div>
-                            <h1 className="text-center">{currentStory.pages[currentPage].chapterTitle.text}</h1>
-                            <div className="flex justify-center items-center border-2 py-3">
-                                {audioState === "NONE"? 
-                                    (    <div>
-                                            <button onClick={retrieveAudio} className="cursor-pointer flex gap-2">
-                                                retrieve audio <HardDriveDownload />
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <Audio audioUrl="/story-audio/flash-fiction.mp3"/>  
-                                    )
-                                }                            
-                            </div>
-                        </div>
-                        <ul>
-                            {currentStory.pages[currentPage].sentences.map((sentence, index) => (
-                                <li key={`pageStorySentence-${index}`}>{sentence.text}</li>
-                            ))}
-                        </ul>
+    return(
+        <div className="w-full min-h-screen bg-background">
+            <Navigation page="Story"/>
+            <main className="w-full flex">
+                <section className="w-2/3 flex flex-col items-center p-2">
+                    <div className="flex w-full gap-3">
+                        <Card className="w-full text-center bg-secondary-300 dark:bg-secondary-950 border-primary-500 dark:border-secondary-950 h-screen overflow-auto">
+                            <CardHeader>
+                                <CardTitle className="text-2xl text-secondary-950 dark:text-secondary-200 font-bold flex justify-center items-center gap-2">
+                                    <BookOpen className="size-8" />
+                                    {currentStory.pages[storyPage].chapterTitle.text}
+                                </CardTitle>
+                            </CardHeader>
+                            {/* Think of adding prose */}
+                            <CardContent className="place-items-center"> 
+                                <div className="indent-8 text-pretty space-y-3 text-start text-primary-950 dark:text-primary-100 leading-relaxed">
+                                    {/* Span tag for stories, P tag stage play and poetry*/}
+                                    {currentStory.pages[storyPage].sentences.map((sentence, index) => (
+                                        <span 
+                                            key={`pageStorySentence-${index}`}
+                                            className="font-semibold text-lg"
+                                            >
+                                                {sentence.text}&nbsp;
+                                        </span>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 </section>
-                <section className="w-1/4 px-4 py-2">
+                <section className="w-1/3 px-4 py-2 space-y-4">
+                    <div className="w-full space-y-4 place-items-center">
+                        <div className="flex gap-3">
+                            <Button onClick={router.back}>Previous Page</Button>
+                            <span className="text-lg font-semibold">Page {currentPage}</span>
+                            <Button onClick={()=>router.push(`/story/${id}?page=${currentPage + 1}`)}>
+                                Go to next page
+                            </Button>
+                        </div>
+                        {audioState === "NONE"? 
+                            (    <div className="flex justify-center items-center border-2 p-3">
+                                    <button onClick={retrieveAudio} className="cursor-pointer flex gap-2 font-semibold">
+                                        Retrieve audio <HardDriveDownload />
+                                    </button>
+                                </div>
+                            ) : (
+                                <Audio audioUrl="/story-audio/flash-fiction.mp3"/>  
+                            )
+                        }         
+                    </div>
                     <p className="font-semibold text-lg underline text-center mb-2">VOCABULARY</p>
                     <Accordion type="single" collapsible className="w-full">
-                        {currentStory.pages[currentPage].vocab.map((vocab, index) => (
+                        {currentStory.pages[storyPage].vocab.map((vocab, index) => (
                             <AccordionItem value={`vocab-${index}`} key={`vocab-${index}`}>
                                 <AccordionTrigger className="p-3 flex justify-center">{vocab.text.toUpperCase()}</AccordionTrigger>
                                 <AccordionContent className="max-h-120 overflow-auto hide-scrollbar">

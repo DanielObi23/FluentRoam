@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/accordion"
 import { useParams } from "next/navigation";
 import axios from "axios";
+import Audio from "@/components/Audio";
 
 //TODO: REMEMBER TO ADD IDIOM'S COUNTRY OF ORIGIN TO IDIOM'S LIST, 
 // ALSO ASK FOR MULTIPLE IDIOMS IN THE LIST IF APPLICABLE
@@ -44,11 +45,7 @@ export default function Page() {
             <Navigation page="feedback" />
             <main className="w-full h-full flex items-baseline">
                 <section className="w-3/4 px-4 py-2">
-                    <audio controls>
-                        <source 
-                            src="https://storage.vapi.ai/007515c7-0c90-474b-a0f2-289501f9d702-1754847784236-809ef4dc-f98e-4915-98ef-56f7aa260af4-mono.mp3"
-                            />
-                    </audio>
+                    <Audio audioUrl="https://storage.vapi.ai/007515c7-0c90-474b-a0f2-289501f9d702-1754847784236-809ef4dc-f98e-4915-98ef-56f7aa260af4-mono.mp3"/>
                     <h1 className="text-2xl font-semibold text-center mt-5">Title: {session.title}</h1>
                     <p className="text-center">Role Scenario: {session.role_scenario}</p>
                     <p className="text-start">{day} {calendarMonth[month]}, {year}</p>
