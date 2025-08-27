@@ -38,6 +38,7 @@ type Row = {
     page: number
 }
 
+// COMPONENT IS RERENDERING TWICE, FIX THAT
 export default function SessionsTable() {
     const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""))
     const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
@@ -50,8 +51,14 @@ export default function SessionsTable() {
         pageButtonRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, []);
 
-    const num1 = (page * 10) - 1
-    const sessionPage = page === 1? filteredSessions.slice(0, 10) : filteredSessions.slice(num1, num1 + 10)
+    // simulation, query database based of page === 1? query first numberOfRowsToShow : from (page - 1) * numberOfRowsToShow 
+    // if list return .length < 10, next page === 0
+    // if error return === out of bound, page doesnt exist, show button to relocate to first page
+    // if list returned === 0, show button to add to list
+    const numberOfRowsToShow = 10
+    const num1 = (page - 1) * numberOfRowsToShow 
+    const sessionPage = page === 1? filteredSessions.slice(0, numberOfRowsToShow) : filteredSessions.slice(num1, num1 + numberOfRowsToShow)
+    console.log(sessionPage)
     return (
         <>
             <div className="w-full flex justify-between items-center gap-2">
@@ -127,6 +134,8 @@ export default function SessionsTable() {
                                     </TableCell>
                                 </TableRow>
                             )})) : (
+                                // IF PAGE IS NOT EQUAL TO 1, SHOW THIS, ELSE IMMEDIATELY SAY NO DATA IN PAGE WHATEVER, BUTTON TO REDIRECT TO PAGE 1, ELSE THIS
+                                // IF SESSIONS LENGTH = 0, JUST MAKE IT RENDER THIS AS WELL
                                 <TableRow>
                                     <TableCell>NO PRACTICE SESSIONS DONE</TableCell>
                                     <TableCell>
@@ -150,7 +159,7 @@ export default function SessionsTable() {
 
                 <Button 
                     onClick={() => setPage(prev => prev + 1)} 
-                    disabled={sessionPage.length < 10 || filteredSessions.length <= 10} 
+                    disabled={sessionPage.length < numberOfRowsToShow  || filteredSessions.length <= 10} 
                     className="md:text-lg">
                         Next
                 </Button>
