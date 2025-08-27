@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
-import { Input } from "../ui/input"
+import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation";
 import { userSessions } from "@/userSessions";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogDescription} from "@/components/ui/dialog"

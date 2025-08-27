@@ -125,12 +125,12 @@ export default function Page() {
                                 <div className="indent-8 text-pretty space-y-3 text-start text-primary-950 dark:text-primary-100 leading-relaxed">
                                     {/* Span tag for stories, P tag stage play and poetry*/}
                                     {currentStory.pages[storyPage].sentences.map((sentence, index) => (
-                                        <span 
+                                        <p 
                                             key={`pageStorySentence-${index}`}
                                             className="font-semibold text-lg"
                                             >
                                                 {sentence.text}&nbsp;
-                                        </span>
+                                        </p>
                                     ))}
                                 </div>
                             </CardContent>

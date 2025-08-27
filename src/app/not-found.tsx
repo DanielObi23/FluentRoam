@@ -15,3 +15,4 @@ export default function NotFound() {
         <Navigation page="Not Found Page"/>
     </div>
 }
+
