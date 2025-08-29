@@ -12,7 +12,7 @@ export default function Page() {
   return (
     <div className="bg-background flex h-screen w-full flex-col">
       <Navigation page="Conversation" />
-      <main className="flex h-full w-full">
+      <main className="main">
         <section className="flex h-full w-full flex-col items-center justify-center gap-7 px-8 py-6 md:w-3/5 md:px-10 md:py-8">
           <SessionsTable />
         </section>

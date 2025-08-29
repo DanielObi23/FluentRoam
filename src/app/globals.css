@@ -9,7 +9,7 @@
   --radius: 0.625rem;
 
   /* Azure Blue → Primary (matches globe in logo) */
-  --primary-50:  95% 0.02 210;
+  --primary-50: 95% 0.02 210;
   --primary-100: 92% 0.05 210;
   --primary-200: 88% 0.08 210;
   --primary-300: 83% 0.12 210;
@@ -18,28 +18,28 @@
   --primary-600: 60% 0.28 210;
   --primary-700: 52% 0.32 210;
   --primary-800: 44% 0.36 210;
-  --primary-900: 36% 0.40 210;
+  --primary-900: 36% 0.4 210;
   --primary-950: 28% 0.44 210;
 
   /* Emerald Green → Secondary (matches speech bubble in logo) */
-  --secondary-50:  96% 0.02 140;
+  --secondary-50: 96% 0.02 140;
   --secondary-100: 93% 0.05 140;
   --secondary-200: 89% 0.08 140;
   --secondary-300: 84% 0.12 140;
   --secondary-400: 78% 0.17 140;
   --secondary-500: 69% 0.22 140;
   --secondary-600: 60% 0.26 140;
-  --secondary-700: 51% 0.30 140;
+  --secondary-700: 51% 0.3 140;
   --secondary-800: 42% 0.34 140;
   --secondary-900: 33% 0.38 140;
   --secondary-950: 25% 0.42 140;
 
   /* Coral Red → Accent (matches logo accents) */
-  --accent-50:  98% 0.02 10;
+  --accent-50: 98% 0.02 10;
   --accent-100: 96% 0.05 10;
-  --accent-200: 92% 0.10 10;
+  --accent-200: 92% 0.1 10;
   --accent-300: 87% 0.15 10;
-  --accent-400: 81% 0.20 10;
+  --accent-400: 81% 0.2 10;
   --accent-500: 73% 0.26 10;
   --accent-600: 63% 0.32 10;
   --accent-700: 53% 0.38 10;
@@ -48,7 +48,7 @@
   --accent-950: 23% 0.52 10;
 
   /* Semantic */
-  --destructive: 65% 0.20 25;
+  --destructive: 65% 0.2 25;
   --warning: 65% 0.17 80;
   --success: 65% 0.17 145;
   --info: 65% 0.17 220;
@@ -92,7 +92,7 @@
 
 /* ✅ Map CSS variables to Tailwind color classes */
 @theme inline {
-  --color-primary-50:  oklch(var(--primary-50));
+  --color-primary-50: oklch(var(--primary-50));
   --color-primary-100: oklch(var(--primary-100));
   --color-primary-200: oklch(var(--primary-200));
   --color-primary-300: oklch(var(--primary-300));
@@ -104,7 +104,7 @@
   --color-primary-900: oklch(var(--primary-900));
   --color-primary-950: oklch(var(--primary-950));
 
-  --color-secondary-50:  oklch(var(--secondary-50));
+  --color-secondary-50: oklch(var(--secondary-50));
   --color-secondary-100: oklch(var(--secondary-100));
   --color-secondary-200: oklch(var(--secondary-200));
   --color-secondary-300: oklch(var(--secondary-300));
@@ -116,7 +116,7 @@
   --color-secondary-900: oklch(var(--secondary-900));
   --color-secondary-950: oklch(var(--secondary-950));
 
-  --color-accent-50:  oklch(var(--accent-50));
+  --color-accent-50: oklch(var(--accent-50));
   --color-accent-100: oklch(var(--accent-100));
   --color-accent-200: oklch(var(--accent-200));
   --color-accent-300: oklch(var(--accent-300));
@@ -148,9 +148,15 @@
   --color-input: oklch(var(--input));
   --color-ring: oklch(var(--ring));
 
-  --font-ui: var(--font-inter); /* Primary interface font - buttons, navigation, sidebar, dashboards, forms, controls */
-  --font-content: var(--font-noto-sans); /* Multilingual learning content - vocabulary lists, conversations, translations, phonetics */
-  --font-reading: var(--font-source-serif); /* Extended reading material - AI stories, articles, essays, formal explanations */
+  --font-ui: var(
+    --font-inter
+  ); /* Primary interface font - buttons, navigation, sidebar, dashboards, forms, controls */
+  --font-content: var(
+    --font-noto-sans
+  ); /* Multilingual learning content - vocabulary lists, conversations, translations, phonetics */
+  --font-reading: var(
+    --font-source-serif
+  ); /* Extended reading material - AI stories, articles, essays, formal explanations */
   /* --no-scrollbar::-webkit-scrollbar {
     display: none
   } */
@@ -177,6 +183,12 @@
       display: none;
     }
   }
+}
+
+.main {
+  height: calc(100vh - 5rem);
+  width: 100%;
+  display: flex;
 }
 
 .button {
@@ -213,14 +225,14 @@
 }
 .button:focus-visible {
   border-color: var(--color-ring);
-  box-shadow: 0 0 0 3px var(--color-ring, rgba(59,130,246,0.5));
+  box-shadow: 0 0 0 3px var(--color-ring, rgba(59, 130, 246, 0.5));
 }
 .button[aria-invalid="true"] {
   border-color: var(--color-destructive);
-  box-shadow: 0 0 0 3px var(--color-destructive, rgba(239,68,68,0.2));
+  box-shadow: 0 0 0 3px var(--color-destructive, rgba(239, 68, 68, 0.2));
 }
 .button.dark[aria-invalid="true"] {
-  box-shadow: 0 0 0 3px var(--color-destructive, rgba(239,68,68,0.4));
+  box-shadow: 0 0 0 3px var(--color-destructive, rgba(239, 68, 68, 0.4));
 }
 .button:hover:not(:disabled) {
   background-color: color-mix(in oklab, var(--color-primary), #000 10%);
@@ -230,7 +242,8 @@ audio::-webkit-media-controls-play-button {
   background-color: oklch(var(--primary));
 }
 
-::view-transition-old(root), ::view-transition-new(root) {
-    animation: none;
-    mix-blend-mode: normal;
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
 }
