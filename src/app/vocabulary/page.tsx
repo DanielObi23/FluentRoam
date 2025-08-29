@@ -4,7 +4,7 @@ import Navigation from "@/components/app_layout/Navigation";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"
-import { Book, CircleXIcon, Clock, Edit, Plus, Search, Star, Trash} from "lucide-react";
+import { Book, CircleXIcon, Clock, Edit, Plus, Search, Star, Table2, Trash} from "lucide-react";
 import { Label } from "@/components/ui/label"
 import {
   Dialog,
@@ -191,7 +191,38 @@ export default function Page() {
                             {/* <Button variant={"outline"} className="flex items-center"><Plus /> <span>Create Deck</span></Button> */}
                         </div>
                     </div>
-                    <Button variant={"secondary"} size={"lg"} className="flex items-center"><Book /> <span>Study now</span></Button>
+                    <div className="grid grid-cols-12 gap-3 w-1/2">
+                        <div className="col-span-4 flex items-center gap-2 border-2 p-4">
+                            <div className="bg-blue-500/35 p-2 rounded-xl">
+                                <Star />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-semibold">3</p>
+                                <p>New Cards</p>
+                            </div>
+                        </div>
+
+                        <div className="col-span-4 flex items-center gap-2 border-2 p-4">
+                            <div className="bg-blue-500/35 p-2 rounded-xl">
+                                <Clock />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-semibold">1</p>
+                                <p>Due Cards</p>
+                            </div>
+                        </div>
+
+                        <div className="col-span-4 flex items-center gap-2 border-2 p-4">
+                            <div className="bg-blue-500/35 p-2 rounded-xl">
+                                <Table2 />
+                            </div>
+                            <div>
+                                <p className="text-2xl font-semibold">{filteredCardList.length}</p>
+                                <p>Total</p>
+                            </div>
+                        </div>
+                    </div>
+                    <Button variant={"secondary"} size={"lg"} className="flex items-center" onClick={() => router.push("/vocabulary/study")}><Book /> <span>Study now</span></Button>
                 </div>
                 
                 <Table>
