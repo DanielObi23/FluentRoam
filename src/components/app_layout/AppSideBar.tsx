@@ -1,6 +1,13 @@
-"use client"
+"use client";
 
-import { Home, MessagesSquare, ScrollText, BookA, BookOpenText, Plus } from "lucide-react"
+import {
+  Home,
+  MessagesSquare,
+  ScrollText,
+  BookA,
+  BookOpenText,
+  Plus,
+} from "lucide-react";
 
 import {
   Sidebar,
@@ -9,22 +16,26 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarFooter
-} from "@/components/ui/sidebar"
-import Image from "next/image"
-import logo from "../../../public/logo/fluentroamTransparent.png"
-import { usePathname } from "next/navigation"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
-import { Button } from "../ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "../ui/dropdown-menu"
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
+  SidebarFooter,
+} from "@/components/ui/sidebar";
+import Image from "next/image";
+import logo from "../../../public/logo/fluentroamTransparent.png";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "../ui/dropdown-menu";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
 // Menu items.
 const items = [
   {
     title: "Home",
-    url: "/",
+    url: "/home",
     icon: Home,
   },
   {
@@ -47,33 +58,41 @@ const items = [
     url: "/vocabulary",
     icon: BookA,
   },
-]
+];
 
 export default function AppSidebar() {
-  const pathname = usePathname()
+  const pathname = usePathname();
   return (
     <Sidebar className="bg-muted">
       <SidebarHeader>
-          <nav className="flex items-center justify-center bg-slate-90 px-1 py-2">
-              <Image src={logo} alt="FluentRoam logo" height={65} width={65} />
-              <h1 className="font-bold text-lg md:text-xl">
-                  <span className='text-secondary-600'>Fluent</span><span className='text-primary-700'>Roam</span>
-              </h1>
-          </nav>
+        <nav className="bg-slate-90 flex items-center justify-center px-1 py-2">
+          <Image src={logo} alt="FluentRoam logo" height={65} width={65} />
+          <h1 className="text-lg font-bold md:text-xl">
+            <span className="text-secondary-600">Fluent</span>
+            <span className="text-primary-700">Roam</span>
+          </h1>
+        </nav>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu className="flex justify-center items-center gap-2.5 w-full">
+        <SidebarMenu className="flex w-full items-center justify-center gap-2.5">
           {items.map((item) => {
-            const isActive = item.url === "/" 
-                    ? pathname === "/" 
-                    : pathname.startsWith(item.url);
-                    
+            const isActive =
+              item.url === "/"
+                ? pathname === "/"
+                : pathname.startsWith(item.url);
+
             return (
               <SidebarMenuItem key={item.title} className="w-6/7">
-                <SidebarMenuButton asChild className="p-3 h-full w-full">
-                  <Link href={item.url} className={cn(isActive && "bg-muted-foreground text-white transition-all duration-700 fade-in-5 fade-out-5")}>
-                    <item.icon className="!size-5"/>
-                    <span className="font-semibold text-lg">{item.title}</span>
+                <SidebarMenuButton asChild className="h-full w-full p-3">
+                  <Link
+                    href={item.url}
+                    className={cn(
+                      isActive &&
+                        "bg-muted-foreground fade-in-5 fade-out-5 text-white transition-all duration-700",
+                    )}
+                  >
+                    <item.icon className="!size-5" />
+                    <span className="text-lg font-semibold">{item.title}</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -82,19 +101,13 @@ export default function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        <div className="py-3 px-1.5">
+        <div className="px-1.5 py-3">
           {/* Maybe use a selector, then using zustand, make sure that if select value changed, global state is updated, maybe save value in local storage */}
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              Change Language
-            </DropdownMenuTrigger>
+            <DropdownMenuTrigger>Change Language</DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
-                ES Spanish
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                IT Italian
-              </DropdownMenuItem>
+              <DropdownMenuItem>ES Spanish</DropdownMenuItem>
+              <DropdownMenuItem>IT Italian</DropdownMenuItem>
               <DropdownMenuItem>
                 <Plus /> Add language
               </DropdownMenuItem>
@@ -104,5 +117,5 @@ export default function AppSidebar() {
         </div>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
