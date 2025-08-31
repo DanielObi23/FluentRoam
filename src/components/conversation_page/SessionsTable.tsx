@@ -1,5 +1,5 @@
 //TODO: use react query to query first 50 pages, then cache it
-// IMPROVE PAGINATION UI, GET FROM SHADCNUI 
+// IMPROVE PAGINATION UI, GET FROM SHADCNUI
 
 import {
   Table,
@@ -8,162 +8,121 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
-import { Input } from "@/components/ui/input"
+import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { userSessions } from "@/userSessions";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger, DialogDescription} from "@/components/ui/dialog"
-import { parseAsInteger, parseAsString ,useQueryState } from "nuqs";
+import { userSessions, UserSession } from "@/userSessions";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import Link from "next/link";
 import { CircleXIcon, Search, X } from "lucide-react";
-import { Label } from "@/components/ui/label"
-
-
-type Session = {
-    id: string,
-    session_id: string,
-    user_id: string,
-    title: string,
-    role_scenario: string,
-    feedback: string,
-    target_vocabulary: string[],
-    user_audio: string,
-    created_at: string
-}
-
-type Row = {
-    sessions: Session[],
-    page: number
-}
+import { Label } from "@/components/ui/label";
+import ConversationHistoryTable from "./ConversationHistoryTable";
 
 // COMPONENT IS RERENDERING TWICE, FIX THAT
 export default function SessionsTable() {
-    const [search, setSearch] = useQueryState("search", parseAsString.withDefault(""))
-    const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1))
-    const router = useRouter()
-    const pageButtonRef = useRef<HTMLDivElement | null>(null)
-    
-    const filteredSessions = userSessions.filter((session) => session.title.toLowerCase().includes(search.toLowerCase()));
+  const [search, setSearch] = useQueryState(
+    "search",
+    parseAsString.withDefault(""),
+  );
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const router = useRouter();
+  const pageButtonRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        pageButtonRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, []);
+  const filteredSessions = userSessions.filter((session) =>
+    session.title.toLowerCase().includes(search.toLowerCase()),
+  );
 
-    // simulation, query database based of page === 1? query first numberOfRowsToShow : from (page - 1) * numberOfRowsToShow 
-    // if list return .length < 10, next page === 0
-    // if error return === out of bound, page doesnt exist, show button to relocate to first page
-    // if list returned === 0, show button to add to list
-    const numberOfRowsToShow = 10
-    const num1 = (page - 1) * numberOfRowsToShow 
-    const sessionPage = page === 1? filteredSessions.slice(0, numberOfRowsToShow) : filteredSessions.slice(num1, num1 + numberOfRowsToShow)
-    console.log(sessionPage)
-    return (
-        <>
-            <div className="w-full flex justify-between items-center gap-2">
-                <div className="md:w-3/7 md:self-start flex gap-2 items-center justify-center">
-                    <div className='w-full max-w-xs space-y-2'>
-                        <Label htmlFor={"search"}>Search</Label>
-                        <div className='relative'>
-                            <div className='text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50'>
-                                <Search className='size-4' />
-                                <span className='sr-only'>Search</span>
-                            </div>
-                            <Input 
-                                defaultValue={search} 
-                                id="search"
-                                type="text"
-                                onChange={(e) => {
-                                    setSearch(e.target.value); 
-                                    setPage(1)}} 
-                                className="placeholder:text-white peer ps-9"
-                                placeholder="Type something..."
-                            />
-                            {search && (
-                                <Button
-                                    variant='ghost'
-                                    size='icon'
-                                    onClick={() => {
-                                        setSearch(""); 
-                                        setPage(1);
-                                        (document.getElementById("search") as HTMLInputElement).value = "";
-                                    }}
-                                    className='text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 end-0 rounded-s-none hover:bg-transparent'
-                                >
-                                    <CircleXIcon />
-                                    <span className='sr-only'>Clear search input</span>
-                                </Button>
-                            )}
-                        </div>
-                    </div>
-                </div>
+  useEffect(() => {
+    pageButtonRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
 
-                <Button onClick={() => router.push("/conversation/form")} className="md:hidden">Create Session</Button>
-            </div>
-            <Table>
-                <TableHeader>
-                    <TableRow className="font-semibold text-4xl">
-                        <TableHead>
-                           Title
-                        </TableHead>
-                        <TableHead>
-                            Type
-                        </TableHead>
-                        <TableHead>
-                            Details
-                        </TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {sessionPage.length > 0 ? 
-                        (sessionPage.map(session => {
-                            return (
-                                <TableRow key={session.id}>
-                                    <TableCell className="md:text-2xl">
-                                        {session.title}
-                                    </TableCell>
-                                    <TableCell>
-                                        Call
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button 
-                                            onClick={() => router.push(`/conversation/feedback/${session.session_id}`)}>
-                                            <span className="hidden md:inline">View</span> Feedback
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )})) : (
-                                // IF PAGE IS NOT EQUAL TO 1, SHOW THIS, ELSE IMMEDIATELY SAY NO DATA IN PAGE WHATEVER, BUTTON TO REDIRECT TO PAGE 1, ELSE THIS
-                                // IF SESSIONS LENGTH = 0, JUST MAKE IT RENDER THIS AS WELL
-                                <TableRow>
-                                    <TableCell>NO PRACTICE SESSIONS DONE</TableCell>
-                                    <TableCell>
-                                        <Button 
-                                            onClick={() => router.push(`/conversation/form`)}>
-                                            Create Session
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            )
-                    }
-                </TableBody>
-            </Table>
-            <div ref={pageButtonRef} className="flex justify-end items-center gap-3">
-                <Button 
-                    onClick={() => setPage(prev => prev - 1)} 
-                    disabled={page <= 1} 
-                    className="md:text-lg">
-                        Previous
+  // simulation, query database based of page === 1? query first numberOfRowsToShow : from (page - 1) * numberOfRowsToShow
+  // if list return .length < 10, next page === 0
+  // if error return === out of bound, page doesnt exist, show button to relocate to first page
+  // if list returned === 0, show button to add to list
+  const numberOfRowsToShow = 10;
+  const num1 = (page - 1) * numberOfRowsToShow;
+  const sessionList =
+    page === 1
+      ? (filteredSessions as UserSession[]).slice(0, numberOfRowsToShow)
+      : (filteredSessions as UserSession[]).slice(
+          num1,
+          num1 + numberOfRowsToShow,
+        );
+  return (
+    <>
+      <div className="flex w-full items-center justify-between gap-2">
+        <div className="flex items-center justify-center gap-2 md:w-3/7 md:self-start">
+          <div className="w-full max-w-xs space-y-2">
+            <Label htmlFor={"search"}>Search</Label>
+            <div className="relative">
+              <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
+                <Search className="size-4" />
+                <span className="sr-only">Search</span>
+              </div>
+              <Input
+                defaultValue={search}
+                id="search"
+                type="text"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+                className="peer ps-9 placeholder:text-white"
+                placeholder="Type something..."
+              />
+              {search && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    setSearch("");
+                    setPage(1);
+                    (
+                      document.getElementById("search") as HTMLInputElement
+                    ).value = "";
+                  }}
+                  className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 end-0 rounded-s-none hover:bg-transparent"
+                >
+                  <CircleXIcon />
+                  <span className="sr-only">Clear search input</span>
                 </Button>
-
-                <Button 
-                    onClick={() => setPage(prev => prev + 1)} 
-                    disabled={sessionPage.length < numberOfRowsToShow  || filteredSessions.length <= 10} 
-                    className="md:text-lg">
-                        Next
-                </Button>
+              )}
             </div>
-        </>
-    )
+          </div>
+        </div>
+
+        <Button asChild>
+          <Link href={"/conversation/form"} className="md:hidden">
+            Create Session
+          </Link>
+        </Button>
+      </div>
+
+      <ConversationHistoryTable sessionList={sessionList} />
+
+      <div ref={pageButtonRef} className="flex items-center justify-end gap-3">
+        <Button
+          onClick={() => setPage((prev) => prev - 1)}
+          disabled={page <= 1}
+          className="md:text-lg"
+        >
+          Previous
+        </Button>
+
+        <Button
+          onClick={() => setPage((prev) => prev + 1)}
+          disabled={
+            sessionList.length < numberOfRowsToShow ||
+            filteredSessions.length <= 10
+          }
+          className="md:text-lg"
+        >
+          Next
+        </Button>
+      </div>
+    </>
+  );
 }

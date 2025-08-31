@@ -3,10 +3,8 @@
 // fix UI for when phone is tilted, and form for when tablet and phone is tilted
 
 import Navigation from "@/components/app_layout/Navigation";
-import CallSessionForm from "@/components/conversation_page/forms/CallSessionForm";
-import ChatSessionForm from "@/components/conversation_page/forms/ChatSessionForm";
+import ConversationForms from "@/components/conversation_page/forms/ConversationForms";
 import SessionsTable from "@/components/conversation_page/SessionsTable";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Page() {
   return (
@@ -18,18 +16,7 @@ export default function Page() {
         </section>
 
         <section className="hidden h-full items-center justify-center md:flex md:w-2/5">
-          <Tabs defaultValue="call" className="w-[400px]">
-            <TabsList>
-              <TabsTrigger value="call">Call</TabsTrigger>
-              <TabsTrigger value="chat">Chat</TabsTrigger>
-            </TabsList>
-            <TabsContent value="call">
-              <CallSessionForm />
-            </TabsContent>
-            <TabsContent value="chat">
-              <ChatSessionForm />
-            </TabsContent>
-          </Tabs>
+          <ConversationForms />
         </section>
       </main>
     </div>

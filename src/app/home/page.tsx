@@ -1,25 +1,22 @@
-import CallSessionForm from "@/components/conversation_page/forms/CallSessionForm";
-import ChatSessionForm from "@/components/conversation_page/forms/ChatSessionForm";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+"use client";
+
+import ConversationForms from "@/components/conversation_page/forms/ConversationForms";
+import { toast } from "sonner";
 
 export default function Page() {
-  return (
-    <Tabs defaultValue="call" className="w-[400px]">
-      <div className="flex w-full items-center justify-around">
-        <p className="font-ui text-xl font-semibold xl:text-2xl">
-          Start Conversation
-        </p>
-        <TabsList className="self-end">
-          <TabsTrigger value="call">Call</TabsTrigger>
-          <TabsTrigger value="chat">Chat</TabsTrigger>
-        </TabsList>
-      </div>
-      <TabsContent value="call">
-        <CallSessionForm />
-      </TabsContent>
-      <TabsContent value="chat">
-        <ChatSessionForm />
-      </TabsContent>
-    </Tabs>
-  );
+  //simulate cards due
+  if (Math.random() < 1) {
+    toast("Cards Due For Review", {
+      position: "top-center",
+      style: {
+        "--normal-bg":
+          "color-mix(in oklab, light-dark(var(--color-sky-600), var(--color-sky-400)) 10%, oklch(var(--background)))",
+        "--normal-text":
+          "light-dark(oklch(var(--color-sky-600)), oklch(var(--color-sky-400)))",
+        "--normal-border":
+          "light-dark(oklch(var(--color-sky-600)), oklch(var(--color-sky-400)))",
+      } as React.CSSProperties,
+    });
+  }
+  return <ConversationForms />;
 }
