@@ -8,9 +8,9 @@ import SessionsTable from "@/components/conversation_page/SessionsTable";
 
 export default function Page() {
   return (
-    <div className="bg-background flex h-screen w-full flex-col">
+    <div className="screen-container">
       <Navigation page="Conversation" />
-      <main className="main">
+      <main className="main items-center justify-center">
         <section className="flex h-full w-full flex-col items-center justify-center gap-7 px-8 py-6 md:w-3/5 md:px-10 md:py-8">
           <SessionsTable />
         </section>

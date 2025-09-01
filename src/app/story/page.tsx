@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import Link from "next/link";
 import StoryHistoryTable from "@/components/StoryHistoryTable";
+import SearchBar from "@/components/SearchBar";
+import useSearchBar from "@/hooks/use-searchBar";
 
 export default function Page() {
   // COPY SESSIONS TABLE LOGIC IN COMPONENTS, EXTRAPOLATE BOTH INTO A CUSTOM HOOK, DO THE REST OF THE UI, ADDING PAGINATION
@@ -25,29 +27,33 @@ export default function Page() {
   // THINK OF MOVING SEARCH BAR TO A DIFFERENT COMPONENT, TO USE WITH CONVERSATION PAGE.
   // ADD PAGE BUTTON TO GO NEXT
 
-  const [search, setSearch] = useQueryState(
-    "search",
-    parseAsString.withDefault(""),
-  );
-  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  // const [search, setSearch] = useQueryState(
+  //   "search",
+  //   parseAsString.withDefault(""),
+  // );
+  //const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
 
-  const filteredList = story.filter((story) =>
+  //USE USEMEMO FOR WHEN QUERYING DATABASE
+  const { page, search, pageLimit } = useSearchBar();
+  const storys = [...story, ...story, ...story, ...story];
+  const filteredList = storys.filter((story) =>
     story.title.toLowerCase().includes(search.toLowerCase()),
   );
-  const num1 = page * 10 - 1;
-  const filteredStoryList =
+
+  const num1 = page * pageLimit - 1;
+  const storyList =
     page === 1
-      ? (filteredList as Story[]).slice(0, 10)
-      : (filteredList as Story[]).slice(num1, num1 + 10);
+      ? (filteredList as Story[]).slice(0, pageLimit)
+      : (filteredList as Story[]).slice(num1, num1 + pageLimit);
 
   const createFormButtonName = "Create Story";
   const createFormButtonLink = "/story/create";
 
   return (
-    <div className="bg-background min-h-screen w-full">
+    <div className="screen-container">
       <Navigation page="Story" />
-      <div className="overflow-x-auto">
-        <div className="flex w-full items-center justify-between gap-2">
+      <div className="main flex-col items-center justify-center gap-7 px-8 py-6 md:w-3/5 md:px-10 md:py-8">
+        {/* <div className="flex w-full items-center justify-between gap-2">
           <div className="flex items-center justify-center gap-2 md:w-3/7 md:self-start">
             <Button asChild>
               <Link href={"/story/create"}>Create Story</Link>
@@ -96,9 +102,14 @@ export default function Page() {
               Create Story
             </Link>
           </Button>
-        </div>
-
-        <StoryHistoryTable storyList={filteredStoryList} />
+        </div> */}
+        <SearchBar
+          tableList={storyList}
+          createFormButtonName={createFormButtonName}
+          createFormButtonLink={createFormButtonLink}
+        >
+          <StoryHistoryTable storyList={storyList} />
+        </SearchBar>
       </div>
     </div>
   );

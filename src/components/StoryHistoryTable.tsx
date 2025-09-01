@@ -47,9 +47,9 @@ export default function StoryHistoryTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {storyList.map((story) => {
+        {storyList.map((story, index) => {
           return (
-            <TableRow key={`${story.id}-${story.created_at}`}>
+            <TableRow key={`${story.id}-${index}`}>
               <TableCell>
                 <Button asChild>
                   <Link href={`/story/${story.id}`}>View Story</Link>

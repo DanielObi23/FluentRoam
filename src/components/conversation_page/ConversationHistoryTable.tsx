@@ -43,9 +43,9 @@ export default function ConversationHistoryTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sessionList.map((session) => {
+        {sessionList.map((session, index) => {
           return (
-            <TableRow key={session.id}>
+            <TableRow key={`${session.id}-${index}`}>
               <TableCell className="md:text-2xl">{session.title}</TableCell>
               <TableCell className="text-center">Call</TableCell>
               <TableCell className="text-center">
