@@ -185,12 +185,6 @@
   }
 }
 
-.main {
-  height: calc(100vh - 5rem);
-  width: 100%;
-  display: flex;
-}
-
 .screen-container {
   background-color: oklch(var(--background));
   display: flex;

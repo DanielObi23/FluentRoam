@@ -19,6 +19,7 @@ import Link from "next/link";
 import StoryHistoryTable from "@/components/StoryHistoryTable";
 import SearchBar from "@/components/SearchBar";
 import useSearchBar from "@/hooks/use-searchBar";
+import Main from "@/components/tags/Main";
 
 export default function Page() {
   // COPY SESSIONS TABLE LOGIC IN COMPONENTS, EXTRAPOLATE BOTH INTO A CUSTOM HOOK, DO THE REST OF THE UI, ADDING PAGINATION
@@ -47,62 +48,11 @@ export default function Page() {
       : (filteredList as Story[]).slice(num1, num1 + pageLimit);
 
   const createFormButtonName = "Create Story";
-  const createFormButtonLink = "/story/create";
+  const createFormButtonLink = "/story/form";
 
   return (
-    <div className="screen-container">
-      <Navigation page="Story" />
-      <div className="main flex-col items-center justify-center gap-7 px-8 py-6 md:w-3/5 md:px-10 md:py-8">
-        {/* <div className="flex w-full items-center justify-between gap-2">
-          <div className="flex items-center justify-center gap-2 md:w-3/7 md:self-start">
-            <Button asChild>
-              <Link href={"/story/create"}>Create Story</Link>
-            </Button>
-            <div className="w-full max-w-xs space-y-2">
-              <Label htmlFor={"search"}>Search</Label>
-              <div className="relative">
-                <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                  <Search className="size-4" />
-                  <span className="sr-only">Search</span>
-                </div>
-                <Input
-                  defaultValue={search}
-                  id="search"
-                  type="text"
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setPage(1);
-                  }}
-                  className="peer ps-9 placeholder:text-white"
-                  placeholder="Type something..."
-                />
-                {search && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setSearch("");
-                      setPage(1);
-                      (
-                        document.getElementById("search") as HTMLInputElement
-                      ).value = "";
-                    }}
-                    className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 end-0 rounded-s-none hover:bg-transparent"
-                  >
-                    <CircleXIcon />
-                    <span className="sr-only">Clear search input</span>
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <Button asChild>
-            <Link href={"/story/create"} className="md:hidden">
-              Create Story
-            </Link>
-          </Button>
-        </div> */}
+    <Main page="Story" className="flex-col">
+      <section aria-labelledby="Story history list">
         <SearchBar
           tableList={storyList}
           createFormButtonName={createFormButtonName}
@@ -110,7 +60,7 @@ export default function Page() {
         >
           <StoryHistoryTable storyList={storyList} />
         </SearchBar>
-      </div>
-    </div>
+      </section>
+    </Main>
   );
 }

@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ReactNode, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import Link from "next/link";
@@ -14,7 +14,7 @@ export default function SearchBar({
 }: {
   createFormButtonName: string;
   createFormButtonLink: string;
-  children: ReactNode;
+  children: React.ReactNode;
   tableList: unknown[];
 }) {
   // COMPONENT WORKS WITH useSearchBar HOOK

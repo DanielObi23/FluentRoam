@@ -1,14 +1,7 @@
 //TODO: use react query to query first 50 pages, then cache it
 // IMPROVE PAGINATION UI, GET FROM SHADCNUI
 
-import { Button } from "@/components/ui/button";
-import { useEffect, useRef } from "react";
-import { Input } from "@/components/ui/input";
 import { userSessions, UserSession } from "@/userSessions";
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
-import Link from "next/link";
-import { CircleXIcon, Search, X } from "lucide-react";
-import { Label } from "@/components/ui/label";
 import ConversationHistoryTable from "./ConversationHistoryTable";
 import useSearchBar from "@/hooks/use-searchBar";
 import SearchBar from "../SearchBar";
@@ -44,7 +37,9 @@ export default function SessionsTable() {
         createFormButtonName={createFormButtonName}
         createFormButtonLink={createFormButtonLink}
       >
-        <ConversationHistoryTable sessionList={sessionList} />
+        <div className="h-150 overflow-auto bg-red-500 max-[400px]:h-100 md:h-175">
+          <ConversationHistoryTable sessionList={sessionList} />
+        </div>
       </SearchBar>
     </>
   );
