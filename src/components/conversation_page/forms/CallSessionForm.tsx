@@ -57,7 +57,7 @@ const formSchema = z.object({
   proficiency: z.string(),
   duration: z.number(),
   speed: z.number(),
-  voice: z.string(),
+  voiceId: z.string(),
 });
 
 export default function CallSessionForm() {
@@ -90,9 +90,9 @@ export default function CallSessionForm() {
       formality: "casual",
       response_length: "detailed",
       proficiency: "B1",
-      duration: 20,
+      duration: 10,
       speed: 1,
-      voice: "",
+      voiceId: spanishVoices.male[0].voiceId,
     },
   });
 
@@ -108,7 +108,7 @@ export default function CallSessionForm() {
           proficiency: values.proficiency,
           duration: values.duration.toString(),
           speed: values.speed.toString(),
-          voiceId: values.voice,
+          voiceId: values.voiceId,
         });
         router.push(`/conversation/call?${params.toString()}`);
       })
@@ -340,7 +340,7 @@ export default function CallSessionForm() {
         {/* VOICES: When making only for pro users, add disabled to tags, if no subscription, remove the value from the url */}
         <FormField
           control={form.control}
-          name="voice"
+          name="voiceId"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="sr-only">Voices</FormLabel>
@@ -407,8 +407,8 @@ export default function CallSessionForm() {
                             </CarouselItem>
                           ))}
                         </CarouselContent>
-                        <CarouselPrevious type="button" />
-                        <CarouselNext type="button" />
+                        <CarouselPrevious type="button" className="hidden" />
+                        <CarouselNext type="button" className="hidden" />
                       </Carousel>
                     </fieldset>
                   ))}

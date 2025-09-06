@@ -12,15 +12,14 @@
 // put vapi assistant id and change vapi web token from next_public in env
 
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import Navigation from "@/components/app_layout/Navigation";
-import Call from "@/components/conversation_page/Call";
-import CallTranscript from "@/components/conversation_page/CallTranscript";
+import Call from "@/components/conversation_page/call/Call";
+import CallTranscript from "@/components/conversation_page/call/CallTranscript";
 import { vapi } from "@/lib/vapi.sdk";
-import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import axios from "axios";
+
 type Role = "assistant" | "user";
 
 type Message = {
@@ -32,65 +31,11 @@ type Message = {
   translation?: string;
 };
 
-type Session = {
-  scenario: string;
-  formality: "casual" | "formal";
-  response_length: "brief" | "detailed";
-  proficiency: "A1" | "A2" | "B1" | "B2";
-  gender: "male" | "female";
-  duration: number;
-  speed: number;
-};
-
-enum CallStatus {
-  INACTIVE = "INACTIVE",
-  CONNECTING = "CONNECTING",
-  ACTIVE = "ACTIVE",
-  FINISHED = "FINISHED",
-}
-
 export default function Session() {
-  const search = useSearchParams();
   const router = useRouter();
-  const { user } = useUser();
+
   const [messages, setMessages] = useState<Message[]>([]);
   const [transcript, setTranscript] = useState("");
-
-  const session: Session = {
-    scenario: search.get("scenario") ?? "",
-    gender: (search.get("gender") ?? "male") as "male" | "female",
-    formality: (search.get("formality") ?? "casual") as "casual" | "formal",
-    response_length: (search.get("response_length") ?? "brief") as
-      | "brief"
-      | "detailed",
-    proficiency: (search.get("proficiency") ?? "B1") as
-      | "A1"
-      | "A2"
-      | "B1"
-      | "B2",
-    duration: Number(search.get("duration") ?? 20),
-    speed: Number(search.get("speed") ?? 1),
-  };
-
-  const assistantOverrides = {
-    recordingEnabled: true,
-    variableValues: {
-      first_message: `Hello ${user?.firstName}, what scenario would you like to start`,
-      scenario: session.scenario,
-      formality: session.formality,
-      response_length: session.response_length,
-      proficiency: session.proficiency,
-    },
-    // voice: {
-    //     provider: "11labs",
-    //     voiceId: voiceId,
-    //     stability: 0.4,
-    //     similarityBoost: 0.8,
-    //     style: 0.5,
-    //     useSpeakerBoost: true,
-    //     model: "eleven_multilingual_v2"
-    // }
-  };
 
   function onMessage(message: Message) {
     if (
@@ -194,12 +139,6 @@ export default function Session() {
     //     return
     // }
 
-    if (!session.scenario) {
-      toast("Event has been created");
-      router.replace("/conversation");
-      return;
-    }
-
     vapi.on("message", onMessage);
     vapi.on("error", onError);
 
@@ -213,18 +152,13 @@ export default function Session() {
     <div className="bg-background flex h-screen w-full flex-col">
       <Navigation page="Conversation" />
       {/* DESKTOP VIEW */}
-      <main className="hidden h-[calc(100vh-80px)] w-full gap-5 p-4 sm:flex sm:flex-row">
-        <Call
-          vapi={vapi}
-          transcript={transcript}
-          gender={session.gender}
-          assistantOverrides={assistantOverrides}
-        />
+      <main className="hidden h-[calc(100vh-5rem)] w-full gap-5 p-4 sm:flex sm:flex-row">
+        <Call vapi={vapi} transcript={transcript} />
         <CallTranscript translate={translate} messages={messages} />
       </main>
 
       {/* MOBILE VIEW */}
-      <main className="flex h-[calc(100vh-80px)] w-full flex-col gap-5 p-4 sm:hidden md:flex-row">
+      <main className="flex h-[calc(100vh-5rem)] w-full flex-col gap-5 p-4 sm:hidden md:flex-row">
         <Tabs defaultValue="call" className="h-full w-full">
           <TabsList className="h-10 w-full">
             <TabsTrigger value="call">Call</TabsTrigger>
@@ -234,12 +168,7 @@ export default function Session() {
             value="call"
             className="flex h-[calc(100%-40px)] w-full flex-col gap-5 p-2 md:flex-row"
           >
-            <Call
-              vapi={vapi}
-              transcript={transcript}
-              gender={session.gender}
-              assistantOverrides={assistantOverrides}
-            />
+            <Call vapi={vapi} transcript={transcript} />
           </TabsContent>
           <TabsContent
             value="transcript"
