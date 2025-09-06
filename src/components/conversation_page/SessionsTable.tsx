@@ -37,7 +37,7 @@ export default function SessionsTable() {
         createFormButtonName={createFormButtonName}
         createFormButtonLink={createFormButtonLink}
       >
-        <div className="h-150 overflow-auto bg-red-500 max-[400px]:h-100 md:h-175">
+        <div className="h-150 overflow-auto max-[400px]:h-100 md:h-175">
           <ConversationHistoryTable sessionList={sessionList} />
         </div>
       </SearchBar>

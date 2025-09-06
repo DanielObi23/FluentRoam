@@ -47,6 +47,9 @@ const formSchema = z.object({
 
 export default function ChatSessionForm() {
   const router = useRouter();
+  const radioClassName =
+    "bg-secondary/70 ring-primary peer-data-[state=checked]:bg-primary cursor-pointer rounded-lg border-2 border-black px-3 py-2 capitalize ring-offset-2 peer-data-[state=checked]:ring-2";
+  const formLabelClassName = "font-medium md:text-lg";
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -81,7 +84,7 @@ export default function ChatSessionForm() {
           name="scenario"
           render={({ field }) => (
             <FormItem className="mt-6 sm:mt-0">
-              <FormLabel>
+              <FormLabel className={formLabelClassName}>
                 Role-Play Scenario
                 <Popover>
                   <PopoverTrigger>
@@ -109,26 +112,26 @@ export default function ChatSessionForm() {
           control={form.control}
           name="formality"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Style</FormLabel>
+            <FormItem className="flex gap-2">
+              <FormLabel className={formLabelClassName}>Style</FormLabel>
               <FormControl>
                 <RadioGroup
                   defaultValue={field.value}
                   className="flex"
                   onValueChange={field.onChange}
                 >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="formal" id="formal" />
-                    <Label htmlFor="formal">Formal</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="casual" id="casual" />
-                    <Label htmlFor="casual">Casual</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="slang" id="slang" />
-                    <Label htmlFor="slang">Casual + Abbreviations</Label>
-                  </div>
+                  {["formal", "casual", "slang"].map((val) => (
+                    <div key={val}>
+                      <RadioGroupItem
+                        value={val}
+                        id={val}
+                        className="peer sr-only"
+                      />
+                      <Label htmlFor={val} className={radioClassName}>
+                        {val}
+                      </Label>
+                    </div>
+                  ))}
                 </RadioGroup>
               </FormControl>
               <FormMessage />
@@ -141,12 +144,12 @@ export default function ChatSessionForm() {
           control={form.control}
           name="response_length"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>
+            <FormItem className="flex gap-2">
+              <FormLabel className={formLabelClassName}>
                 Response Length
                 <Popover>
                   <PopoverTrigger>
-                    <Info className="cursor-pointer" />
+                    <Info className="size-5 cursor-pointer" />
                   </PopoverTrigger>
                   <PopoverContent>
                     Select "Brief responses" to speak more than you listen and
@@ -160,14 +163,18 @@ export default function ChatSessionForm() {
                   className="flex"
                   onValueChange={field.onChange}
                 >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="brief" id="brief" />
-                    <Label htmlFor="brief">Brief responses</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="detailed" id="detailed" />
-                    <Label htmlFor="detailed">Detailed responses</Label>
-                  </div>
+                  {["brief", "detailed"].map((val) => (
+                    <div key={val}>
+                      <RadioGroupItem
+                        value={val}
+                        id={val}
+                        className="peer sr-only"
+                      />
+                      <Label htmlFor={val} className={radioClassName}>
+                        {val}
+                      </Label>
+                    </div>
+                  ))}
                 </RadioGroup>
               </FormControl>
               <FormMessage />
@@ -180,8 +187,8 @@ export default function ChatSessionForm() {
           control={form.control}
           name="proficiency"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Proficiency</FormLabel>
+            <FormItem className="flex gap-2">
+              <FormLabel className={formLabelClassName}>Proficiency</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
@@ -198,7 +205,9 @@ export default function ChatSessionForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">START CHAT SESSION</Button>
+        <Button type="submit" className="w-full">
+          START CHAT SESSION
+        </Button>
       </form>
     </Form>
   );
