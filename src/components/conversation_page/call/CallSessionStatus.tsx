@@ -1,47 +1,39 @@
 import Vapi from "@vapi-ai/web";
-import { useState, useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { toast } from "sonner";
-import { CallStatus } from "./Call";
+import { useCallSessionStore, CallStatus } from "@/store";
 
 export default function CallSessionStatus({
-  status,
+  time,
   duration,
   vapi,
 }: {
-  status: string;
+  time: number;
   duration: number;
   vapi: Vapi;
 }) {
-  const [clock, setClock] = useState("00:00");
-  const time = useRef(0);
-
-  function updateClock() {
-    const mins = Math.floor(time.current / 60);
-    const secs = time.current % 60;
-    setClock(
-      `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`,
-    );
-    time.current = status === "ACTIVE" ? time.current + 1 : time.current;
-  }
+  const clock = useCallSessionStore((state) => state.clock);
+  const updateClock = useCallSessionStore((state) => state.updateClock);
+  const callStatus = useCallSessionStore((state) => state.callStatus);
 
   function timerUpdate() {
     //duration and time are in seconds
     // show toast when half way done
-    if (time.current === Math.floor(duration / 2)) {
-      toast(`${Math.floor(time.current / 60)} mins left.`, {
+    if (time === Math.floor(duration / 2)) {
+      toast(`${Math.floor(time / 60)} mins left.`, {
         position: "top-center",
       });
       return;
     }
 
     // show toast when 5 minute left
-    if (time.current === Math.floor(duration - 5 * 60)) {
+    if (time === Math.floor(duration - 5 * 60)) {
       toast("5 mins left.", { position: "top-center" });
       return;
     }
 
     // show toast when 1 minute left
-    if (time.current === Math.floor(duration - 1 * 60)) {
+    if (time === Math.floor(duration - 1 * 60)) {
       toast("1 min left.", { position: "top-center" });
       vapi.send({
         type: "add-message",
@@ -62,14 +54,18 @@ export default function CallSessionStatus({
   }
 
   useEffect(() => {
+    if (callStatus === CallStatus.CONNECTING) {
+      updateClock("00:00");
+      return;
+    }
+    if (callStatus !== CallStatus.ACTIVE) return;
     const interval = setInterval(() => {
-      if (status !== CallStatus.ACTIVE) return;
       timerUpdate();
-      updateClock();
+      // updateClock();
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [status]);
+  }, [callStatus]);
 
   return (
     <div className="flex w-full items-center justify-between gap-2 self-start font-semibold">
@@ -79,7 +75,7 @@ export default function CallSessionStatus({
         </div>
         <div className="flex items-center gap-2">
           <div className="size-2 animate-pulse rounded-full bg-red-700"></div>
-          {status}
+          {callStatus}
         </div>
       </div>
     </div>

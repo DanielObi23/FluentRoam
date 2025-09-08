@@ -21,7 +21,7 @@ export default function StoryHistoryTable({
     return (
       <div
         role="status"
-        className="bg-secondary/50 flex w-full items-center justify-around p-5"
+        className="bg-secondary/50 flex w-full items-center justify-around gap-2 p-5"
       >
         <p className="text-lg font-semibold md:text-2xl">
           No Story History Available

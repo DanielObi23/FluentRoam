@@ -1,22 +1,20 @@
 import { Mic, MicOff, Captions, CaptionsOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useCallSessionStore } from "@/store";
+import { CallStatus, useCallSessionStore } from "@/store";
 import Vapi from "@vapi-ai/web";
 import { useState } from "react";
-import { CallStatus } from "./Call";
 
 export default function CallControls({
-  callStatus,
   handleCurrentSession,
   vapi,
 }: {
-  callStatus: string;
   handleCurrentSession: () => void;
   vapi: Vapi;
 }) {
   const captionIsOn = useCallSessionStore((state) => state.captionIsOn);
   const toggleCaption = useCallSessionStore((state) => state.updateCaptionIsOn);
+  const callStatus = useCallSessionStore((state) => state.callStatus);
   const [isMuted, setIsMuted] = useState(false);
   return (
     <div className="grid grid-cols-6 gap-3">

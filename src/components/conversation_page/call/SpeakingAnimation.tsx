@@ -1,19 +1,27 @@
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
 import animationData from "../../../../public/lottie-animation/Sound Waves.json";
-import { useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCallSessionStore } from "@/store";
 
 export default function SpeakingAnimation({
   isAISpeaking,
-  transcript,
+  //transcript,
 }: {
   isAISpeaking: boolean;
-  transcript: string;
+  //transcript: string;
 }) {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
-  isAISpeaking ? lottieRef.current?.play() : lottieRef.current?.pause();
   const captionIsOn = useCallSessionStore((state) => state.captionIsOn);
+  const transcript = useCallSessionStore((state) => state.transcript);
+
+  useEffect(() => {
+    if (isAISpeaking) {
+      lottieRef.current?.play();
+    } else {
+      lottieRef.current?.pause();
+    }
+  }, [isAISpeaking]);
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center self-center">

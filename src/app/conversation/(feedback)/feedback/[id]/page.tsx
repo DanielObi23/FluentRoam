@@ -46,6 +46,17 @@ export default function Page() {
       <main className="flex h-full w-full items-baseline">
         <section className="w-3/4 px-4 py-2">
           <Audio audioUrl="https://storage.vapi.ai/007515c7-0c90-474b-a0f2-289501f9d702-1754847784236-809ef4dc-f98e-4915-98ef-56f7aa260af4-mono.mp3" />
+          <Button
+            onClick={() =>
+              console.log(
+                `retrieve all the data from backend, push to form's page,
+                 fill in the forms with the data, to let users update it, 
+                 update the form id, if it's different from previous, else leave it alone`,
+              )
+            }
+          >
+            Redo the scenario
+          </Button>
           <h1 className="mt-5 text-center text-2xl font-semibold">
             Title: {session.title}
           </h1>

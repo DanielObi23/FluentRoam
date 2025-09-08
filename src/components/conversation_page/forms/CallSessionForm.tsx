@@ -57,7 +57,7 @@ const formSchema = z.object({
   proficiency: z.string(),
   duration: z.number(),
   speed: z.number(),
-  voiceId: z.string(),
+  voice: z.string(),
 });
 
 export default function CallSessionForm() {
@@ -82,17 +82,28 @@ export default function CallSessionForm() {
     }
   };
 
+  const voice = spanishVoices.male[0];
+  const voiceId = voice.voiceId;
+  const voiceName = voice.name;
+  const voiceGender = "male";
+  const voiceAccent = voice.accent;
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       scenario:
-        "i, the user, am chatting with you, a female friend about your new boyfriend, after a chance encounter on the street",
+        "meeting my mexican girlfriend strict and religious parents to ask for her hand in marriage, i'm from england, visiting them",
       formality: "casual",
       response_length: "detailed",
       proficiency: "B1",
       duration: 10,
       speed: 1,
-      voiceId: spanishVoices.male[0].voiceId,
+      voice: JSON.stringify({
+        voiceId: voiceId,
+        name: voiceName,
+        gender: voiceGender,
+        accent: voiceAccent,
+      }),
     },
   });
 
@@ -101,6 +112,7 @@ export default function CallSessionForm() {
       .getUserMedia({ audio: true })
       .then((stream) => {
         console.log("Microphone access granted:", stream);
+        const voice = JSON.parse(values.voice);
         const params = new URLSearchParams({
           scenario: values.scenario,
           formality: values.formality,
@@ -108,7 +120,10 @@ export default function CallSessionForm() {
           proficiency: values.proficiency,
           duration: values.duration.toString(),
           speed: values.speed.toString(),
-          voiceId: values.voiceId,
+          voiceId: voice.voiceId,
+          name: voice.name,
+          gender: voice.gender,
+          accent: voice.accent,
         });
         router.push(`/conversation/call?${params.toString()}`);
       })
@@ -340,20 +355,25 @@ export default function CallSessionForm() {
         {/* VOICES: When making only for pro users, add disabled to tags, if no subscription, remove the value from the url */}
         <FormField
           control={form.control}
-          name="voiceId"
+          name="voice"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="sr-only">Voices</FormLabel>
               <FormControl>
                 <RadioGroup
-                  defaultValue={spanishVoices.male[0].voiceId}
+                  defaultValue={JSON.stringify({
+                    voiceId,
+                    name: voiceName,
+                    gender: voiceGender,
+                    accent: voiceAccent,
+                  })}
                   onValueChange={field.onChange}
                 >
-                  {(["male", "female"] as const).map((val) => (
-                    <fieldset key={val} className="min-w-0 space-y-2">
+                  {(["male", "female"] as const).map((gender) => (
+                    <fieldset key={gender} className="min-w-0 space-y-2">
                       <legend className="flex w-full justify-between font-medium select-none">
-                        <span className="capitalize">{val} voices:</span>
-                        {val === "male" && (
+                        <span className="capitalize">{gender} voices:</span>
+                        {gender === "male" && (
                           <Popover>
                             <PopoverTrigger>
                               <Info className="size-6 cursor-pointer" />
@@ -367,22 +387,29 @@ export default function CallSessionForm() {
                       </legend>
                       <Carousel className="cursor-grab">
                         <CarouselContent>
-                          {spanishVoices[val].map((voice, index) => (
+                          {spanishVoices[gender].map((voice, index) => (
                             <CarouselItem
                               key={`${voice.voiceId}-${index}`}
                               className="basis-1/2 sm:basis-1/3"
                             >
                               <label
                                 key={`${voice.voiceId}-${index}`}
-                                className="border-input has-data-[state=checked]:border-primary/80 has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative flex flex-col items-center gap-1.5 rounded-md border px-2 py-3 text-center shadow-xs transition-[color,box-shadow] outline-none has-focus-visible:ring-[3px] has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50"
+                                className="border-input has-data-[state=checked]:border-primary/80 has-focus-visible:border-ring has-focus-visible:ring-ring/50 relative flex cursor-grab flex-col items-center gap-1.5 rounded-md border px-2 py-3 text-center shadow-xs transition-[color,box-shadow] outline-none has-focus-visible:ring-[3px] has-data-disabled:cursor-not-allowed has-data-disabled:opacity-50"
                               >
                                 <RadioGroupItem
                                   id={voice.voiceId}
-                                  value={voice.voiceId}
+                                  value={JSON.stringify({
+                                    voiceId: voice.voiceId,
+                                    name: voice.name,
+                                    gender,
+                                    accent: voice.accent,
+                                  })}
                                   className="sr-only after:absolute after:inset-0"
                                   aria-label={`${voice.accent} accent`}
                                 />
                                 <p className="select-none">{voice.name}</p>
+
+                                {/* AUDIO SAMPLE */}
                                 <audio
                                   preload="none"
                                   id={`${voice.voiceId}-${voice.name}`}
@@ -402,13 +429,17 @@ export default function CallSessionForm() {
                                   {/**If audio is playing, show pause, and on click, pause should be button for play */}
                                   {<PlayCircle className="cursor-pointer" />}
                                 </button>
+
                                 <p className="select-none">{voice.accent}</p>
                               </label>
                             </CarouselItem>
                           ))}
                         </CarouselContent>
-                        <CarouselPrevious type="button" className="hidden" />
-                        <CarouselNext type="button" className="hidden" />
+                        <CarouselPrevious
+                          type="button"
+                          className="max-sm:hidden"
+                        />
+                        <CarouselNext type="button" className="max-sm:hidden" />
                       </Carousel>
                     </fieldset>
                   ))}
