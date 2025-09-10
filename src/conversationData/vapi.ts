@@ -1,10 +1,10 @@
 export const vapiPrompt = {
   voice: {
     model: "eleven_turbo_v2_5",
-    speed: 1,
+    speed: 0.7,
     voiceId: "bIHbv24MWmeRgasZH58o",
     provider: "11labs",
-    stability: 0.4,
+    stability: 0.6,
     similarityBoost: 0.75,
   },
   model: {

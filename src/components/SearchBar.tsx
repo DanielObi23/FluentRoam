@@ -80,7 +80,7 @@ export default function SearchBar({
         </Button>
       </div>
 
-      {children}
+      <div className="h-[calc(100vh-17rem)] overflow-auto">{children}</div>
 
       <div ref={pageButtonRef} className="flex items-center justify-end gap-3">
         <Button

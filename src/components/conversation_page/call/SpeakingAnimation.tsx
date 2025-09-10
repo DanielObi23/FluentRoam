@@ -24,26 +24,30 @@ export default function SpeakingAnimation({
   }, [isAISpeaking]);
 
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center self-center">
+    <div className="flex w-full flex-1 flex-col justify-between gap-3">
       <div
         className={cn(
-          "flex h-40 w-40 items-center justify-center rounded-full text-4xl font-bold",
+          "relative mx-auto my-auto flex items-center justify-center rounded-full transition-all duration-300",
           isAISpeaking
-            ? "animate-pulse ring-2 ring-blue-400"
-            : "ring-1 ring-gray-300",
-          "bg-gradient-to-br from-blue-500 to-indigo-600 text-white",
+            ? "size-40 animate-pulse ring-4 ring-blue-400"
+            : "size-32 ring-2 ring-gray-400",
         )}
       >
-        <Lottie
-          lottieRef={lottieRef}
-          autoPlay={false}
-          animationData={animationData}
-        />
+        <div className="bg-background absolute inset-2 flex items-center justify-center rounded-full">
+          <Lottie
+            lottieRef={lottieRef}
+            autoPlay={false}
+            animationData={animationData}
+            style={{ height: "70%", width: "70%" }}
+          />
+        </div>
       </div>
 
-      <p className="text-foreground mt-4 max-h-48 w-full overflow-auto rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-xl bg-gray-600/40 px-4 py-3 text-pretty sm:hidden">
-        {captionIsOn && transcript}
-      </p>
+      {captionIsOn && (
+        <p className="text-foreground w-full overflow-y-auto rounded-lg bg-gray-600/40 px-4 py-3 text-sm sm:hidden">
+          {transcript}
+        </p>
+      )}
     </div>
   );
 }

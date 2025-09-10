@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import Vapi from "@vapi-ai/web";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { vapi } from "@/lib/vapi.sdk";
 import { vapiPrompt } from "@/conversationData/vapi";
 import { useSearchParams } from "next/navigation";
 import CallSessionStatus from "./CallSessionStatus";
@@ -8,9 +8,8 @@ import CallControls from "./CallControls";
 import { toast } from "sonner";
 import { useCallSessionStore, CallStatus } from "@/store";
 
-export default function Call({ vapi, time }: { vapi: Vapi; time: number }) {
-  const search = useSearchParams();
-
+export default function Call() {
+  // store immediately in database, maybe a timeout, after 10+ secs, then store in database, to make sure there's an actual convo being stored
   const callId = useRef("");
   const [isAISpeaking, setIsAISpeaking] = useState(false);
 
@@ -19,20 +18,23 @@ export default function Call({ vapi, time }: { vapi: Vapi; time: number }) {
   const updateTranscript = useCallSessionStore((s) => s.updateTranscript);
   const updateMessages = useCallSessionStore((s) => s.updateMessages);
 
-  const session = {
-    name: search.get("name") ?? "José",
-    accent: search.get("accent") ?? "generic",
-    gender: search.get("gender") ?? "male",
-    scenario: search.get("scenario") ?? "",
-    formality: (search.get("formality") ?? "casual") as "casual" | "formal",
-    response_length: (search.get("response_length") ?? "brief") as
-      | "brief"
-      | "detailed",
-    proficiency: (search.get("proficiency") ?? "B1") as "A2" | "B1" | "B2",
-    duration: Number(search.get("duration") ?? 20) * 60,
-    speed: Number(search.get("speed") ?? 1),
-    voiceId: search.get("voiceId") ?? "bIHbv24MWmeRgasZH58o",
-  };
+  const search = useSearchParams();
+  const session = useMemo(() => {
+    return {
+      name: search.get("name") ?? "José",
+      accent: search.get("accent") ?? "generic",
+      gender: search.get("gender") ?? "male",
+      scenario: search.get("scenario") ?? "",
+      formality: (search.get("formality") ?? "casual") as "casual" | "formal",
+      response_length: (search.get("response_length") ?? "brief") as
+        | "brief"
+        | "detailed",
+      proficiency: (search.get("proficiency") ?? "B1") as "A2" | "B1" | "B2",
+      duration: Number(search.get("duration") ?? 20) * 60, //vapi duration timer is in seconds
+      speed: Number(search.get("speed") ?? 1),
+      voiceId: search.get("voiceId") ?? "bIHbv24MWmeRgasZH58o",
+    };
+  }, []);
 
   const assistant = {
     ...vapiPrompt,
@@ -60,7 +62,6 @@ export default function Call({ vapi, time }: { vapi: Vapi; time: number }) {
   // --- VAPI EVENTS ---
   function onCallStart() {
     updateCallStatus(CallStatus.ACTIVE);
-    console.log("call-started");
     vapi.setMuted(false);
   }
 
@@ -83,6 +84,13 @@ export default function Call({ vapi, time }: { vapi: Vapi; time: number }) {
     vapi.say("This is the end of our conversation, goodbye!", true);
   }
 
+  function onSpeechStart() {
+    setIsAISpeaking(true);
+  }
+  function onSpeechEnd() {
+    setIsAISpeaking(false);
+  }
+
   function handleCurrentSession() {
     if (
       callStatus === CallStatus.INACTIVE ||
@@ -97,30 +105,24 @@ export default function Call({ vapi, time }: { vapi: Vapi; time: number }) {
   useEffect(() => {
     vapi.on("call-start", onCallStart);
     vapi.on("call-end", onCallEnd);
-    vapi.on("speech-start", () => setIsAISpeaking(true));
-    vapi.on("speech-end", () => setIsAISpeaking(false));
+    vapi.on("speech-start", () => onSpeechStart);
+    vapi.on("speech-end", () => onSpeechEnd);
 
     return () => {
       vapi.off("call-start", onCallStart);
       vapi.off("call-end", onCallEnd);
-      vapi.off("speech-start", () => setIsAISpeaking(true));
-      vapi.off("speech-end", () => setIsAISpeaking(false));
+      vapi.off("speech-start", () => onSpeechStart);
+      vapi.off("speech-end", () => onSpeechEnd);
     };
-  }, []);
+  }, [session]); // to prevent recreating event listeners and removing on every render
 
   return (
-    <div className="flex w-full flex-col gap-4 sm:h-2/3 sm:w-1/3">
-      <div className="bg-card flex h-6/7 flex-col items-center gap-7 rounded-lg p-6">
-        <CallSessionStatus
-          time={time}
-          duration={session.duration}
-          vapi={vapi}
-        />
-
+    <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+      <div className="bg-card flex flex-1 flex-col items-center gap-6 overflow-y-auto rounded-lg p-6">
+        <CallSessionStatus />
         <SpeakingAnimation isAISpeaking={isAISpeaking} />
       </div>
-
-      <CallControls vapi={vapi} handleCurrentSession={handleCurrentSession} />
+      <CallControls handleCurrentSession={handleCurrentSession} />
     </div>
   );
 }
