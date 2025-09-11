@@ -36,7 +36,7 @@ export default function ConversationHistoryTable({
   return (
     <Table className={className}>
       <TableHeader>
-        <TableRow className="text-2xl font-semibold">
+        <TableRow className="text-xl font-semibold lg:text-2xl">
           <TableHead>Title</TableHead>
           <TableHead className="text-center">Type</TableHead>
           <TableHead className="text-center">Details</TableHead>
@@ -46,8 +46,8 @@ export default function ConversationHistoryTable({
         {sessionList.map((session, index) => {
           return (
             <TableRow key={`${session.id}-${index}`}>
-              <TableCell className="md:text-2xl">{session.title}</TableCell>
-              <TableCell className="text-center">Call</TableCell>
+              <TableCell className="lg:text-xl">{session.title}</TableCell>
+              <TableCell className="text-center lg:text-lg">Call</TableCell>
               <TableCell className="text-center">
                 <Button asChild>
                   <Link href={`/conversation/feedback/${session.session_id}`}>

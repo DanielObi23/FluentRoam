@@ -24,6 +24,7 @@ export default function SearchBar({
   );
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const pageButtonRef = useRef<HTMLDivElement | null>(null);
+  const tableRef = useRef<HTMLDivElement | null>(null);
   const { pageLimit } = useSearchBar();
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function SearchBar({
   return (
     <>
       <div className="flex w-full items-center justify-between gap-2">
-        <div className="flex items-center justify-center gap-2 md:w-3/7 md:self-start">
+        <div className="flex items-center justify-center gap-2 md:w-5/7 md:self-start lg:w-3/7 xl:w-2/7">
           <div className="relative w-full">
             <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
               <Search className="size-4" />
@@ -52,7 +53,7 @@ export default function SearchBar({
                 updateSearchState(e.target.value, 1);
               }}
               className="peer ps-9 placeholder:text-white"
-              placeholder="Type something..."
+              placeholder="Search"
             />
             {search && (
               <Button
@@ -80,11 +81,19 @@ export default function SearchBar({
         </Button>
       </div>
 
-      <div className="h-[calc(100vh-17rem)] overflow-auto">{children}</div>
+      <div
+        ref={tableRef}
+        className="my-8 max-h-[calc(100vh-18rem)] overflow-auto"
+      >
+        {children}
+      </div>
 
       <div ref={pageButtonRef} className="flex items-center justify-end gap-3">
         <Button
-          onClick={() => setPage((prev) => prev - 1)}
+          onClick={() => {
+            setPage((prev) => prev - 1);
+            tableRef.current?.scroll(0, 0);
+          }}
           disabled={page <= 1}
           className="md:text-lg"
         >
@@ -92,7 +101,10 @@ export default function SearchBar({
         </Button>
 
         <Button
-          onClick={() => setPage((prev) => prev + 1)}
+          onClick={() => {
+            setPage((prev) => prev + 1);
+            tableRef.current?.scroll(0, 0);
+          }}
           disabled={tableList.length < pageLimit}
           className="md:text-lg"
         >

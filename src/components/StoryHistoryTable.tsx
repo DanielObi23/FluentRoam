@@ -38,7 +38,7 @@ export default function StoryHistoryTable({
         <TableRow>
           <TableHead></TableHead>
           <TableHead>Title</TableHead>
-          <TableHead>Story Type</TableHead>
+          <TableHead>Type</TableHead>
           <TableHead>Proficiency</TableHead>
           <TableHead>Genre</TableHead>
           <TableHead>Theme</TableHead>
@@ -52,7 +52,9 @@ export default function StoryHistoryTable({
             <TableRow key={`${story.id}-${index}`}>
               <TableCell>
                 <Button asChild>
-                  <Link href={`/story/${story.id}`}>View Story</Link>
+                  <Link href={`/story/${story.id}`}>
+                    View <span className="hidden md:block">Story</span>
+                  </Link>
                 </Button>
               </TableCell>
               <TableCell className="max-w-xs">{story.title}</TableCell>

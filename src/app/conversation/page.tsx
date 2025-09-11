@@ -10,7 +10,7 @@ export default function Page() {
     <Main page="Conversation">
       <section
         aria-labelledby="Conversation histroy list"
-        className="space-y-7 self-start px-8 py-6 md:w-3/5 md:px-10 md:py-8"
+        className="self-start px-8 py-6 md:w-3/5 md:px-10 md:py-8"
       >
         <SessionsTable />
       </section>

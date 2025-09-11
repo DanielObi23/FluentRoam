@@ -13,7 +13,7 @@ export default function Main({
   return (
     <div className="bg-background flex h-screen w-full flex-col">
       <Navigation page={page} />
-      <main className={twMerge("flex-1 overflow-auto p-1.5 md:p-3", className)}>
+      <main className={twMerge("flex-1 overflow-auto p-1.5 md:p-3")}>
         <div
           className={twMerge(
             "flex min-h-full items-center justify-center",

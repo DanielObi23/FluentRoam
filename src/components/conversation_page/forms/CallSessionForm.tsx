@@ -437,9 +437,9 @@ export default function CallSessionForm() {
                         </CarouselContent>
                         <CarouselPrevious
                           type="button"
-                          className="max-sm:hidden"
+                          className="max-lg:hidden"
                         />
-                        <CarouselNext type="button" className="max-sm:hidden" />
+                        <CarouselNext type="button" className="max-lg:hidden" />
                       </Carousel>
                     </fieldset>
                   ))}
