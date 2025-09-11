@@ -4,19 +4,19 @@ import { cn } from "@/lib/utils";
 import defaultProfile from "../../../../public/default_profile.jpg";
 import fluentroam from "../../../../public/logo/fluentroam.jpg";
 import { Conversation } from "@/hooks/use-conversationMessage";
-import { memo, Ref } from "react";
+import { memo } from "react";
+import { useUser } from "@clerk/nextjs";
+import useConversationMessage from "@/hooks/use-conversationMessage";
 
-function TranscriptMessage({
+function CallTranscriptMessage({
   message,
   index,
-  translate,
-  userImage,
 }: {
   message: Conversation;
   index: number;
-  translate: (text: string, index: number) => void;
-  userImage: string | null | undefined;
 }) {
+  const { user } = useUser();
+  const { translate } = useConversationMessage();
   const isAssistant = message.role === "assistant";
 
   return (
@@ -25,9 +25,6 @@ function TranscriptMessage({
         isAssistant ? "justify-start self-start" : "justify-end self-end",
         "flex w-8/9 flex-col gap-x-0.5 md:w-5/7",
       )}
-      onDoubleClick={
-        isAssistant ? () => translate(message.transcript, index) : undefined
-      }
     >
       <div
         className={cn(
@@ -54,7 +51,9 @@ function TranscriptMessage({
         <Avatar className="self-end">
           <AvatarImage
             src={
-              isAssistant ? fluentroam.src : (userImage ?? defaultProfile.src)
+              isAssistant
+                ? fluentroam.src
+                : (user?.imageUrl ?? defaultProfile.src)
             }
             className="object-cover"
           />
@@ -78,4 +77,4 @@ function TranscriptMessage({
   );
 }
 
-export default memo(TranscriptMessage);
+export default memo(CallTranscriptMessage);

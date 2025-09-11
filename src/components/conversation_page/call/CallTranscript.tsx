@@ -1,12 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import { useUser } from "@clerk/nextjs";
 import useConversationMessage from "@/hooks/use-conversationMessage";
-import TranscriptMessage from "./TranscriptMessage";
+import CallTranscriptMessage from "./CallTranscriptMessage";
 
 export default function CallTranscript() {
   const [showTranscript, setShowTranscript] = useState(true);
-  const { user } = useUser();
   const scrollRef = useRef<HTMLDivElement>(null);
   const { messages, translate } = useConversationMessage();
 
@@ -38,13 +36,7 @@ export default function CallTranscript() {
       >
         {showTranscript &&
           messages.map((m, i) => (
-            <TranscriptMessage
-              key={i}
-              message={m}
-              index={i}
-              translate={translate}
-              userImage={user?.imageUrl}
-            />
+            <CallTranscriptMessage key={i} message={m} index={i} />
           ))}
       </div>
     </div>

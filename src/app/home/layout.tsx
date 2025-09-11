@@ -10,10 +10,10 @@ export default function HomeLayout({
   storyHistory: React.ReactNode;
 }) {
   return (
-    <Main page="HomePage">
+    <Main page="HomePage" className="flex">
       <h1 className="sr-only">FluentRoam Home Page</h1>
 
-      <section className="dark:bg-primary/10 bg-primary-800/30 hidden max-h-[calc(100%-0.75rem)] w-1/3 justify-center overflow-auto rounded-xl p-3 lg:flex 2xl:w-1/4 2xl:items-center">
+      <section className="dark:bg-primary/10 bg-primary-800/30 hidden h-full w-1/3 justify-center rounded-xl p-3 lg:flex 2xl:w-1/4 2xl:items-center">
         {children}
       </section>
 

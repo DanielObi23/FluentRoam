@@ -108,10 +108,22 @@ export default function Page() {
         />
         <div
           className={cn(
-            "text-bold flex h-2/7 w-2/5 flex-col items-center justify-center gap-2 text-2xl",
+            "text-bold relative flex h-2/7 w-2/5 flex-col items-center justify-center gap-2 text-2xl",
             showAns ? "bg-blue-800" : "bg-red-800",
           )}
         >
+          <Button
+            className="absolute top-3 right-3"
+            variant={"secondary"}
+            onClick={() => {
+              setCurrentCardNum((prev) => prev + 1);
+              setShowAns(false);
+              setShowHint(false);
+            }}
+            disabled={currentCardNum === cardList.length - 1}
+          >
+            Next
+          </Button>
           <p className="text-2xl font-bold">
             {showAns
               ? cardList[currentCardNum].translation
@@ -135,6 +147,7 @@ export default function Page() {
             {showHint ? "Hide" : "Show"} Hint
           </Button>
         </div>
+
         <Button variant={"outline"} onClick={() => setShowAns(!showAns)}>
           {showAns ? "Hide" : "Show"} Answer
         </Button>
@@ -146,17 +159,6 @@ export default function Page() {
           {/* Bury from the whole deck, absolute buttom */}
           <Button variant={"destructive"}>Bury</Button>
         </div>
-        <Button
-          variant={"secondary"}
-          onClick={() => {
-            setCurrentCardNum((prev) => prev + 1);
-            setShowAns(false);
-            setShowHint(false);
-          }}
-          disabled={currentCardNum === cardList.length - 1}
-        >
-          Next
-        </Button>
       </div>
     </div>
   );

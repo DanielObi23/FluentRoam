@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ConversationForms() {
   return (
-    <Tabs defaultValue="call" className="w-[400px]">
+    <Tabs defaultValue="call" className="m-auto w-[400px]">
       <div className="flex w-full items-center justify-around">
         <p className="font-ui text-xl font-semibold xl:text-2xl">
           Start Conversation

@@ -11,17 +11,15 @@ export default function Main({
   className?: string;
 }) {
   return (
-    <div className="bg-background flex h-screen w-full flex-col">
+    <div className="bg-background flex h-screen w-full flex-col overflow-auto">
       <Navigation page={page} />
-      <main className={twMerge("flex-1 overflow-auto p-1.5 md:p-3")}>
-        <div
-          className={twMerge(
-            "flex min-h-full items-center justify-center",
-            className,
-          )}
-        >
-          {children}
-        </div>
+      <main
+        className={twMerge(
+          "h-[calc(100vh-5rem)] overflow-auto p-1.5 md:p-3",
+          className,
+        )}
+      >
+        {children}
       </main>
     </div>
   );

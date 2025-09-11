@@ -29,7 +29,6 @@ export type Conversation = {
 
 export default function useConversationMessage() {
   const messages = useCallSessionStore((state) => state.messages);
-
   const addMessage = useCallback(
     (transcript: string, role: "assistant" | "user") => {
       const { messages, updateMessages, updateTranscript } =
@@ -85,14 +84,14 @@ export default function useConversationMessage() {
     try {
       const response = await axios.post("/api/translate", {
         text,
-        from: "it",
-        to: "es",
+        from: "es",
+        to: "en",
       });
 
-      const translation = response.data;
+      const translation = response.data.message;
 
       const newMsgs = [...messages];
-      newMsgs[index] = { ...newMsgs[index], translation: translation.message };
+      newMsgs[index] = { ...newMsgs[index], translation };
       updateMessages(newMsgs);
     } catch (err) {
       toast("error translating, please try again");
