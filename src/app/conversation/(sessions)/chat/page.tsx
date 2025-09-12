@@ -1,35 +1,62 @@
 "use client";
+//TODO: make selected voice to be the voice for translation and messages, do one for english as well, make sure it persists so user doesnt have to keep choosing on page reload,
+// and restarting/creating conversation
+// memoise the chatTranscriptMessage, and the props being passed down,
+// the page is rerendering several times, fix that
+// make it so that users can translate, and select voice on mobile as well
+// put the restart button somewhere else
+
 //TODO: CHAT PERSISTS ON PAGE RELOAD, ALSO ON COMPONENT DISMOUNT. I'M THINKING GETTING IT DIRECTLY FROM VAPI, JUST STORE chatIdRef and assistantID
+
 //TODO: SEPARATE THE COMPONENTS
 //TODO: ADD ANIMATIONS TO TELL USER TO START TYPING, ELEVENLABS AUDIO TRANSCRIBER, TRANSLATOR, ANIMATION LOADER WAITING FOR RESPONSE, ERROR HANDLING
 
 import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, SendHorizontal } from "lucide-react";
-import axios from "axios";
+import { Mic, RotateCcw, SendHorizontal } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useSearchParams } from "next/navigation";
 import Main from "@/components/tags/Main";
 import { Translator } from "@/components/Translator";
 import ChatTranscriptMessage from "@/components/conversation_page/chat/ChatTranscriptMessage";
-
-interface ChatMessage {
-  role: "user" | "assistant";
-  text: string;
-  loading: boolean;
-  translation?: string;
-}
+import { useChatSessionStore } from "@/store";
+import useChatTranscript from "@/hooks/use-chatTranscript";
+import { toast } from "sonner";
+import { useRouter, useSearchParams } from "next/navigation";
+import Lottie from "lottie-react";
+import animationData from "../../../../../public/lottie-animation/loading.json";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Page() {
   const search = useSearchParams();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const chatIdRef = useRef("");
+  const router = useRouter();
+  if (!search.get("scenario")) {
+    toast("Please create a scenario to start conversation", {
+      position: "top-center",
+    });
+    //redirect("/conversation"); for when retrieving call data from backend, remember to pass duration into useTimer when backend is ready
+    router.replace("/conversation");
+
+    return (
+      <Main page="Conversation">
+        <Lottie autoPlay={false} animationData={animationData} />
+      </Main>
+    );
+  }
+  const messages = useChatSessionStore((s) => s.messages);
+  // const setChatId = useChatSessionStore((s) => s.setChatId);
+  //const chatIdRef = useRef("");
+  //const languageSourceCode = "es";
 
   const textMessageRef = useRef<HTMLTextAreaElement>(null);
+  const { sendMessage, recordMessage, restartConversation, voiceList } =
+    useChatTranscript();
   const scrollRef = useRef<HTMLDivElement>(null);
-  const recognitionRef = useRef(
-    new window.SpeechRecognition() || window.webkitSpeechRecognition,
-  );
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
@@ -37,90 +64,6 @@ export default function Page() {
       behavior: "smooth",
     });
   }, [messages]);
-
-  async function startConversation() {
-    setMessages([
-      {
-        role: "assistant",
-        text: "....Retrieving response",
-        loading: true,
-      },
-    ]);
-    //HANDLE IF ANY DATA IS MISSING
-    const result = await axios.post("/api/chat", {
-      scenario: search.get("scenario"),
-      formality: search.get("formality"),
-      response_length: search.get("response_length"),
-      proficiency: search.get("proficiency"),
-      chatId: "",
-      message: "",
-    });
-    chatIdRef.current = result.data.chatId;
-    setMessages([
-      {
-        role: "assistant",
-        text: result.data.message,
-        loading: false,
-      },
-    ]);
-  }
-
-  async function sendMessage() {
-    recognitionRef.current.stop();
-    const message = (textMessageRef.current as HTMLTextAreaElement).value;
-    if (message.trim().length === 0) {
-      return;
-    }
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "user",
-        text: message,
-        loading: false,
-      },
-      {
-        role: "assistant",
-        text: "....Retrieving response",
-        loading: true,
-      },
-    ]);
-
-    (textMessageRef.current as HTMLTextAreaElement).value = "";
-    (textMessageRef.current as HTMLTextAreaElement).focus();
-
-    const result = await axios.post("/api/chat", {
-      message,
-      chatId: chatIdRef.current,
-    });
-    chatIdRef.current = result.data.chatId;
-    setMessages((prev) => [
-      ...prev.slice(0, prev.length - 1),
-      {
-        role: "assistant",
-        text: result.data.message,
-        loading: false,
-      },
-    ]);
-  }
-
-  function recordMessage() {
-    // const SpeechRecognition =
-    //   window.SpeechRecognition || window.webkitSpeechRecognition;
-    // const recognition = new SpeechRecognition();
-    recognitionRef.current.lang = "es";
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.start();
-    recognitionRef.current.onresult = async function (event) {
-      const transcript = event.results[event.results.length - 1][0].transcript;
-      (textMessageRef.current as HTMLTextAreaElement).value += " " + transcript;
-      //setText(transcript);
-    };
-  }
-
-  useEffect(() => {
-    startConversation();
-  }, []);
 
   //Handle another audio being clicked whilst one is playing, it's currently cued, stop the one playing, and start playing the other one
 
@@ -135,16 +78,14 @@ export default function Page() {
             <ChatTranscriptMessage
               key={index}
               index={index}
-              messages={messages}
               message={message}
-              setMessages={setMessages}
             />
           ))}
         </div>
 
         {/* TYPING AREA */}
         <div className="flex items-center gap-2 p-3">
-          <Button onClick={recordMessage} className="">
+          <Button onClick={() => recordMessage(textMessageRef)}>
             <Mic />
           </Button>
 
@@ -156,13 +97,19 @@ export default function Page() {
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                sendMessage();
+                sendMessage(textMessageRef);
               }
             }}
           />
 
-          <Button onClick={sendMessage} className="">
+          <Button onClick={() => sendMessage(textMessageRef)} className="">
             <SendHorizontal />
+          </Button>
+          <Button
+            onClick={() => restartConversation(textMessageRef)}
+            className=""
+          >
+            <RotateCcw />
           </Button>
         </div>
       </section>
@@ -170,7 +117,19 @@ export default function Page() {
       <section className="flex w-2/5 flex-col items-center gap-10 py-10 max-md:hidden">
         {/* TRANSLATOR */}
         <div className="flex h-4/7 w-full flex-col items-center gap-3">
-          {/* <select id="voiceSelect"></select> */}
+          <Select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Voices" />
+            </SelectTrigger>
+            <SelectContent>
+              {voiceList.map((voice) => (
+                <SelectItem
+                  key={voice.voiceURI}
+                  value={voice.voiceURI}
+                >{`${voice.name} - ${voice.lang}`}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Translator />
         </div>
       </section>

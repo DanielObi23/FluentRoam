@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { Conversation } from "./hooks/use-conversationMessage";
+import { persist } from "zustand/middleware";
+import { Conversation } from "./hooks/use-callTranscript";
 
 export enum CallStatus {
   INACTIVE = "INACTIVE",
@@ -46,6 +46,43 @@ export const useCallSessionStore = create<CallSessionStore>()(
       clock: "00:00",
       updateClock: (time) => {
         set({ clock: time });
+      },
+    }),
+    {
+      name: "call-session-storage",
+    },
+  ),
+);
+
+interface ChatMessage {
+  role: "user" | "assistant";
+  text: string;
+  translation?: string;
+}
+
+type ChatSessionStore = {
+  chatId: string;
+  setChatId: (id: string) => void;
+  messages: ChatMessage[];
+  setMessages: (message: ChatMessage[]) => void;
+  addMessage: (message: ChatMessage) => void;
+};
+
+// think of pushing messages, only reset it when translation occurs
+export const useChatSessionStore = create<ChatSessionStore>()(
+  persist(
+    (set, get) => ({
+      chatId: "",
+      setChatId: (id) => {
+        set({ chatId: id });
+      },
+      messages: [],
+      setMessages: (message) => {
+        console.log(Math.random, { message });
+        set({ messages: message });
+      },
+      addMessage: (message) => {
+        set((state) => ({ messages: [...state.messages, message] }));
       },
     }),
     {

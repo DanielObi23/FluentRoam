@@ -4,97 +4,28 @@ import defaultProfile from "../../../../public/default_profile.jpg";
 import fluentroam from "../../../../public/logo/fluentroam.jpg";
 import { Button } from "@/components/ui/button";
 import { Volume2, Copy } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+
 import axios from "axios";
 import { toast } from "sonner";
 import { memo } from "react";
+import useChatTranscript from "@/hooks/use-chatTranscript";
 
 interface ChatMessage {
   role: "user" | "assistant";
   text: string;
-  loading: boolean;
+  //loading: boolean;
   translation?: string;
 }
 
 function ChatTranscriptMessage({
   message,
   index,
-  messages,
-  setMessages,
 }: {
   message: ChatMessage;
   index: number;
-  messages: ChatMessage[];
-  setMessages: (text: ChatMessage[]) => void;
 }) {
-  const { user } = useUser();
+  const { userImage, translate, playAudio, handleCopy } = useChatTranscript();
   const isAssistant = message.role === "assistant";
-  const languageSourceCode = "es";
-  const languageTargetCode = "en";
-
-  const playAudio = (text: string, language: string) => {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      //utterance.getVoices();
-      utterance.lang = "es-MX";
-      speechSynthesis.speak(utterance);
-    }
-  };
-
-  // function populateVoiceList() {
-  //   if (typeof speechSynthesis === "undefined") {
-  //     return;
-  //   }
-
-  //   const voices = speechSynthesis.getVoices();
-
-  //   for (const voice of voices) {
-  //     const option = document.createElement("option");
-  //     option.textContent = `${voice.name} (${voice.lang})`;
-
-  //     if (voice.default) {
-  //       option.textContent += " — DEFAULT";
-  //     }
-
-  //     option.setAttribute("data-lang", voice.lang);
-  //     option.setAttribute("data-name", voice.name);
-  //     document.getElementById("voiceSelect").appendChild(option);
-  //   }
-  // }
-
-  // populateVoiceList();
-
-  // if (
-  //   typeof speechSynthesis !== "undefined" &&
-  //   speechSynthesis.onvoiceschanged !== undefined
-  // ) {
-  //   speechSynthesis.onvoiceschanged = populateVoiceList;
-  // }
-
-  async function translate(text: string, index: number) {
-    try {
-      const response = await axios.post("/api/translate", {
-        text,
-        from: languageSourceCode,
-        to: languageTargetCode,
-      });
-
-      const translation = response.data.message;
-
-      const newMsgs = [...messages];
-      newMsgs[index] = { ...newMsgs[index], translation };
-      setMessages(newMsgs);
-    } catch (err) {
-      toast("error translating, please try again");
-    }
-  }
-
-  const handleCopy = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast("Copied to clipboard", {
-      description: "Text has been copied to your clipboard.",
-    });
-  };
 
   return (
     <div
@@ -120,7 +51,7 @@ function ChatTranscriptMessage({
         >
           <p>{message.text}</p>
           {message.translation && (
-            <p className="text-foreground w-full rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-xl bg-gray-600/40 px-4 py-3 text-pretty">
+            <p className="w-full rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-xl bg-gray-600/40 px-4 py-3 text-pretty text-gray-200">
               {message.translation}
             </p>
           )}
@@ -129,9 +60,7 @@ function ChatTranscriptMessage({
         <Avatar className={cn(isAssistant ? "self-end" : "self-end", "")}>
           <AvatarImage
             src={
-              isAssistant
-                ? fluentroam.src
-                : (user?.imageUrl ?? defaultProfile.src)
+              isAssistant ? fluentroam.src : (userImage ?? defaultProfile.src)
             }
             className="object-cover"
           />
@@ -157,7 +86,7 @@ function ChatTranscriptMessage({
         <Button
           variant={"outline"}
           size="icon"
-          onClick={() => playAudio(message.text, languageSourceCode)}
+          onClick={() => playAudio(message.text)}
         >
           <Volume2 />
         </Button>

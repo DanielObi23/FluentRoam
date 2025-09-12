@@ -5,6 +5,7 @@ import SessionsTable from "@/components/conversation_page/SessionsTable";
 import Main from "@/components/tags/Main";
 
 //TODO: use react query to query first 50 pages, then cache it
+// maybe empty out messages in call and chat session, to free up storage
 export default function Page() {
   return (
     <Main page="Conversation" className="flex gap-4">

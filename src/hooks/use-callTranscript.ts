@@ -3,6 +3,7 @@ import { vapi } from "@/lib/vapi.sdk";
 import { useCallSessionStore } from "@/store";
 import axios from "axios";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 type UserMessage = {
   type: "transcript";
@@ -27,7 +28,8 @@ export type Conversation = {
   translation?: string;
 };
 
-export default function useConversationMessage() {
+export default function useCallTranscript() {
+  const { user } = useUser();
   const messages = useCallSessionStore((state) => state.messages);
   const addMessage = useCallback(
     (transcript: string, role: "assistant" | "user") => {
@@ -111,5 +113,5 @@ export default function useConversationMessage() {
     };
   }, [onMessage]); // to prevent recreating event listeners and removing on every render
 
-  return { translate, messages };
+  return { translate, messages, userImage: user?.imageUrl };
 }

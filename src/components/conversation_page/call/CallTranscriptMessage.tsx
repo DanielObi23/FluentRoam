@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import defaultProfile from "../../../../public/default_profile.jpg";
 import fluentroam from "../../../../public/logo/fluentroam.jpg";
-import { Conversation } from "@/hooks/use-conversationMessage";
+import { Conversation } from "@/hooks/use-callTranscript";
 import { memo } from "react";
-import { useUser } from "@clerk/nextjs";
-import useConversationMessage from "@/hooks/use-conversationMessage";
+import useCallTranscript from "@/hooks/use-callTranscript";
 
 function CallTranscriptMessage({
   message,
@@ -15,8 +14,7 @@ function CallTranscriptMessage({
   message: Conversation;
   index: number;
 }) {
-  const { user } = useUser();
-  const { translate } = useConversationMessage();
+  const { translate, userImage } = useCallTranscript();
   const isAssistant = message.role === "assistant";
 
   return (
@@ -51,9 +49,7 @@ function CallTranscriptMessage({
         <Avatar className="self-end">
           <AvatarImage
             src={
-              isAssistant
-                ? fluentroam.src
-                : (user?.imageUrl ?? defaultProfile.src)
+              isAssistant ? fluentroam.src : (userImage ?? defaultProfile.src)
             }
             className="object-cover"
           />

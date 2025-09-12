@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import useConversationMessage from "@/hooks/use-conversationMessage";
+import useCallTranscript from "@/hooks/use-callTranscript";
 import CallTranscriptMessage from "./CallTranscriptMessage";
 
 export default function CallTranscript() {
   const [showTranscript, setShowTranscript] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { messages, translate } = useConversationMessage();
+  const { messages } = useCallTranscript();
 
   useEffect(() => {
     scrollRef.current?.scrollTo({
