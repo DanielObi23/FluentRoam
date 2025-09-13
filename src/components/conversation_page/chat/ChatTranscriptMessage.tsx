@@ -4,27 +4,29 @@ import defaultProfile from "../../../../public/default_profile.jpg";
 import fluentroam from "../../../../public/logo/fluentroam.jpg";
 import { Button } from "@/components/ui/button";
 import { Volume2, Copy } from "lucide-react";
-
-import axios from "axios";
-import { toast } from "sonner";
 import { memo } from "react";
-import useChatTranscript from "@/hooks/use-chatTranscript";
 
 interface ChatMessage {
   role: "user" | "assistant";
   text: string;
-  //loading: boolean;
   translation?: string;
 }
 
 function ChatTranscriptMessage({
   message,
   index,
+  playAudio,
+  userImage,
+  handleCopy,
+  translate,
 }: {
   message: ChatMessage;
   index: number;
+  playAudio: (text: string) => void;
+  userImage: string | undefined;
+  handleCopy: (text: string) => void;
+  translate: (text: string, index: number) => void;
 }) {
-  const { userImage, translate, playAudio, handleCopy } = useChatTranscript();
   const isAssistant = message.role === "assistant";
 
   return (

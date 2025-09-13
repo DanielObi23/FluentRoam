@@ -1,19 +1,9 @@
 "use client";
-//TODO: make selected voice to be the voice for translation and messages, do one for english as well, make sure it persists so user doesnt have to keep choosing on page reload,
-// and restarting/creating conversation
-// memoise the chatTranscriptMessage, and the props being passed down,
-// the page is rerendering several times, fix that
-// make it so that users can translate, and select voice on mobile as well
-// put the restart button somewhere else
+//TODO: CHAT PERSISTS ON PAGE RELOAD, ALSO ON COMPONENT DISMOUNT. I'M THINKING GETTING IT DIRECTLY FROM VAPI, JUST STORE chatId and assistantID, instead of localStorage with zustand
 
-//TODO: CHAT PERSISTS ON PAGE RELOAD, ALSO ON COMPONENT DISMOUNT. I'M THINKING GETTING IT DIRECTLY FROM VAPI, JUST STORE chatIdRef and assistantID
-
-//TODO: SEPARATE THE COMPONENTS
-//TODO: ADD ANIMATIONS TO TELL USER TO START TYPING, ELEVENLABS AUDIO TRANSCRIBER, TRANSLATOR, ANIMATION LOADER WAITING FOR RESPONSE, ERROR HANDLING
-
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect, RefObject } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, RotateCcw, SendHorizontal } from "lucide-react";
+import { Mic, SendHorizontal } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Main from "@/components/tags/Main";
 import { Translator } from "@/components/Translator";
@@ -31,10 +21,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import ChatFeatures from "@/components/conversation_page/chat/ChatFeatures";
 
 export default function Page() {
   const search = useSearchParams();
   const router = useRouter();
+
   if (!search.get("scenario")) {
     toast("Please create a scenario to start conversation", {
       position: "top-center",
@@ -48,14 +50,21 @@ export default function Page() {
       </Main>
     );
   }
-  const messages = useChatSessionStore((s) => s.messages);
-  // const setChatId = useChatSessionStore((s) => s.setChatId);
-  //const chatIdRef = useRef("");
-  //const languageSourceCode = "es";
 
+  const messages = useChatSessionStore((s) => s.messages);
   const textMessageRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage, recordMessage, restartConversation, voiceList } =
-    useChatTranscript();
+  const {
+    sendMessage,
+    recordMessage,
+    restartConversation,
+    voiceList,
+    setSelectedVoice,
+    playAudio,
+    userImage,
+    handleCopy,
+    translate,
+    selectedVoiceURI,
+  } = useChatTranscript();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -65,11 +74,20 @@ export default function Page() {
     });
   }, [messages]);
 
-  //Handle another audio being clicked whilst one is playing, it's currently cued, stop the one playing, and start playing the other one
-
+  console.log(222); // rerendering 10 times
   return (
     <Main page="Chat" className="flex h-[calc(100vh-5rem)] w-full">
-      <section className="flex w-3/5 flex-col p-4 max-md:w-full">
+      <section className="relative flex w-3/5 flex-col p-4 max-md:w-full">
+        <ChatFeatures
+          voiceList={voiceList}
+          playAudio={playAudio}
+          setSelectedVoice={setSelectedVoice}
+          restartConversation={restartConversation}
+          selectedVoiceURI={selectedVoiceURI}
+          textMessageRef={textMessageRef as RefObject<HTMLTextAreaElement>}
+        />
+
+        {/* CHAT AREA */}
         <div
           ref={scrollRef}
           className="hide-scrollbar dark:bg-primary/10 bg-primary-800/30 flex flex-1 flex-col gap-3 overflow-y-scroll p-4"
@@ -79,6 +97,10 @@ export default function Page() {
               key={index}
               index={index}
               message={message}
+              playAudio={playAudio}
+              userImage={userImage}
+              handleCopy={handleCopy}
+              translate={translate}
             />
           ))}
         </div>
@@ -105,32 +127,69 @@ export default function Page() {
           <Button onClick={() => sendMessage(textMessageRef)} className="">
             <SendHorizontal />
           </Button>
-          <Button
-            onClick={() => restartConversation(textMessageRef)}
-            className=""
-          >
-            <RotateCcw />
-          </Button>
         </div>
       </section>
 
       <section className="flex w-2/5 flex-col items-center gap-10 py-10 max-md:hidden">
-        {/* TRANSLATOR */}
-        <div className="flex h-4/7 w-full flex-col items-center gap-3">
-          <Select>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Voices" />
-            </SelectTrigger>
-            <SelectContent>
-              {voiceList.map((voice) => (
-                <SelectItem
-                  key={voice.voiceURI}
-                  value={voice.voiceURI}
-                >{`${voice.name} - ${voice.lang}`}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Translator />
+        <div className="flex h-4/7 w-full flex-col items-center gap-5">
+          {/* VOICE SELECT */}
+          {voiceList.length > 0 && (
+            <div className="flex w-full flex-wrap items-center justify-center gap-2">
+              <Button onClick={() => playAudio("hola, qué tal")}>
+                Test Voice
+              </Button>
+              <Select
+                onValueChange={(voiceURI) => {
+                  setSelectedVoice(voiceURI);
+                }}
+                defaultValue={selectedVoiceURI}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Voices" />
+                </SelectTrigger>
+                <SelectContent defaultValue={selectedVoiceURI}>
+                  {voiceList.map((voice) => (
+                    <SelectItem
+                      key={voice.voiceURI}
+                      value={voice.voiceURI as string}
+                    >{`${voice.name} - ${voice.lang}`}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
+          {/* TRANSLATOR */}
+          <Translator playLearningAudio={playAudio} />
+          <Dialog>
+            <DialogTrigger asChild className="self-end">
+              <Button variant="destructive">Restart Conversation</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Restart Conversation</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to restart conversation?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex items-center sm:justify-between">
+                <DialogClose asChild>
+                  <Button type="button" variant="secondary">
+                    Close
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    variant={"destructive"}
+                    onClick={() => restartConversation(textMessageRef)}
+                    className="self-end"
+                  >
+                    Restart<span className="max-sm:hidden">Conversation</span>
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </section>
     </Main>

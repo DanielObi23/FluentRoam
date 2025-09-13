@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { vapi } from "@/lib/vapi.sdk";
-import { vapiPrompt } from "@/conversationData/vapi";
+import { vapiPrompt } from "@/utils/conversationData/vapi";
 import { useSearchParams } from "next/navigation";
 import CallSessionStatus from "./CallSessionStatus";
 import SpeakingAnimation from "./SpeakingAnimation";

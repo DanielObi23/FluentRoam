@@ -32,7 +32,7 @@ import { useRouter } from "next/navigation";
 import { Info, PlayCircle } from "lucide-react";
 import { Input } from "../../ui/input";
 import { useState, useRef } from "react";
-import { spanishVoices } from "@/conversationData/spanishVapi";
+import { spanishVoices } from "@/utils/conversationData/spanishVapi";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,

@@ -66,9 +66,10 @@ type ChatSessionStore = {
   messages: ChatMessage[];
   setMessages: (message: ChatMessage[]) => void;
   addMessage: (message: ChatMessage) => void;
+  selectedVoiceURI: string;
+  setVoiceURI: (voice: string) => void;
 };
 
-// think of pushing messages, only reset it when translation occurs
 export const useChatSessionStore = create<ChatSessionStore>()(
   persist(
     (set, get) => ({
@@ -78,11 +79,14 @@ export const useChatSessionStore = create<ChatSessionStore>()(
       },
       messages: [],
       setMessages: (message) => {
-        console.log(Math.random, { message });
         set({ messages: message });
       },
       addMessage: (message) => {
         set((state) => ({ messages: [...state.messages, message] }));
+      },
+      selectedVoiceURI: "",
+      setVoiceURI: (voice) => {
+        set({ selectedVoiceURI: voice });
       },
     }),
     {

@@ -6,15 +6,19 @@ import axios from "axios";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpDown, Copy, Volume2, Languages, X } from "lucide-react";
 import { toast } from "sonner";
+import { languages } from "@/utils/language";
 
-const languages = [
-  { code: "en", name: "English" },
-  { code: "es", name: "Spanish" },
-];
-
-export function Translator() {
-  const [sourceLanguage, setSourceLanguage] = useState(languages[0].code);
-  const [targetLanguage, setTargetLanguage] = useState(languages[1].code);
+export function Translator({
+  playLearningAudio,
+}: {
+  playLearningAudio: (text: string) => void;
+}) {
+  const [sourceLanguage, setSourceLanguage] = useState(
+    languages.userLanguage.code,
+  );
+  const [targetLanguage, setTargetLanguage] = useState(
+    languages.targetLanguage.code,
+  );
   const [sourceText, setSourceText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
 
@@ -33,6 +37,11 @@ export function Translator() {
   };
 
   const handleSpeak = (text: string, language: string) => {
+    if (language === languages.targetLanguage.code) {
+      playLearningAudio(text);
+      return;
+    }
+
     if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = language;
@@ -57,7 +66,7 @@ export function Translator() {
   }
 
   return (
-    <div className="bg-sidebar border-sidebar-border dark:bg-secondary/10 bg-secondary-800/30 flex h-screen w-full flex-col border-r">
+    <div className="bg-sidebar border-sidebar-border dark:bg-secondary/10 bg-secondary-800/30 flex w-full flex-col border-r">
       {/* Header */}
       <div className="border-sidebar-border w-full border-b p-6">
         <div className="flex flex-wrap items-center justify-center gap-3">
@@ -72,7 +81,9 @@ export function Translator() {
               <p className="text-secondary-50 font-semibold">From</p>
               <Button variant={"outline"} asChild>
                 <div>
-                  {languages.find((l) => l.code === sourceLanguage)?.name}
+                  {sourceLanguage === languages.userLanguage.code
+                    ? languages.userLanguage.name
+                    : languages.targetLanguage.name}
                 </div>
               </Button>
             </div>
@@ -90,7 +101,9 @@ export function Translator() {
               <p className="text-secondary-50 font-semibold">To</p>
               <Button variant={"outline"} asChild>
                 <div>
-                  {languages.find((l) => l.code === targetLanguage)?.name}
+                  {targetLanguage === languages.userLanguage.code
+                    ? languages.targetLanguage.name
+                    : languages.userLanguage.name}
                 </div>
               </Button>
             </div>
@@ -105,7 +118,9 @@ export function Translator() {
           <div className="flex items-center justify-between gap-1">
             <div className="flex gap-2">
               <p className="text-secondary-50 font-semibold">
-                {languages.find((l) => l.code === sourceLanguage)?.name}
+                {sourceLanguage === languages.userLanguage.code
+                  ? languages.userLanguage.name
+                  : languages.targetLanguage.name}
               </p>
 
               {sourceText && (
@@ -151,7 +166,9 @@ export function Translator() {
         <div className="dark:bg-secondary/40 bg-secondary-800/70 flex w-full flex-col justify-around gap-2 border-2 p-3">
           <div className="flex gap-1">
             <p className="text-secondary-50 font-semibold">
-              {languages.find((l) => l.code === targetLanguage)?.name}
+              {targetLanguage === languages.userLanguage.code
+                ? languages.targetLanguage.name
+                : languages.userLanguage.name}
             </p>
             {translatedText && (
               <>

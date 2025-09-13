@@ -3,18 +3,30 @@
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { toast } from "sonner";
-import { RefObject, useEffect, useMemo, useRef, useState } from "react";
+import {
+  RefObject,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { useChatSessionStore } from "@/store";
 import { useSearchParams } from "next/navigation";
 
 export default function useChatTranscript() {
-  const { user } = useUser();
-  const search = useSearchParams();
-  const setChatId = useChatSessionStore((s) => s.setChatId);
   const languageSourceCode = "es";
   const languageTargetCode = "en";
+
+  const { user } = useUser();
+  const search = useSearchParams();
+
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  let selectedVoice: SpeechSynthesisVoice | null = null;
+  const [voiceList, setVoiceList] = useState<SpeechSynthesisVoice[]>([]);
+
+  const setChatId = useChatSessionStore((s) => s.setChatId);
+  const selectedVoiceURI = useChatSessionStore((s) => s.selectedVoiceURI);
+  const setVoiceURI = useChatSessionStore((s) => s.setVoiceURI);
 
   async function startConversation() {
     const setMessages = useChatSessionStore.getState().setMessages;
@@ -40,6 +52,15 @@ export default function useChatTranscript() {
         text: result.data.message,
       },
     ]);
+  }
+
+  //TODO: either automatically save convo, or ask user to save or not
+  function restartConversation(
+    textMessageRef: RefObject<HTMLTextAreaElement | null>,
+  ) {
+    (textMessageRef.current as HTMLTextAreaElement).value = "";
+    (textMessageRef.current as HTMLTextAreaElement).focus();
+    startConversation();
   }
 
   async function sendMessage(
@@ -72,7 +93,12 @@ export default function useChatTranscript() {
     });
   }
 
-  async function translate(text: string, index: number) {
+  function setSelectedVoice(selectedVoice: string) {
+    setVoiceURI(selectedVoice);
+  }
+
+  // ALL useCallback ARE BEING PASED INTO MEMOISED COMPONENT
+  const translate = useCallback(async (text: string, index: number) => {
     const messages = useChatSessionStore.getState().messages;
     const setMessages = useChatSessionStore.getState().setMessages;
     try {
@@ -90,51 +116,40 @@ export default function useChatTranscript() {
     } catch (err) {
       toast("error translating, please try again");
     }
-  }
+  }, []);
 
-  const handleCopy = (text: string) => {
+  const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
     toast("Copied to clipboard", {
       description: "Text has been copied to your clipboard.",
       position: "top-right",
     });
-  };
+  }, []);
 
-  const playAudio = (text: string) => {
-    if ("speechSynthesis" in window) {
+  const playAudio = useCallback(
+    (text: string) => {
+      if (!("speechSynthesis" in window)) return;
+      window.speechSynthesis.cancel();
+
       const utterance = new SpeechSynthesisUtterance(text);
-      //utterance.getVoices();
-      //   utterance.voice = new SpeechSynthesisVoice(
-      //     "Microsoft Dalia Online (Natural) - Spanish (Mexico)",
-      //   );
-      utterance.lang = languageSourceCode;
 
-      if (selectedVoice) utterance.voice = selectedVoice;
-      //"Microsoft Jorge Online (Natural) - Spanish (Mexico)"
-      // "es-ES" - spain; "es-US" - United states; "es-MX" - Mexico
-      // Get available voices
-      //   const voices = speechSynthesis.getVoices();
-
-      //   // Pick a specific voice by name or language
-      //   const selectedVoice =
-      //     voices.find((v) => v.lang === lang) ||
-      //     voices.find((v) => v.name.includes("Google Español")) ||
-      //     voices[0];
-
-      //   if (selectedVoice) {
-      //     utterance.voice = selectedVoice;
-      //   }
-      speechSynthesis.getVoices;
-      speechSynthesis.speak(utterance);
-    }
-  };
+      const voiceURI = useChatSessionStore.getState().selectedVoiceURI;
+      const voice =
+        voiceList.find((voice) => voice.voiceURI === voiceURI) || null;
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang || languageSourceCode;
+      } else {
+        utterance.lang = languageSourceCode;
+      }
+      window.speechSynthesis.speak(utterance);
+    },
+    [selectedVoiceURI, voiceList],
+  );
 
   function recordMessage(
     textMessageRef: RefObject<HTMLTextAreaElement | null>,
   ) {
-    // const SpeechRecognition =
-    //   window.SpeechRecognition || window.webkitSpeechRecognition;
-    // const recognition = new SpeechRecognition();
     const recognition = recognitionRef.current as SpeechRecognition;
     recognition.lang = languageSourceCode;
     recognition.continuous = true;
@@ -142,33 +157,36 @@ export default function useChatTranscript() {
     recognition.onresult = async function (event) {
       const transcript = event.results[event.results.length - 1][0].transcript;
       (textMessageRef.current as HTMLTextAreaElement).value += " " + transcript;
-      //setText(transcript);
     };
   }
 
-  //TODO: either automatically save convo, or ask user to save or not
-  function restartConversation(
-    textMessageRef: RefObject<HTMLTextAreaElement | null>,
-  ) {
-    (textMessageRef.current as HTMLTextAreaElement).value = "";
-    (textMessageRef.current as HTMLTextAreaElement).focus();
-    startConversation();
-  }
+  useEffect(() => {
+    const handleVoicesChanged = () => {
+      const voices = window.speechSynthesis.getVoices();
+      setVoiceList(
+        voices.filter((v) => v.lang.startsWith(`${languageSourceCode}-`)),
+      );
+      if (!selectedVoiceURI) setVoiceURI(voices[0].voiceURI); // if no voice selected previously, default is first option
+    };
 
-  const voiceList = useMemo(() => {
-    const voices = speechSynthesis.getVoices();
-    return voices.filter((voice) =>
-      voice.lang.includes(`${languageSourceCode}-`),
-    );
-  }, [languageSourceCode]);
+    // Run once
+    handleVoicesChanged();
+
+    // Run again when voices finish loading
+    window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
 
   useEffect(() => {
-    console.log(voiceList);
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
     const messages = useChatSessionStore.getState().messages;
-    if (messages) return;
-    startConversation;
+    if (!messages || messages.length === 0) {
+      startConversation();
+    }
   }, []);
 
   return {
@@ -180,5 +198,7 @@ export default function useChatTranscript() {
     recordMessage,
     restartConversation,
     voiceList,
+    setSelectedVoice,
+    selectedVoiceURI,
   };
 }
