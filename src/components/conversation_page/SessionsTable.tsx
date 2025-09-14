@@ -33,9 +33,10 @@ export default function SessionsTable() {
   return (
     <>
       <SearchBar
-        tableList={sessionList}
-        createFormButtonName={createFormButtonName}
-        createFormButtonLink={createFormButtonLink}
+        tableLength={sessionList.length}
+        ButtonName={createFormButtonName}
+        ButtonLink={createFormButtonLink}
+        ButtonVariant={"default"}
       >
         <ConversationHistoryTable sessionList={sessionList} />
       </SearchBar>

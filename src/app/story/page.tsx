@@ -25,11 +25,12 @@ export default function Page() {
 
   return (
     <Main page="Story" className="flex-col">
-      <section aria-labelledby="Story history list" className="w-full">
+      <section aria-labelledby="Story history list" className="w-full px-3">
         <SearchBar
-          tableList={storyList}
-          createFormButtonName={createFormButtonName}
-          createFormButtonLink={createFormButtonLink}
+          tableLength={storyList.length}
+          ButtonName={createFormButtonName}
+          ButtonLink={createFormButtonLink}
+          ButtonVariant={"default"}
         >
           <StoryHistoryTable storyList={storyList} />
         </SearchBar>

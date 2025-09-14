@@ -37,7 +37,7 @@ export default function StoryHistoryTable({
       <TableHeader>
         <TableRow>
           <TableHead></TableHead>
-          <TableHead>Title</TableHead>
+          <TableHead className="min-w-[10rem]">Title</TableHead>
           <TableHead>Type</TableHead>
           <TableHead>Proficiency</TableHead>
           <TableHead>Genre</TableHead>

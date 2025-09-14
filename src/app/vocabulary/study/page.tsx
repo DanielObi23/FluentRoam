@@ -1,10 +1,12 @@
 "use client";
 
-import Navigation from "@/components/app_layout/Navigation";
+import Lottie from "lottie-react";
+import animationData from "../../../../public/lottie-animation/Trophy.json";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import Main from "@/components/tags/Main";
 
 export default function Page() {
   const [showAns, setShowAns] = useState(false);
@@ -98,10 +100,27 @@ export default function Page() {
     },
   ];
 
+  if (currentCardNum === cardList.length) {
+    return (
+      <Main
+        page="Vocabulary"
+        className="flex flex-col items-center justify-center"
+      >
+        <p className="font-ui text-4xl font-bold">CONGRATULATIONS</p>
+        <p className="font-semibold">ALL CARDS REVIEWED FOR TODAY</p>
+        <Lottie
+          autoPlay={true}
+          animationData={animationData}
+          loop={false}
+          style={{ height: "20rem" }}
+        />
+      </Main>
+    );
+  }
+
   return (
-    <div className="flex w-full flex-col">
-      <Navigation page="Vocab-Study" />
-      <div className="flex h-screen w-full flex-col items-center justify-center gap-3">
+    <Main page="Vocabulary">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3">
         <Progress
           className="w-2/3"
           value={((currentCardNum + 1) / cardList.length) * 100}
@@ -120,9 +139,8 @@ export default function Page() {
               setShowAns(false);
               setShowHint(false);
             }}
-            disabled={currentCardNum === cardList.length - 1}
           >
-            Next
+            {currentCardNum + 1 === cardList.length ? "Finish" : "Next"}
           </Button>
           <p className="text-2xl font-bold">
             {showAns
@@ -160,6 +178,6 @@ export default function Page() {
           <Button variant={"destructive"}>Bury</Button>
         </div>
       </div>
-    </div>
+    </Main>
   );
 }

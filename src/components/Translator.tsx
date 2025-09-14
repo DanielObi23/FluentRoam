@@ -101,7 +101,7 @@ export function Translator({
               <p className="text-secondary-50 font-semibold">To</p>
               <Button variant={"outline"} asChild>
                 <div>
-                  {targetLanguage === languages.userLanguage.code
+                  {targetLanguage === languages.targetLanguage.code
                     ? languages.targetLanguage.name
                     : languages.userLanguage.name}
                 </div>
@@ -166,7 +166,7 @@ export function Translator({
         <div className="dark:bg-secondary/40 bg-secondary-800/70 flex w-full flex-col justify-around gap-2 border-2 p-3">
           <div className="flex gap-1">
             <p className="text-secondary-50 font-semibold">
-              {targetLanguage === languages.userLanguage.code
+              {targetLanguage === languages.targetLanguage.code
                 ? languages.targetLanguage.name
                 : languages.userLanguage.name}
             </p>

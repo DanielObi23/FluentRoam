@@ -47,6 +47,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useEffect, useRef } from "react";
+import SearchBar from "@/components/SearchBar";
+import { useIsMobile } from "@/hooks/use-mobile";
+import Link from "next/link";
+import Main from "@/components/tags/Main";
 
 //MAYBE MAKE SEARCH INTO A COMPONENT/CUSTOM HOOK, COMPONENT FOR ROUTER BUTTON
 // TOGGLE TO REVIEW FROM SPANISH TO ENGLISH OR FROM ENGLISH TO SPANISH
@@ -66,6 +70,7 @@ export default function Page() {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const id = useId();
   const pageButtonRef = useRef<HTMLDivElement | null>(null);
+  const isMobile = useIsMobile();
 
   const cardList = [
     {
@@ -189,173 +194,157 @@ export default function Page() {
   }
 
   return (
-    <div className="flex h-screen w-full flex-col">
-      <Navigation page="Vocabulary list" />
-      <div className="w-full space-y-4 px-10 py-5 md:px-15 md:py-10">
-        <div className="flex items-center justify-between">
-          <div className="w-full space-y-4 md:w-1/4">
-            <div className="space-y-1">
-              <h1 className="text-2xl font-bold">My Deck</h1>
-              <h2 className="text-lg">Manage your flashcard collection</h2>
+    <Main
+      page="Vocabulary"
+      className="flex flex-col gap-3 px-5 py-5 max-md:space-y-2 max-md:py-1 sm:px-10 md:px-15 md:py-10"
+    >
+      <div className="flex items-center justify-between gap-1 max-md:items-baseline">
+        <div className="my-auto max-w-2/3 gap-2 space-y-2 overflow-auto max-md:flex md:w-1/4">
+          <h1 className="text-2xl font-bold">My Deck</h1>
+          <h2 className="text-lg max-md:hidden">
+            Manage your flashcard collection
+          </h2>
+          <div className="flex items-baseline gap-1 text-center text-lg font-semibold md:hidden">
+            <div className="flex items-center gap-1 border-2 px-2 py-1">
+              {/* <Star /> */}
+              <p>New: 3</p>
+            </div>
+            <div className="flex items-center gap-1 border-2 px-2 py-1">
+              {/* <Clock /> */}
+              <p>Due: 1</p>
             </div>
 
-            <div className="flex items-center justify-between gap-2">
-              <div className="relative w-full">
-                <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
-                  <Search className="size-4" />
-                  <span className="sr-only">Search</span>
-                </div>
-                <Input
-                  defaultValue={search}
-                  type="text"
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setPage(1);
-                  }}
-                  className="peer ps-9 placeholder:text-white"
-                  placeholder="Filter list..."
-                />
-                {search && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => {
-                      setSearch("");
-                      setPage(1);
-                      (
-                        document.getElementById("search") as HTMLInputElement
-                      ).value = "";
-                    }}
-                    className="text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 end-0 rounded-s-none hover:bg-transparent"
-                  >
-                    <CircleXIcon />
-                    <span className="sr-only">Clear search input</span>
-                  </Button>
-                )}
-              </div>
-              <Dialog>
-                <Button asChild>
-                  <DialogTrigger>
-                    <Plus />
-                    New Card
-                  </DialogTrigger>
-                </Button>
-
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Card Details</DialogTitle>
-                    <DialogDescription>
-                      create new card by filling in the details
-                    </DialogDescription>
-                  </DialogHeader>
-                  <form action={addCard} className="space-y-5">
-                    <div className="space-y-3">
-                      <Label htmlFor="card-name">Text:</Label>
-                      <Input type="text" id="card-name" name="text" required />
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="card-name">Translation:</Label>
-                      <Input
-                        type="text"
-                        id="card-translation"
-                        name="translation"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="">Part of Speech:</Label>
-                      <Select name="pos">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select the part of speech" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            <SelectLabel>Part of Speech</SelectLabel>
-                            <SelectItem value="noun">Noun</SelectItem>
-                            <SelectItem value="pronoun">Pronoun</SelectItem>
-                            <SelectItem value="verb">Verb</SelectItem>
-                            <SelectItem value="adjective">Adjective</SelectItem>
-                            <SelectItem value="adverb">Adverb</SelectItem>
-                            <SelectItem value="prepositions">
-                              Prepositions
-                            </SelectItem>
-                            <SelectItem value="conjunctions">
-                              Conjunctions
-                            </SelectItem>
-                            <SelectItem value="phrase">Phrase</SelectItem>
-                            <SelectItem value="idiom">Idiom</SelectItem>
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-3">
-                      <Label htmlFor="card-context">Example/Context:</Label>
-                      <Input type="text" id="card-context" name="context" />
-                    </div>
-                    <DialogFooter>
-                      <DialogClose asChild>
-                        <Button type="button" variant="secondary">
-                          Close
-                        </Button>
-                      </DialogClose>
-                      <Button type="submit">Add Card</Button>
-                    </DialogFooter>
-                  </form>
-                </DialogContent>
-              </Dialog>
-              {/* <Button variant={"outline"} className="flex items-center"><Plus /> <span>Create Deck</span></Button> */}
+            <div className="flex items-center gap-1 border-2 px-2 py-1">
+              {/* <Table2 /> */}
+              <p>Total: {filteredCardList.length}</p>
             </div>
           </div>
-          <div className="grid w-1/2 grid-cols-12 gap-3">
-            <div className="col-span-4 flex items-center gap-2 border-2 p-4">
-              <div className="rounded-xl bg-blue-500/35 p-2">
-                <Star />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold">3</p>
-                <p>New Cards</p>
-              </div>
-            </div>
-
-            <div className="col-span-4 flex items-center gap-2 border-2 p-4">
-              <div className="rounded-xl bg-blue-500/35 p-2">
-                <Clock />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold">1</p>
-                <p>Due Cards</p>
-              </div>
-            </div>
-
-            <div className="col-span-4 flex items-center gap-2 border-2 p-4">
-              <div className="rounded-xl bg-blue-500/35 p-2">
-                <Table2 />
-              </div>
-              <div>
-                <p className="text-2xl font-semibold">
-                  {filteredCardList.length}
-                </p>
-                <p>Total</p>
-              </div>
-            </div>
-          </div>
-          <Button
-            variant={"secondary"}
-            size={"lg"}
-            className="flex items-center"
-            onClick={() => router.push("/vocabulary/study")}
-          >
-            <Book /> <span>Study now</span>
-          </Button>
         </div>
 
+        <div className="my-auto flex flex-col items-end gap-2">
+          {/* CARDS DUE AND TO REVIEW */}
+          <div className="flex items-baseline gap-1 max-md:hidden">
+            <div className="flex items-center gap-1 border-2 px-2 py-1">
+              <Star />
+              <p className="text-2xl font-semibold">New: 3</p>
+            </div>
+            <div className="flex items-center gap-1 border-2 px-2 py-1">
+              <Clock />
+              <p className="text-2xl font-semibold">Due: 1</p>
+            </div>
+
+            <div className="flex items-center gap-1 border-2 px-2 py-1">
+              <Table2 />
+              <p className="text-2xl font-semibold">
+                Total: {filteredCardList.length}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* ADD CARD */}
+            <Dialog>
+              <Button size={isMobile ? "sm" : "lg"} asChild>
+                <DialogTrigger>
+                  <Plus />
+                  New Card
+                </DialogTrigger>
+              </Button>
+
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Card Details</DialogTitle>
+                  <DialogDescription>
+                    create new card by filling in the details
+                  </DialogDescription>
+                </DialogHeader>
+                <form action={addCard} className="space-y-5">
+                  <div className="space-y-3">
+                    <Label htmlFor="card-name">Text:</Label>
+                    <Input type="text" id="card-name" name="text" required />
+                  </div>
+                  <div className="space-y-3">
+                    <Label htmlFor="card-name">Translation:</Label>
+                    <Input
+                      type="text"
+                      id="card-translation"
+                      name="translation"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <Label htmlFor="">Part of Speech:</Label>
+                    <Select name="pos">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select the part of speech" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel>Part of Speech</SelectLabel>
+                          <SelectItem value="noun">Noun</SelectItem>
+                          <SelectItem value="pronoun">Pronoun</SelectItem>
+                          <SelectItem value="verb">Verb</SelectItem>
+                          <SelectItem value="adjective">Adjective</SelectItem>
+                          <SelectItem value="adverb">Adverb</SelectItem>
+                          <SelectItem value="prepositions">
+                            Prepositions
+                          </SelectItem>
+                          <SelectItem value="conjunctions">
+                            Conjunctions
+                          </SelectItem>
+                          <SelectItem value="phrase">Phrase</SelectItem>
+                          <SelectItem value="idiom">Idiom</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-3">
+                    <Label htmlFor="card-context">Example/Context:</Label>
+                    <Input type="text" id="card-context" name="context" />
+                  </div>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button type="button" variant="secondary">
+                        Close
+                      </Button>
+                    </DialogClose>
+                    <Button type="submit">Add Card</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            {!isMobile && (
+              <Button
+                variant={"secondary"}
+                size={"lg"}
+                className="flex items-center"
+                asChild
+              >
+                <Link href={"/vocabulary/study"}>
+                  <Book /> <span>Study now</span>
+                </Link>
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <SearchBar
+        ButtonLink="/vocabulary/study"
+        ButtonName="Study"
+        ButtonVariant={"secondary"}
+        tableLength={flashCardPage.length}
+      >
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Front</TableHead>
               <TableHead>Back</TableHead>
               <TableHead>P.O.S</TableHead>
-              <TableHead>Context</TableHead>
+              <TableHead className="min-w-[15rem] text-center">
+                Context
+              </TableHead>
               <TableHead>Next Review</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className="text-center">Actions</TableHead>
@@ -370,7 +359,7 @@ export default function Page() {
                 <TableCell>{card.sentence_context}</TableCell>
                 <TableCell>today</TableCell>
                 <TableCell>yesterday</TableCell>
-                <TableCell className="space-x-3">
+                <TableCell className="flex items-center gap-3">
                   <Button>
                     <Edit /> Edit
                   </Button>
@@ -382,31 +371,7 @@ export default function Page() {
             ))}
           </TableBody>
         </Table>
-        <div
-          ref={pageButtonRef}
-          className="flex items-center justify-end gap-3"
-        >
-          <Button
-            onClick={() => setPage((prev) => prev - 1)}
-            disabled={page <= 1}
-            className="md:text-lg"
-          >
-            Previous
-          </Button>
-
-          {/* FIGURE OUT WHAT THE DISABLED CRITERIA MEAN AND THE REST OF THIS CODE */}
-          <Button
-            onClick={() => setPage((prev) => prev + 1)}
-            disabled={
-              flashCardPage.length < numberOfRowsToShow ||
-              filteredCardList.length <= 10
-            }
-            className="md:text-lg"
-          >
-            Next
-          </Button>
-        </div>
-      </div>
-    </div>
+      </SearchBar>
+    </Main>
   );
 }

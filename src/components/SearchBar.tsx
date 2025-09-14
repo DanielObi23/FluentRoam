@@ -5,17 +5,28 @@ import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import Link from "next/link";
 import { CircleXIcon, Search, X } from "lucide-react";
 import useSearchBar from "@/hooks/use-searchBar";
+import { ScrollArea } from "./ui/scroll-area";
 
 export default function SearchBar({
-  createFormButtonName,
-  createFormButtonLink,
+  ButtonName,
+  ButtonLink,
+  ButtonVariant,
   children,
-  tableList,
+  tableLength,
 }: {
-  createFormButtonName: string;
-  createFormButtonLink: string;
+  ButtonName: string;
+  ButtonLink: string;
+  ButtonVariant:
+    | "link"
+    | "default"
+    | "destructive"
+    | "outline"
+    | "secondary"
+    | "ghost"
+    | null
+    | undefined;
   children: React.ReactNode;
-  tableList: unknown[];
+  tableLength: number;
 }) {
   // COMPONENT WORKS WITH useSearchBar HOOK
   const [search, setSearch] = useQueryState(
@@ -38,7 +49,7 @@ export default function SearchBar({
 
   return (
     <>
-      <div className="flex w-full items-center justify-between gap-2">
+      <div className="flex w-full items-center gap-3">
         <div className="flex items-center justify-center gap-2 md:w-5/7 md:self-start lg:w-3/7 xl:w-2/7">
           <div className="relative w-full">
             <div className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 peer-disabled:opacity-50">
@@ -74,19 +85,19 @@ export default function SearchBar({
           </div>
         </div>
 
-        <Button asChild>
-          <Link href={createFormButtonLink} className="md:hidden">
-            {createFormButtonName}
+        <Button variant={ButtonVariant} asChild>
+          <Link href={ButtonLink} className="md:hidden">
+            {ButtonName}
           </Link>
         </Button>
       </div>
 
-      <div
+      <ScrollArea
         ref={tableRef}
         className="my-8 max-h-[calc(100vh-18rem)] overflow-auto"
       >
         {children}
-      </div>
+      </ScrollArea>
 
       <div ref={pageButtonRef} className="flex items-center justify-end gap-3">
         <Button
@@ -105,7 +116,7 @@ export default function SearchBar({
             setPage((prev) => prev + 1);
             tableRef.current?.scroll(0, 0);
           }}
-          disabled={tableList.length < pageLimit}
+          disabled={tableLength < pageLimit}
           className="md:text-lg"
         >
           Next

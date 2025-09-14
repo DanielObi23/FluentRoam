@@ -4,6 +4,7 @@ import { useCallSessionStore } from "@/store";
 import axios from "axios";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
+import { languages } from "@/utils/language";
 
 type UserMessage = {
   type: "transcript";
@@ -86,8 +87,8 @@ export default function useCallTranscript() {
     try {
       const response = await axios.post("/api/translate", {
         text,
-        from: "es",
-        to: "en",
+        from: languages.userLanguage.code,
+        to: languages.targetLanguage.code,
       });
 
       const translation = response.data.message;

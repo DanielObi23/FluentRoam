@@ -13,10 +13,11 @@ import {
 } from "react";
 import { useChatSessionStore } from "@/store";
 import { useSearchParams } from "next/navigation";
+import { languages } from "@/utils/language";
 
 export default function useChatTranscript() {
-  const languageSourceCode = "es";
-  const languageTargetCode = "en";
+  const languageSourceCode = languages.userLanguage.code;
+  const languageTargetCode = languages.targetLanguage.code;
 
   const { user } = useUser();
   const search = useSearchParams();
@@ -104,8 +105,8 @@ export default function useChatTranscript() {
     try {
       const response = await axios.post("/api/translate", {
         text,
-        from: languageSourceCode,
-        to: languageTargetCode,
+        from: languageTargetCode,
+        to: languageSourceCode,
       });
 
       const translation = response.data.message;
@@ -138,9 +139,9 @@ export default function useChatTranscript() {
         voiceList.find((voice) => voice.voiceURI === voiceURI) || null;
       if (voice) {
         utterance.voice = voice;
-        utterance.lang = voice.lang || languageSourceCode;
+        utterance.lang = voice.lang || languageTargetCode;
       } else {
-        utterance.lang = languageSourceCode;
+        utterance.lang = languageTargetCode;
       }
       window.speechSynthesis.speak(utterance);
     },
@@ -151,7 +152,7 @@ export default function useChatTranscript() {
     textMessageRef: RefObject<HTMLTextAreaElement | null>,
   ) {
     const recognition = recognitionRef.current as SpeechRecognition;
-    recognition.lang = languageSourceCode;
+    recognition.lang = languageTargetCode;
     recognition.continuous = true;
     recognition.start();
     recognition.onresult = async function (event) {
@@ -163,10 +164,13 @@ export default function useChatTranscript() {
   useEffect(() => {
     const handleVoicesChanged = () => {
       const voices = window.speechSynthesis.getVoices();
-      setVoiceList(
-        voices.filter((v) => v.lang.startsWith(`${languageSourceCode}-`)),
+      const filteredVoices = voices.filter((v) =>
+        v.lang.startsWith(`${languageTargetCode}-`),
       );
-      if (!selectedVoiceURI) setVoiceURI(voices[0].voiceURI); // if no voice selected previously, default is first option
+      setVoiceList(filteredVoices);
+      console.log(selectedVoiceURI);
+      if (selectedVoiceURI === "")
+        console.log(filteredVoices[0]?.voiceURI || ""); // if no voice selected previously, default is first option
     };
 
     // Run once

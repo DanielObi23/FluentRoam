@@ -74,7 +74,6 @@ export default function Page() {
     });
   }, [messages]);
 
-  console.log(222); // rerendering 10 times
   return (
     <Main page="Chat" className="flex h-[calc(100vh-5rem)] w-full">
       <section className="relative flex w-3/5 flex-col p-4 max-md:w-full">
@@ -134,8 +133,11 @@ export default function Page() {
         <div className="flex h-4/7 w-full flex-col items-center gap-5">
           {/* VOICE SELECT */}
           {voiceList.length > 0 && (
-            <div className="flex w-full flex-wrap items-center justify-center gap-2">
-              <Button onClick={() => playAudio("hola, qué tal")}>
+            <div className="grid grid-cols-12 gap-2">
+              <Button
+                className="col-span-4"
+                onClick={() => playAudio("hola, qué tal")}
+              >
                 Test Voice
               </Button>
               <Select
@@ -144,7 +146,7 @@ export default function Page() {
                 }}
                 defaultValue={selectedVoiceURI}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="md:w-[10rem] lg:w-[15rem]">
                   <SelectValue placeholder="Voices" />
                 </SelectTrigger>
                 <SelectContent defaultValue={selectedVoiceURI}>
