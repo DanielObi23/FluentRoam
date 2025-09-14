@@ -5,12 +5,13 @@ import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import Link from "next/link";
 import { CircleXIcon, Search, X } from "lucide-react";
 import useSearchBar from "@/hooks/use-searchBar";
-import { ScrollArea } from "./ui/scroll-area";
+import { twMerge } from "tailwind-merge";
 
 export default function SearchBar({
   ButtonName,
   ButtonLink,
   ButtonVariant,
+  ButtonClass,
   children,
   tableLength,
 }: {
@@ -25,6 +26,7 @@ export default function SearchBar({
     | "ghost"
     | null
     | undefined;
+  ButtonClass?: string;
   children: React.ReactNode;
   tableLength: number;
 }) {
@@ -85,19 +87,21 @@ export default function SearchBar({
           </div>
         </div>
 
-        <Button variant={ButtonVariant} asChild>
-          <Link href={ButtonLink} className="md:hidden">
-            {ButtonName}
-          </Link>
+        <Button
+          className={twMerge("md:hidden", ButtonClass)}
+          variant={ButtonVariant}
+          asChild
+        >
+          <Link href={ButtonLink}>{ButtonName}</Link>
         </Button>
       </div>
 
-      <ScrollArea
+      <div
         ref={tableRef}
-        className="my-8 max-h-[calc(100vh-18rem)] overflow-auto"
+        className="scrollbar-hover my-8 max-h-[calc(100vh-18rem)] overflow-auto"
       >
         {children}
-      </ScrollArea>
+      </div>
 
       <div ref={pageButtonRef} className="flex items-center justify-end gap-3">
         <Button

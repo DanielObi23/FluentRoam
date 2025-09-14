@@ -1,5 +1,4 @@
 //TODO: use react query to query first 50 pages, then cache it
-// IMPROVE PAGINATION UI, GET FROM SHADCNUI
 
 import { userSessions, UserSession } from "@/userSessions";
 import ConversationHistoryTable from "./ConversationHistoryTable";
@@ -14,7 +13,7 @@ export default function SessionsTable() {
     session.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  // simulation, query database based of page === 1? query first numberOfRowsToShow : from (page - 1) * numberOfRowsToShow
+  // simulation, query database based of page === 1? query first pageLimit : from (page - 1) * pageLimit
   // if list return .length < 10, next page === 0
   // if error return === out of bound, page doesnt exist, show button to relocate to first page
   // if list returned === 0, show button to add to list
