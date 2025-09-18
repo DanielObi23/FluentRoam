@@ -23,11 +23,7 @@ export default function useChatTranscript() {
   const search = useSearchParams();
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const [voiceList, setVoiceList] = useState<SpeechSynthesisVoice[]>([]);
-
   const setChatId = useChatSessionStore((s) => s.setChatId);
-  const selectedVoiceURI = useChatSessionStore((s) => s.selectedVoiceURI);
-  const setVoiceURI = useChatSessionStore((s) => s.setVoiceURI);
 
   async function startConversation() {
     const setMessages = useChatSessionStore.getState().setMessages;
@@ -94,10 +90,6 @@ export default function useChatTranscript() {
     });
   }
 
-  function setSelectedVoice(selectedVoice: string) {
-    setVoiceURI(selectedVoice);
-  }
-
   // ALL useCallback ARE BEING PASED INTO MEMOISED COMPONENT
   const translate = useCallback(async (text: string, index: number) => {
     const messages = useChatSessionStore.getState().messages;
@@ -127,27 +119,6 @@ export default function useChatTranscript() {
     });
   }, []);
 
-  const playAudio = useCallback(
-    (text: string) => {
-      if (!("speechSynthesis" in window)) return;
-      window.speechSynthesis.cancel();
-
-      const utterance = new SpeechSynthesisUtterance(text);
-
-      const voiceURI = useChatSessionStore.getState().selectedVoiceURI;
-      const voice =
-        voiceList.find((voice) => voice.voiceURI === voiceURI) || null;
-      if (voice) {
-        utterance.voice = voice;
-        utterance.lang = voice.lang || languageTargetCode;
-      } else {
-        utterance.lang = languageTargetCode;
-      }
-      window.speechSynthesis.speak(utterance);
-    },
-    [selectedVoiceURI, voiceList],
-  );
-
   function recordMessage(
     textMessageRef: RefObject<HTMLTextAreaElement | null>,
   ) {
@@ -162,29 +133,6 @@ export default function useChatTranscript() {
   }
 
   useEffect(() => {
-    const handleVoicesChanged = () => {
-      const voices = window.speechSynthesis.getVoices();
-      const filteredVoices = voices.filter((v) =>
-        v.lang.startsWith(`${languageTargetCode}-`),
-      );
-      setVoiceList(filteredVoices);
-      console.log(selectedVoiceURI);
-      if (selectedVoiceURI === "")
-        console.log(filteredVoices[0]?.voiceURI || ""); // if no voice selected previously, default is first option
-    };
-
-    // Run once
-    handleVoicesChanged();
-
-    // Run again when voices finish loading
-    window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
-
-    return () => {
-      window.speechSynthesis.onvoiceschanged = null;
-    };
-  }, []);
-
-  useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
     const messages = useChatSessionStore.getState().messages;
@@ -197,12 +145,8 @@ export default function useChatTranscript() {
     userImage: user?.imageUrl,
     translate,
     handleCopy,
-    playAudio,
     sendMessage,
     recordMessage,
     restartConversation,
-    voiceList,
-    setSelectedVoice,
-    selectedVoiceURI,
   };
 }

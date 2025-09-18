@@ -15,13 +15,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Lottie from "lottie-react";
 import animationData from "../../../../../public/lottie-animation/loading.json";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -32,6 +25,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import ChatFeatures from "@/components/conversation_page/chat/ChatFeatures";
+import VoiceSelect from "@/components/VoiceSelect";
+import usePlayAudio from "@/hooks/use-playAudio";
 
 export default function Page() {
   const search = useSearchParams();
@@ -57,14 +52,12 @@ export default function Page() {
     sendMessage,
     recordMessage,
     restartConversation,
-    voiceList,
-    setSelectedVoice,
-    playAudio,
     userImage,
     handleCopy,
     translate,
-    selectedVoiceURI,
   } = useChatTranscript();
+  const { voiceList, setSelectedVoice, playAudio, selectedVoiceURI } =
+    usePlayAudio();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -89,7 +82,7 @@ export default function Page() {
         {/* CHAT AREA */}
         <div
           ref={scrollRef}
-          className="hide-scrollbar dark:bg-primary/10 bg-primary-800/30 flex flex-1 flex-col gap-3 overflow-y-scroll p-4"
+          className="scrollbar-hover dark:bg-primary/10 bg-primary-800/30 flex flex-1 flex-col gap-3 overflow-y-scroll p-4"
         >
           {messages?.map((message, index) => (
             <ChatTranscriptMessage
@@ -112,7 +105,7 @@ export default function Page() {
 
           <Textarea
             ref={textMessageRef}
-            className="hide-scrollbar max-h-24 min-h-10 flex-1 resize-none overflow-y-auto rounded-2xl px-6 text-wrap"
+            className="scrollbar-hover max-h-24 min-h-10 flex-1 resize-none overflow-y-auto rounded-2xl px-6 text-wrap"
             placeholder="Type a message"
             autoFocus
             onKeyDown={(e) => {
@@ -132,34 +125,7 @@ export default function Page() {
       <section className="flex w-2/5 flex-col items-center gap-10 py-10 max-md:hidden">
         <div className="flex h-4/7 w-full flex-col items-center gap-5">
           {/* VOICE SELECT */}
-          {voiceList.length > 0 && (
-            <div className="grid grid-cols-12 gap-2">
-              <Button
-                className="col-span-4"
-                onClick={() => playAudio("hola, qué tal")}
-              >
-                Test Voice
-              </Button>
-              <Select
-                onValueChange={(voiceURI) => {
-                  setSelectedVoice(voiceURI);
-                }}
-                defaultValue={selectedVoiceURI}
-              >
-                <SelectTrigger className="md:w-[10rem] lg:w-[15rem]">
-                  <SelectValue placeholder="Voices" />
-                </SelectTrigger>
-                <SelectContent defaultValue={selectedVoiceURI}>
-                  {voiceList.map((voice) => (
-                    <SelectItem
-                      key={voice.voiceURI}
-                      value={voice.voiceURI as string}
-                    >{`${voice.name} - ${voice.lang}`}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
+          <VoiceSelect />
 
           {/* TRANSLATOR */}
           <Translator playLearningAudio={playAudio} />

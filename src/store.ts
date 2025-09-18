@@ -66,8 +66,6 @@ type ChatSessionStore = {
   messages: ChatMessage[];
   setMessages: (message: ChatMessage[]) => void;
   addMessage: (message: ChatMessage) => void;
-  selectedVoiceURI: string;
-  setVoiceURI: (voice: string) => void;
 };
 
 export const useChatSessionStore = create<ChatSessionStore>()(
@@ -84,13 +82,28 @@ export const useChatSessionStore = create<ChatSessionStore>()(
       addMessage: (message) => {
         set((state) => ({ messages: [...state.messages, message] }));
       },
+    }),
+    {
+      name: "chat-session-storage",
+    },
+  ),
+);
+
+type PlayAudioStore = {
+  selectedVoiceURI: string;
+  setVoiceURI: (voice: string) => void;
+};
+
+export const usePlayAudioStore = create<PlayAudioStore>()(
+  persist(
+    (set, get) => ({
       selectedVoiceURI: "",
       setVoiceURI: (voice) => {
         set({ selectedVoiceURI: voice });
       },
     }),
     {
-      name: "call-session-storage",
+      name: "play-audio-storage",
     },
   ),
 );
