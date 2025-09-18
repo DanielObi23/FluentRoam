@@ -2,12 +2,13 @@
 
 import { userSessions, UserSession } from "@/userSessions";
 import ConversationHistoryTable from "./ConversationHistoryTable";
-import useSearchBar from "@/hooks/use-searchBar";
-import SearchBar from "../SearchBar";
+import useTable from "@/hooks/use-table";
+import Table from "../Table";
+import ConversationForms from "./forms/ConversationForms";
 
 // COMPONENT IS RERENDERING TWICE, FIX THAT
 export default function SessionsTable() {
-  const { page, search, pageLimit } = useSearchBar();
+  const { page, search, pageLimit } = useTable();
 
   const filteredSessions = userSessions.filter((session) =>
     session.title.toLowerCase().includes(search.toLowerCase()),
@@ -27,18 +28,16 @@ export default function SessionsTable() {
     page === 1
       ? (filteredSessions as UserSession[]).slice(0, pageLimit)
       : (filteredSessions as UserSession[]).slice(num1, num1 + pageLimit);
-  const createFormButtonName = "Create Convo";
-  const createFormButtonLink = "/conversation/form";
+
   return (
     <>
-      <SearchBar
+      <Table
         tableLength={sessionList.length}
-        ButtonName={createFormButtonName}
-        ButtonLink={createFormButtonLink}
-        ButtonVariant={"default"}
+        buttonName={["Create", "Convo"]}
+        form={<ConversationForms />}
       >
         <ConversationHistoryTable sessionList={sessionList} />
-      </SearchBar>
+      </Table>
     </>
   );
 }

@@ -1,8 +1,8 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 
-// TO BE USED WITH THE SEARCH BAR COMPONENT
-export default function useSearchBar() {
+// TO BE USED WITH THE TABLE COMPONENT
+export default function useTable() {
   const searchParams = useSearchParams();
   const search = (searchParams.get("search") as string) || "";
   const pageString = searchParams.get("page") as string;

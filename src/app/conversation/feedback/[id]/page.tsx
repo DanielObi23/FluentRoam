@@ -1,10 +1,10 @@
 "use client";
 
-import VocabTable from "@/components/conversation_page/VocabTable";
+import SessionVocabTable from "@/components/conversation_page/SessionVocabTable";
 import { Button } from "@/components/ui/button";
 import { userSessions } from "@/userSessions";
 import Markdown from "react-markdown";
-import { VocabEntry } from "@/components/conversation_page/VocabTable";
+import { VocabEntry } from "@/components/conversation_page/SessionVocabTable";
 import { UserSession } from "@/userSessions";
 import {
   Accordion,
@@ -228,7 +228,7 @@ export default function Page() {
                       {vocab.vocab.toUpperCase()}
                     </AccordionTrigger>
                     <AccordionContent className="hide-scrollbar max-h-120 overflow-auto">
-                      <VocabTable vocab={vocab} index={index} />
+                      <SessionVocabTable vocab={vocab} index={index} />
                     </AccordionContent>
                   </AccordionItem>
                 ),

@@ -1,34 +1,22 @@
 "use client";
 
-import Navigation from "@/components/app_layout/Navigation";
 import { useParams, useRouter } from "next/navigation";
-import { story } from "@/story";
+import { Story, story } from "@/story";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
 import Audio from "@/components/Audio";
 import { useState } from "react";
 import { BookOpen, HardDriveDownload } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { parseAsInteger, useQueryState } from "nuqs";
 import Main from "@/components/tags/Main";
+import Prelogue from "@/components/story_page/Prelogue";
 
 // ADD A WAY FOR USERS TO JUMP TO ANY PAGE WITHIN THE NUMBER OF POSSIBLE PAGES
 // USE COMBINATION OF SELECT AND PAGINATION
@@ -52,87 +40,11 @@ export default function Page() {
 
   if (currentPage === 1) {
     // EXPORT TO COMPONENT AND CALL IT PRELOGUE
-    return (
-      <div className="w-full">
-        <Navigation page="Story" />
-        <main className="h-[calc(100vh-5rem)] space-y-4 overflow-auto p-3">
-          {/* Figure out what order you want these to be, maybe make into a component */}
-          <Table className="w-2/3 max-md:w-full">
-            <TableBody>
-              <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>{currentStory.title}</TableCell>
-              </TableRow>
-              <TableRow>
-                {/* SEE MORE */}
-                <TableCell>Plot</TableCell>
-                <TableCell>{currentStory.storySeed}</TableCell>
-              </TableRow>
-              <TableRow>
-                {/* SEE MORE */}
-                <TableCell>Tags</TableCell>
-                <TableCell>
-                  <Collapsible>
-                    <CollapsibleTrigger className="cursor-pointer">
-                      Genre, Theme, Tone
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <Table>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>Genre</TableCell>
-                            <TableCell>
-                              {currentStory.tags.genre.join(", ")}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Theme</TableCell>
-                            <TableCell>
-                              {currentStory.tags.theme.join(", ")}
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Tone</TableCell>
-                            <TableCell>
-                              {currentStory.tags.tone.join(", ")}
-                            </TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </CollapsibleContent>
-                  </Collapsible>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Type</TableCell>
-                <TableCell>{currentStory.storyType}</TableCell>
-              </TableRow>
-              <TableRow>
-                {/* SEE MORE */}
-                <TableCell>Summary</TableCell>
-                <TableCell>{currentStory.summary.text}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <div className="flex gap-3">
-            <Button onClick={router.back}>Previous Page</Button>
-            <span className="text-lg font-semibold">Page {currentPage}</span>
-            <Button
-              onClick={() =>
-                router.push(`/story/${id}?page=${currentPage + 1}`)
-              }
-            >
-              Go to next page
-            </Button>
-          </div>
-        </main>
-      </div>
-    );
+    return <Prelogue currentStory={currentStory} id={id} />;
   }
 
   return (
     <Main page="Story">
-      {/* Why is there both section and div */}
       {/* <div className="flex w-full gap-3 overflow-auto max-md:h-[calc(100vh-6rem)]"></div> */}
       <section className="flex flex-col items-center p-2 max-lg:w-full max-md:h-[calc(100vh-6rem)]">
         <Card className="bg-secondary-300 dark:bg-secondary-950 border-primary-500 dark:border-secondary-950 h-screen w-full overflow-auto text-center">
@@ -227,11 +139,5 @@ export default function Page() {
         </div>
       </section>
     </Main>
-    // <div className="w-full min-h-screen bg-background">
-    //     <Navigation page="Story"/>
-    //     <main className="w-full flex">
-
-    //     </main>
-    // </div>
   );
 }

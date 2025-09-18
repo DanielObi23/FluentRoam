@@ -26,9 +26,6 @@ export default function StoryHistoryTable({
         <p className="text-lg font-semibold md:text-2xl">
           No Story History Available
         </p>
-        <Button asChild>
-          <Link href="/story/create">Create Story</Link>
-        </Button>
       </div>
     );
   }

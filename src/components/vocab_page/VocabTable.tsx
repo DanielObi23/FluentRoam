@@ -8,9 +8,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SearchBar from "@/components/SearchBar";
-import useSearchBar from "@/hooks/use-searchBar";
+import SearchBar from "@/components/Table";
+import useSearchBar from "@/hooks/use-table";
 import { cardList } from "@/dummy_data";
+import VocabForm from "./VocabForm";
 
 export default function VocabTable() {
   const { page, search, pageLimit } = useSearchBar();
@@ -35,10 +36,10 @@ export default function VocabTable() {
 
   return (
     <SearchBar
-      ButtonLink="/vocabulary/study"
-      ButtonName="Study"
-      ButtonVariant={"secondary"}
+      buttonName={["Add", "Vocab"]}
       tableLength={flashCardPage.length}
+      form={<VocabForm />}
+      buttonClass="md:flex"
     >
       <Table>
         <TableHeader>

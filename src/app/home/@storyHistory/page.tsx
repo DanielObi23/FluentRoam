@@ -2,7 +2,7 @@
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { story, Story } from "@/story";
-import StoryHistoryTable from "@/components/StoryHistoryTable";
+import StoryHistoryTable from "@/components/story_page/StoryHistoryTable";
 
 export default function StoryHistory() {
   const isMobile = useIsMobile();

@@ -26,9 +26,6 @@ export default function ConversationHistoryTable({
         <p className="text-lg font-semibold md:text-2xl">
           No Conversation History Available
         </p>
-        <Button asChild>
-          <Link href="/conversation/form">Create Session</Link>
-        </Button>
       </div>
     );
   }
