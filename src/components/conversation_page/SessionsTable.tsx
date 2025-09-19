@@ -5,6 +5,8 @@ import ConversationHistoryTable from "./ConversationHistoryTable";
 import useTable from "@/hooks/use-table";
 import Table from "../Table";
 import ConversationForms from "./forms/ConversationForms";
+import { useMemo } from "react";
+import axios from "axios";
 
 // COMPONENT IS RERENDERING TWICE, FIX THAT
 export default function SessionsTable() {
@@ -13,6 +15,14 @@ export default function SessionsTable() {
   const filteredSessions = userSessions.filter((session) =>
     session.title.toLowerCase().includes(search.toLowerCase()),
   );
+
+  const sessions = useMemo(() => {
+    axios.post("/conversation", {
+      page,
+      search,
+      pageLimit,
+    });
+  }, [page, search]);
 
   // simulation, query database based of page === 1? query first pageLimit : from (page - 1) * pageLimit
   // if list return .length < 10, next page === 0

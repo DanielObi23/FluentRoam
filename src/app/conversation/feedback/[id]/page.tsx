@@ -1,9 +1,7 @@
 "use client";
 
 import SessionVocabTable from "@/components/conversation_page/SessionVocabTable";
-import { Button } from "@/components/ui/button";
 import { userSessions } from "@/userSessions";
-import Markdown from "react-markdown";
 import { VocabEntry } from "@/components/conversation_page/SessionVocabTable";
 import { UserSession } from "@/userSessions";
 import {
@@ -18,36 +16,8 @@ import Audio from "@/components/Audio";
 import Main from "@/components/tags/Main";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { z } from "zod";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
-const FormSchema = z.object({
-  items: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: "You have to select at least one item.",
-  }),
-});
+import SessionAddVocab from "@/components/conversation_page/SessionAddVocab";
+import SessionFeedback from "@/components/conversation_page/SessionFeedback";
 
 //TODO: REMEMBER TO ADD IDIOM'S COUNTRY OF ORIGIN TO IDIOM'S LIST,
 // ALSO ASK FOR MULTIPLE IDIOMS IN THE LIST IF APPLICABLE
@@ -55,6 +25,8 @@ const FormSchema = z.object({
 // EITHER IMPROVE MARKDOWN FORMATTING OF FEEDBACK, OR SEPARATE INTO DIFFERENT KEYS IN FEEDBACK KEY e.g cultural insights, error highlighting etc
 // FEEDBACK SHOULD BE BILINGUAL, THE USER'S NATIVE LANGUAGE (EXPLANTIONS) AND LANGUAGE USER'S LEARNING
 // ADD IDIOMS ALONG WITH VOCAB TO VOCAB LIST
+
+//THINK ABOUT ADD TRANSCRIPT INTO THIS AS WELL
 
 export default function Page() {
   const { id } = useParams();
@@ -72,57 +44,22 @@ export default function Page() {
     console.log(result);
   }
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      items: ["recents", "home"],
-    },
-  });
-
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
-
   return (
     <Main
       page="Feedback"
       className="flex gap-x-3 max-lg:flex-col lg:overflow-clip"
     >
       <section className="dark:bg-primary/10 bg-primary-800/30 w-3/4 px-4 py-2 max-lg:w-full max-md:h-[calc(100vh-5rem)] md:h-full">
-        <p className="text-start font-semibold md:mt-5">{date}</p>
-        <h1 className="text-center text-2xl font-semibold">
-          Title: {session.title}
-        </h1>
-        <p className="text-center">Role Scenario: {session.role_scenario}</p>
-        <Separator className="my-3 bg-white" />
-        <ScrollArea className="bg-background h-[calc(100vh-21rem)]">
-          <Markdown>{session.feedback}</Markdown>
-        </ScrollArea>
-
-        <div className="mt-4.5 mb-3 grid w-full grid-cols-12 gap-x-4 px-4">
-          <Button className="col-span-6">Export to PDF</Button>
-          <Button
-            className="col-span-6"
-            onClick={() =>
-              console.log(
-                `retrieve all the data from backend, push to form's page,
-                 fill in the forms with the data, to let users update it, 
-                 update the form id, if it's different from previous, else leave it alone`,
-              )
-            }
-          >
-            Redo Scenario
-          </Button>
-        </div>
+        <SessionFeedback
+          date={date}
+          feedback={session.feedback}
+          role_scenario={session.role_scenario}
+          title={session.title}
+        />
       </section>
 
       <section className="flex flex-col gap-3 space-y-3 px-4 py-2 max-lg:flex max-lg:w-full max-md:h-[calc(100vh-5rem)] md:h-full md:flex-row lg:flex-col xl:w-1/4">
+        {/* CALL SESSION AUDIO RECORDING */}
         <div className="w-full md:order-2 md:w-1/3 lg:order-1 lg:w-full">
           <p className="mb-2 text-center text-lg font-semibold">
             Play Recording
@@ -131,91 +68,15 @@ export default function Page() {
         </div>
         <Separator className="hidden lg:order-2 lg:block" />
         <div className="h-2/3 w-full md:order-1 md:w-2/3 lg:order-2 lg:w-full">
+          {/* ADD VOCAB */}
           <div className="mb-2 flex w-full items-center justify-evenly">
             <p className="text-center text-lg font-semibold underline">
               VOCABULARY
             </p>
-            <Dialog>
-              <form>
-                <DialogTrigger asChild>
-                  <Button className="dark:bg-primary/10 bg-primary-800/30">
-                    ADD <span className="max-lg:hidden">TO VOCAB LIST</span>
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogTitle className="">Vocab List</DialogTitle>
-                  <Form {...form}>
-                    <form
-                      onSubmit={form.handleSubmit(onSubmit)}
-                      className="space-y-8"
-                    >
-                      <FormField
-                        control={form.control}
-                        name="items"
-                        render={() => (
-                          <FormItem>
-                            <div className="mb-4">
-                              <FormLabel className="sr-only text-base">
-                                Vocab List
-                              </FormLabel>
-                              <FormDescription>
-                                Select the vocabs you want to add to vocab list.
-                              </FormDescription>
-                            </div>
-                            {session.target_vocabulary.map(
-                              (vocab: VocabEntry, index) => (
-                                <FormField
-                                  key={`${vocab.vocab}-${index}`}
-                                  control={form.control}
-                                  name="items"
-                                  render={({ field }) => {
-                                    return (
-                                      <FormItem
-                                        key={`${vocab.vocab}-${index}`}
-                                        className="flex flex-row items-center gap-2"
-                                      >
-                                        <FormControl>
-                                          <Checkbox
-                                            checked={field.value?.includes(
-                                              `${vocab.vocab}-${index}`,
-                                            )}
-                                            onCheckedChange={(checked) => {
-                                              return checked
-                                                ? field.onChange([
-                                                    ...field.value,
-                                                    `${vocab.vocab}-${index}`,
-                                                  ])
-                                                : field.onChange(
-                                                    field.value?.filter(
-                                                      (value) =>
-                                                        value !==
-                                                        `${vocab.vocab}-${index}`,
-                                                    ),
-                                                  );
-                                            }}
-                                          />
-                                        </FormControl>
-                                        <FormLabel className="text-sm font-normal capitalize">
-                                          {vocab.vocab} | {vocab.meaning[0]}
-                                        </FormLabel>
-                                      </FormItem>
-                                    );
-                                  }}
-                                />
-                              ),
-                            )}
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit">Submit</Button>
-                    </form>
-                  </Form>
-                </DialogContent>
-              </form>
-            </Dialog>
+            <SessionAddVocab vocabulary={session.target_vocabulary} />
           </div>
 
+          {/* VOCAB TABLE */}
           <Accordion type="single" collapsible className="w-full">
             <ScrollArea className="h-[calc(100vh-25rem)] w-full">
               {session.target_vocabulary.map(
