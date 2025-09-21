@@ -6,8 +6,6 @@ import Main from "@/components/tags/Main";
 import { useCallSessionStore, useChatSessionStore } from "@/store";
 import { useEffect } from "react";
 
-//TODO: use react query to query first 50 pages, then cache it
-// maybe empty out messages in call and chat session, to free up storage
 export default function Page() {
   //clear chat and call storage
   const setMessages = useChatSessionStore((s) => s.setMessages);

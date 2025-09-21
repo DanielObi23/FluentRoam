@@ -20,6 +20,8 @@ type CallSessionStore = {
   updateCallStatus: (status: CallStatus) => void;
   clock: string;
   updateClock: (time: string) => void;
+  callId: string;
+  updateCallId: (text: string) => void;
 };
 
 export const useCallSessionStore = create<CallSessionStore>()(
@@ -46,6 +48,10 @@ export const useCallSessionStore = create<CallSessionStore>()(
       clock: "00:00",
       updateClock: (time) => {
         set({ clock: time });
+      },
+      callId: "",
+      updateCallId: (id) => {
+        set({ callId: id });
       },
     }),
     {

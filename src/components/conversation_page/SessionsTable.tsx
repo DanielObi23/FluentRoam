@@ -1,52 +1,59 @@
-//TODO: use react query to query first 50 pages, then cache it
-
-import { userSessions, UserSession } from "@/userSessions";
-import ConversationHistoryTable from "./ConversationHistoryTable";
 import useTable from "@/hooks/use-table";
-import Table from "../Table";
-import ConversationForms from "./forms/ConversationForms";
-import { useMemo } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import Table from "@/components/Table";
+import ConversationForms from "@/components/conversation_page/forms/ConversationForms";
+import ConversationHistoryTable from "@/components/conversation_page/ConversationHistoryTable";
+import Loading from "@/components/Loading";
+import Error from "@/app/error";
 
-// COMPONENT IS RERENDERING TWICE, FIX THAT
+type UserSession = {
+  session_id: string;
+  session_type: string;
+  title: string;
+};
 export default function SessionsTable() {
   const { page, search, pageLimit } = useTable();
+  const [sessions, setSessions] = useState<UserSession[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  const filteredSessions = userSessions.filter((session) =>
-    session.title.toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    async function getSessionList() {
+      try {
+        const result = await axios.post("/api/conversation", {
+          page,
+          search,
+          pageLimit,
+        });
+        setSessions(result.data);
+      } catch (err) {
+        setHasError(true);
+        console.log(err);
+        console.error("Error getting sessions");
+      }
 
-  const sessions = useMemo(() => {
-    axios.post("/conversation", {
-      page,
-      search,
-      pageLimit,
-    });
+      setIsDataLoading(false);
+    }
+    getSessionList();
   }, [page, search]);
 
-  // simulation, query database based of page === 1? query first pageLimit : from (page - 1) * pageLimit
-  // if list return .length < 10, next page === 0
-  // if error return === out of bound, page doesnt exist, show button to relocate to first page
-  // if list returned === 0, show button to add to list
+  if (isDataLoading) {
+    return <Loading />;
+  }
 
-  // if error, show error lottie-animation
-  // if loading, show loading lottie-animation
-  // track with state, or react query
-
-  const num1 = (page - 1) * pageLimit;
-  const sessionList =
-    page === 1
-      ? (filteredSessions as UserSession[]).slice(0, pageLimit)
-      : (filteredSessions as UserSession[]).slice(num1, num1 + pageLimit);
+  if (hasError) {
+    return <Error />;
+  }
 
   return (
     <>
       <Table
-        tableLength={sessionList.length}
+        tableLength={sessions.length}
         buttonName={["Create", "Convo"]}
         form={<ConversationForms />}
       >
-        <ConversationHistoryTable sessionList={sessionList} />
+        <ConversationHistoryTable sessionList={sessions} />
       </Table>
     </>
   );

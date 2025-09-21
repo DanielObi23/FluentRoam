@@ -20,7 +20,7 @@ export default function SessionFeedback({
       <h1 className="text-center text-2xl font-semibold">Title: {title}</h1>
       <p className="text-center">Role Scenario: {role_scenario}</p>
       <Separator className="my-3 bg-white" />
-      <ScrollArea className="bg-background h-[calc(100vh-21rem)]">
+      <ScrollArea className="bg-background h-[calc(100vh-21rem)] px-2">
         <Markdown>{feedback}</Markdown>
       </ScrollArea>
 

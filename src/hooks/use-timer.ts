@@ -26,7 +26,6 @@ export default function useTimer() {
     //DURATION AND TIME ARE IN SECONDS
     // show toast when half way done
     if (time.current === Math.floor(duration / 2)) {
-      console.log({ time: time.current, duration: Math.floor(duration / 2) });
       toast(`${Math.floor(time.current / 60)} mins left.`, {
         position: "top-center",
       });
@@ -35,20 +34,12 @@ export default function useTimer() {
 
     // show toast when 5 minute left
     if (duration > 5 * 60 && time.current === Math.floor(duration - 5 * 60)) {
-      console.log({
-        time: time.current,
-        duration: Math.floor(duration - 5 * 60),
-      });
       toast("5 mins left.", { position: "top-center" });
       return;
     }
 
     // show toast when 1 minute left
     if (time.current === Math.floor(duration - 1 * 60)) {
-      console.log({
-        time: time.current,
-        duration: Math.floor(duration - 1 * 60),
-      });
       toast("1 min left.", { position: "top-center" });
       vapi.send({
         type: "add-message",

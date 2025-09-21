@@ -34,7 +34,7 @@ export default function useChatTranscript() {
       },
     ]);
 
-    const result = await axios.post("/api/chat", {
+    const result = await axios.post("/api/conversation/chat", {
       scenario: search.get("scenario") ?? "",
       formality: search.get("formality") ?? "casual",
       response_length: search.get("response_length") ?? "brief",

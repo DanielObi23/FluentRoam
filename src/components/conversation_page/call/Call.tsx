@@ -7,16 +7,17 @@ import SpeakingAnimation from "./SpeakingAnimation";
 import CallControls from "./CallControls";
 import { toast } from "sonner";
 import { useCallSessionStore, CallStatus } from "@/store";
+import axios from "axios";
 
 export default function Call() {
-  // store immediately in database, maybe a timeout, after 10+ secs, then store in database, to make sure there's an actual convo being stored
-  const callId = useRef("");
   const [isAISpeaking, setIsAISpeaking] = useState(false);
 
   const callStatus = useCallSessionStore((s) => s.callStatus);
   const updateCallStatus = useCallSessionStore((s) => s.updateCallStatus);
   const updateTranscript = useCallSessionStore((s) => s.updateTranscript);
   const updateMessages = useCallSessionStore((s) => s.updateMessages);
+  const updateCallId = useCallSessionStore((s) => s.updateCallId);
+  //const updateClock = useCallSessionStore((s) => s.updateClock);
 
   const search = useSearchParams();
   const session = useMemo(() => {
@@ -62,17 +63,27 @@ export default function Call() {
   // --- VAPI EVENTS ---
   function onCallStart() {
     updateCallStatus(CallStatus.ACTIVE);
+
     vapi.setMuted(false);
   }
 
-  function onCallEnd() {
+  async function onCallEnd() {
     updateCallStatus(CallStatus.FINISHED);
+    const callId = useCallSessionStore.getState().callId;
+    const result = await axios.post("/api/conversation/call", {
+      scenario: session.scenario,
+      formality: session.formality,
+      proficiency: session.proficiency,
+      callId,
+      type: "call",
+    });
     toast("Call ended. Thanks for practicing!", { position: "top-center" });
   }
 
   function startSession() {
+    // updateClock("00:00");
     vapi.start(assistant, assistantOverrides).then((call) => {
-      callId.current = call?.id || "";
+      updateCallId(call?.id || "");
     });
     updateMessages([]);
     updateTranscript("");
@@ -81,7 +92,7 @@ export default function Call() {
 
   function endSession() {
     updateCallStatus(CallStatus.FINISHED);
-    vapi.say("This is the end of our conversation, goodbye!", true);
+    vapi.stop();
   }
 
   function onSpeechStart() {

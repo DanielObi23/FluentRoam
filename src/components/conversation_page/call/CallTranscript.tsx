@@ -32,7 +32,7 @@ export default function CallTranscript() {
       {/* live transcript */}
       <div
         ref={scrollRef}
-        className="bg-card hide-scrollbar flex flex-col gap-3 overflow-y-scroll p-4"
+        className="bg-card scrollbar-hover flex flex-col gap-3 overflow-y-scroll p-4"
       >
         {showTranscript &&
           messages.map((m, i) => (
