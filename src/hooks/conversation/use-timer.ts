@@ -61,6 +61,7 @@ export default function useTimer() {
 
   useEffect(() => {
     if (callStatus === CallStatus.CONNECTING) {
+      time.current = 0;
       updateClock("00:00");
       return;
     }

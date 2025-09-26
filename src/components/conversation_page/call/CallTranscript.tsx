@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
-import useCallTranscript from "@/hooks/use-callTranscript";
+import useCallTranscript from "@/hooks/conversation/use-callTranscript";
 import CallTranscriptMessage from "./CallTranscriptMessage";
 
 export default function CallTranscript() {
@@ -13,8 +13,14 @@ export default function CallTranscript() {
       top: scrollRef.current.scrollHeight,
       behavior: "smooth",
     });
-    //scrollRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages.length]); //length: to avoid it scrolling when translation is added
+
+  useEffect(() => {
+    scrollRef.current?.scrollTo({
+      top: scrollRef.current.scrollHeight,
+      behavior: "auto",
+    });
+  }, [showTranscript]);
 
   function toggleDisplay() {
     setShowTranscript((prev) => !prev);

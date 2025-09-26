@@ -19,7 +19,6 @@ const deeplClient = new deepl.DeepLClient(process.env.DEEPL_AUTH_KEY!);
 
 export async function POST(req: Request) {
   const { text, from, to } = await req.json();
-  console.log({ text, from, to });
   if (!text || !to) {
     return Response.json({
       status: 400,
@@ -49,12 +48,10 @@ export async function POST(req: Request) {
           },
         },
       );
-      console.log(data);
       const translation = data[0].translations[0].text;
       return Response.json({ status: 200, message: translation });
     } catch (err: any) {
-      console.error(err);
-      console.error("Azure Translation Error");
+      console.error("Azure Translation Error", err);
       return Response.json({ status: 502, message: "Translation failed" });
     }
   }
@@ -68,7 +65,7 @@ export async function POST(req: Request) {
         : result.text;
       return Response.json({ status: 200, message: translatedText });
     } catch (err) {
-      console.error("Error translating the text");
+      console.error("Deepl Translation Error", err);
       return Response.json({ status: 502, message: "error translating" });
     }
   }

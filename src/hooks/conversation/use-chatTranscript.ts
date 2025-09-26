@@ -21,6 +21,12 @@ export default function useChatTranscript() {
 
   const { user } = useUser();
   const search = useSearchParams();
+  const searchValues = {
+    scenario: search.get("scenario") ?? "",
+    formality: search.get("formality") ?? "casual",
+    response_length: search.get("response_length") ?? "brief",
+    proficiency: search.get("proficiency") ?? "B1",
+  };
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const setChatId = useChatSessionStore((s) => s.setChatId);
@@ -35,10 +41,10 @@ export default function useChatTranscript() {
     ]);
 
     const result = await axios.post("/api/conversation/chat", {
-      scenario: search.get("scenario") ?? "",
-      formality: search.get("formality") ?? "casual",
-      response_length: search.get("response_length") ?? "brief",
-      proficiency: search.get("proficiency") ?? "B1",
+      scenario: searchValues.scenario,
+      formality: searchValues.formality,
+      response_length: searchValues.response_length,
+      proficiency: searchValues.proficiency,
       chatId: "",
       message: "",
     });
@@ -132,6 +138,18 @@ export default function useChatTranscript() {
     };
   }
 
+  async function endConversation() {
+    const chatId = useChatSessionStore.getState().chatId;
+    const transcript = useChatSessionStore.getState().messages;
+    const result = axios.post("/api/conversation/chat/save", {
+      chatId,
+      proficiency: searchValues.proficiency,
+      scenario: searchValues.scenario,
+      formality: searchValues.formality,
+      transcript,
+    });
+  }
+
   useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
@@ -148,5 +166,6 @@ export default function useChatTranscript() {
     sendMessage,
     recordMessage,
     restartConversation,
+    endConversation,
   };
 }

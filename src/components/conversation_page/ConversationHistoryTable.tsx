@@ -11,7 +11,7 @@ import Link from "next/link";
 
 type UserSession = {
   session_id: string;
-  session_type: string;
+  type: string;
   title: string;
 };
 
@@ -49,7 +49,9 @@ export default function ConversationHistoryTable({
           return (
             <TableRow key={`${session.session_id}-${index}`}>
               <TableCell className="lg:text-xl">{session.title}</TableCell>
-              <TableCell className="text-center lg:text-lg">Call</TableCell>
+              <TableCell className="text-center uppercase lg:text-lg">
+                {session.type}
+              </TableCell>
               <TableCell className="text-center">
                 <Button asChild>
                   <Link href={`/conversation/feedback/${session.session_id}`}>

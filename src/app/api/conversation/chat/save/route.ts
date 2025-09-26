@@ -10,23 +10,17 @@ if (!process.env.VAPI_API_KEY) {
 export const vapiClient = new VapiClient({ token: process.env.VAPI_API_KEY });
 
 export async function POST(req: Request) {
-  const { callId, proficiency, scenario, formality } = await req.json();
+  const { chatId, proficiency, scenario, formality, transcript } =
+    await req.json();
   const user = await currentUser();
 
   if (!user) {
     return Response.json({ error: "Unauthorized", status: 401 });
   }
 
-  if (!callId || !proficiency || !scenario || !formality) {
+  if (!chatId || !proficiency || !scenario || !formality || !transcript) {
     return Response.json({ error: "missing data", status: 400 });
   }
-
-  const call: any = await vapiClient.calls.get(callId);
-  const transcript = call.transcript;
-  const audio = call.recordingUrl;
-
-  if (!transcript)
-    return Response.json({ status: 500, error: "no transcript provided" });
 
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const chatCompletion = await groq.chat.completions.create({
@@ -53,13 +47,24 @@ export async function POST(req: Request) {
   const feedback = summary.feedback;
   const vocabulary = summary.vocabulary;
 
-  const { error } = await supabaseAdmin.from("conversation").insert({
-    session_id: callId,
+  console.log({
+    session_id: chatId,
     proficiency,
     scenario,
     formality,
-    type: "call",
-    audio,
+    type: "chat",
+    user_id: user.id,
+    title,
+    feedback,
+    vocabulary,
+  });
+
+  const { error } = await supabaseAdmin.from("conversation").insert({
+    session_id: chatId,
+    proficiency,
+    scenario,
+    formality,
+    type: "chat",
     user_id: user.id,
     title,
     feedback,

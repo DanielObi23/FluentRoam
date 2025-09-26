@@ -20,7 +20,8 @@ export async function POST(req: Request) {
     .select("session_id, type, title")
     .eq("user_id", user?.id)
     .ilike("title", `%${search}%`)
-    .range(from, to);
+    .range(from, to)
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.log(error);

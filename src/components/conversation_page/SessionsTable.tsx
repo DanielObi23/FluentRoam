@@ -9,7 +9,7 @@ import Error from "@/app/error";
 
 type UserSession = {
   session_id: string;
-  session_type: string;
+  type: string;
   title: string;
 };
 export default function SessionsTable() {

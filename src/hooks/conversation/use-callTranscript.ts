@@ -39,12 +39,18 @@ export default function useCallTranscript() {
       const lastMessage = messages.at(-1);
       let newMessages;
       let TranscriptMessage = transcript;
+
       if (!lastMessage) {
         // first message
         newMessages = [{ transcript, role }];
       } else if (lastMessage.role === role) {
         // same role
-        if (transcript.toLowerCase() === lastMessage.transcript.toLowerCase())
+        if (
+          lastMessage.transcript
+            .toLowerCase()
+            .includes(transcript.toLowerCase())
+        )
+          // to avoid duplicates
           return;
 
         TranscriptMessage = `${lastMessage.transcript} ${transcript}`;
@@ -87,8 +93,8 @@ export default function useCallTranscript() {
     try {
       const response = await axios.post("/api/translate", {
         text,
-        from: languages.userLanguage.code,
-        to: languages.targetLanguage.code,
+        from: languages.targetLanguage.code,
+        to: languages.userLanguage.code,
       });
 
       const translation = response.data.message;

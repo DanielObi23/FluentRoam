@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { Conversation } from "./hooks/use-callTranscript";
+import { persist, devtools } from "zustand/middleware";
+import { Conversation } from "./hooks/conversation/use-callTranscript";
 
+/* ---------- CALL CONVERSATION ---------- */
 export enum CallStatus {
   INACTIVE = "INACTIVE",
   CONNECTING = "CONNECTING",
@@ -9,92 +10,90 @@ export enum CallStatus {
   FINISHED = "FINISHED",
 }
 
-type CallSessionStore = {
-  captionIsOn: boolean;
+const initialCallState = {
+  captionIsOn: true,
+  transcript: "",
+  messages: [] as Conversation[],
+  callStatus: CallStatus.INACTIVE,
+  clock: "00:00",
+  callId: "",
+};
+
+type CallSessionStore = typeof initialCallState & {
   updateCaptionIsOn: () => void;
-  transcript: string;
   updateTranscript: (text: string) => void;
-  messages: Conversation[];
-  updateMessages: (message: Conversation[]) => void;
-  callStatus: CallStatus;
+  updateMessages: (messages: Conversation[]) => void;
   updateCallStatus: (status: CallStatus) => void;
-  clock: string;
   updateClock: (time: string) => void;
-  callId: string;
-  updateCallId: (text: string) => void;
+  updateCallId: (id: string) => void;
+  reset: () => void; // <-- new
 };
 
 export const useCallSessionStore = create<CallSessionStore>()(
-  persist(
-    (set, get) => ({
-      captionIsOn: true,
-      updateCaptionIsOn: () => {
-        set((state) => ({
-          captionIsOn: !state.captionIsOn,
-        }));
-      },
-      transcript: "",
-      updateTranscript: (text) => {
-        set({ transcript: text });
-      },
-      messages: [],
-      updateMessages: (message) => {
-        set({ messages: message });
-      },
-      callStatus: CallStatus.INACTIVE,
-      updateCallStatus: (status) => {
-        set({ callStatus: status });
-      },
-      clock: "00:00",
-      updateClock: (time) => {
-        set({ clock: time });
-      },
-      callId: "",
-      updateCallId: (id) => {
-        set({ callId: id });
-      },
-    }),
-    {
-      name: "call-session-storage",
-    },
+  devtools(
+    persist(
+      (set) => ({
+        ...initialCallState,
+
+        updateCaptionIsOn: () => set((s) => ({ captionIsOn: !s.captionIsOn })),
+
+        updateTranscript: (text) => set({ transcript: text }),
+
+        updateMessages: (messages) => set({ messages }),
+
+        updateCallStatus: (status) => set({ callStatus: status }),
+
+        updateClock: (time) => set({ clock: time }),
+
+        updateCallId: (id) => set({ callId: id }),
+
+        reset: () => set(initialCallState, false, "reset"),
+      }),
+      { name: "call-session-storage" },
+    ),
   ),
 );
 
+/* ---------- CHAT CONVERSATION ---------- */
 interface ChatMessage {
   role: "user" | "assistant";
   text: string;
   translation?: string;
 }
 
-type ChatSessionStore = {
-  chatId: string;
+const initialChatState = {
+  chatId: "",
+  messages: [] as ChatMessage[],
+};
+
+type ChatSessionStore = typeof initialChatState & {
   setChatId: (id: string) => void;
-  messages: ChatMessage[];
-  setMessages: (message: ChatMessage[]) => void;
+  setMessages: (messages: ChatMessage[]) => void;
   addMessage: (message: ChatMessage) => void;
+  reset: () => void;
 };
 
 export const useChatSessionStore = create<ChatSessionStore>()(
-  persist(
-    (set, get) => ({
-      chatId: "",
-      setChatId: (id) => {
-        set({ chatId: id });
-      },
-      messages: [],
-      setMessages: (message) => {
-        set({ messages: message });
-      },
-      addMessage: (message) => {
-        set((state) => ({ messages: [...state.messages, message] }));
-      },
-    }),
-    {
-      name: "chat-session-storage",
-    },
+  devtools(
+    persist(
+      (set) => ({
+        ...initialChatState,
+
+        setChatId: (id) => set({ chatId: id }),
+
+        setMessages: (messages) => set({ messages }),
+
+        addMessage: (message) =>
+          set((state) => ({ messages: [...state.messages, message] })),
+
+        reset: () => set(initialChatState, false, "reset"),
+      }),
+      { name: "chat-session-storage" },
+    ),
   ),
 );
 
+/* ---------- AUDIO ---------- */
 type PlayAudioStore = {
   selectedVoiceURI: string;
   setVoiceURI: (voice: string) => void;
@@ -102,7 +101,7 @@ type PlayAudioStore = {
 
 export const usePlayAudioStore = create<PlayAudioStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       selectedVoiceURI: "",
       setVoiceURI: (voice) => {
         set({ selectedVoiceURI: voice });

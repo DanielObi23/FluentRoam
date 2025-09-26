@@ -1,5 +1,4 @@
 "use client";
-//TODO: CHAT PERSISTS ON PAGE RELOAD, ALSO ON COMPONENT DISMOUNT. I'M THINKING GETTING IT DIRECTLY FROM VAPI, JUST STORE chatId and assistantID, instead of localStorage with zustand
 
 import { useRef, useEffect, RefObject } from "react";
 import { Button } from "@/components/ui/button";
@@ -9,7 +8,7 @@ import Main from "@/components/tags/Main";
 import { Translator } from "@/components/Translator";
 import ChatTranscriptMessage from "@/components/conversation_page/chat/ChatTranscriptMessage";
 import { useChatSessionStore } from "@/store";
-import useChatTranscript from "@/hooks/use-chatTranscript";
+import useChatTranscript from "@/hooks/conversation/use-chatTranscript";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import Lottie from "lottie-react";
@@ -48,6 +47,7 @@ export default function Page() {
 
   const messages = useChatSessionStore((s) => s.messages);
   const textMessageRef = useRef<HTMLTextAreaElement>(null);
+
   const {
     sendMessage,
     recordMessage,
@@ -55,7 +55,9 @@ export default function Page() {
     userImage,
     handleCopy,
     translate,
+    endConversation,
   } = useChatTranscript();
+
   const { voiceList, setSelectedVoice, playAudio, selectedVoiceURI } =
     usePlayAudio();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -153,6 +155,36 @@ export default function Page() {
                     className="self-end"
                   >
                     Restart<span className="max-sm:hidden">Conversation</span>
+                  </Button>
+                </DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog>
+            <DialogTrigger asChild className="self-start">
+              <Button variant="destructive">End Conversation</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>End Conversation</DialogTitle>
+                <DialogDescription>
+                  Are you sure you want to end conversation?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter className="flex items-center sm:justify-between">
+                <DialogClose asChild>
+                  <Button type="button" variant="secondary">
+                    Close
+                  </Button>
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button
+                    variant={"destructive"}
+                    onClick={endConversation}
+                    className="self-end"
+                  >
+                    End<span className="max-sm:hidden">Conversation</span>
                   </Button>
                 </DialogClose>
               </DialogFooter>

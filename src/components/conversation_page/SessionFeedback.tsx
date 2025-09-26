@@ -24,7 +24,7 @@ export default function SessionFeedback({
         <Markdown>{feedback}</Markdown>
       </ScrollArea>
 
-      <div className="mt-4.5 mb-3 grid w-full grid-cols-12 gap-x-4 px-4">
+      <div className="my-4.5 mb-3 grid w-full grid-cols-12 gap-x-4 px-4">
         <Button className="col-span-6">Export to PDF</Button>
         <Button
           className="col-span-6"

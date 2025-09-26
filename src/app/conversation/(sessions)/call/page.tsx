@@ -12,7 +12,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Main from "@/components/tags/Main";
 import Lottie from "lottie-react";
 import animationData from "../../../../../public/lottie-animation/loading.json";
-import useTimer from "@/hooks/use-timer";
+import useTimer from "@/hooks/conversation/use-timer";
 
 export default function Session() {
   const search = useSearchParams();
@@ -21,7 +21,6 @@ export default function Session() {
     toast("Please create a scenario to start conversation", {
       position: "top-center",
     });
-    //redirect("/conversation"); for when retrieving call data from backend, remember to pass duration into useTimer when backend is ready
     router.replace("/conversation");
 
     return (

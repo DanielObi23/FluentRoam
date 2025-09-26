@@ -77,7 +77,6 @@ export default function Page() {
     async function getFeedback() {
       try {
         const result = await axios.get(`/api/conversation/feedback/${id}`);
-        console.log(result.data);
         setSession(result.data);
       } catch (err) {
         console.error("Error retrieving session");
@@ -106,14 +105,14 @@ export default function Page() {
         />
       </section>
 
-      <section className="flex flex-col gap-3 space-y-3 px-4 py-2 max-lg:flex max-lg:w-full max-md:h-[calc(100vh-5rem)] md:h-full md:flex-row lg:flex-col xl:w-1/4">
+      <section className="mt-3 flex flex-col gap-3 space-y-3 px-4 py-2 max-lg:flex max-lg:w-full max-md:h-[calc(100vh-5rem)] md:h-full md:flex-row lg:flex-col xl:w-1/4">
         {/* CALL SESSION AUDIO RECORDING */}
-        {session.audio !== "" && (
+        {session.audio && (
           <div className="w-full md:order-2 md:w-1/3 lg:order-1 lg:w-full">
             <p className="mb-2 text-center text-lg font-semibold">
               Play Recording
             </p>
-            <Audio audioUrl="https://storage.vapi.ai/007515c7-0c90-474b-a0f2-289501f9d702-1754847784236-809ef4dc-f98e-4915-98ef-56f7aa260af4-mono.mp3" />
+            <Audio audioUrl={session.audio} />
           </div>
         )}
 

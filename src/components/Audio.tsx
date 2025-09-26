@@ -63,7 +63,9 @@ export default function Audio({ audioUrl }: { audioUrl: string }) {
           step={1}
           className="w-4/7"
         />
-        <span>{`${Math.trunc(audio?.duration / 60 || 0)}:${audio?.duration % 60 | 0 || "00"}`}</span>
+        <span>
+          {`${Math.trunc(audio?.duration / 60 || 0)}:${(audio?.duration % 60 | 0).toString().padStart(2, "0")} `}
+        </span>
       </div>
       <div className="flex w-full items-center justify-around">
         {/* DOWNLOAD BUTTON */}
