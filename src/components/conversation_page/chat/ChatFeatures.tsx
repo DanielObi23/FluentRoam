@@ -24,16 +24,14 @@ export default function ChatFeatures({
   voiceList,
   playAudio,
   setSelectedVoice,
-  restartConversation,
+  endConversation,
   selectedVoiceURI,
-  textMessageRef,
 }: {
   voiceList: SpeechSynthesisVoice[];
   playAudio: (text: string) => void;
   setSelectedVoice: (text: string) => void;
-  restartConversation: (ref: RefObject<HTMLTextAreaElement>) => void;
+  endConversation: () => void;
   selectedVoiceURI: string;
-  textMessageRef: RefObject<HTMLTextAreaElement>;
 }) {
   return (
     <Dialog>
@@ -56,7 +54,7 @@ export default function ChatFeatures({
               <TabsTrigger value="voice">Voice</TabsTrigger>
             )}
             <TabsTrigger value="translator">Translator</TabsTrigger>
-            <TabsTrigger value="restart">Restart</TabsTrigger>
+            <TabsTrigger value="end">End Convo</TabsTrigger>
           </TabsList>
 
           <TabsContent value="voice" className="w-full place-items-center">
@@ -96,21 +94,18 @@ export default function ChatFeatures({
             <Translator playLearningAudio={playAudio} />
           </TabsContent>
 
-          <TabsContent
-            value="restart"
-            className="flex items-center justify-center"
-          >
+          <TabsContent value="end" className="flex items-center justify-center">
             <Dialog>
               <DialogTrigger asChild>
                 <Button variant="destructive" size={"lg"}>
-                  Restart Conversation
+                  End Conversation
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Restart Conversation</DialogTitle>
+                  <DialogTitle>End Conversation</DialogTitle>
                   <DialogDescription>
-                    Are you sure you want to restart conversation?
+                    Are you sure you want to end conversation?
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="flex items-center sm:justify-between">
@@ -122,10 +117,10 @@ export default function ChatFeatures({
                   <DialogClose asChild>
                     <Button
                       variant={"destructive"}
-                      onClick={() => restartConversation(textMessageRef)}
+                      onClick={endConversation}
                       className="self-end"
                     >
-                      Restart
+                      End
                       <span className="max-sm:hidden">Conversation</span>
                     </Button>
                   </DialogClose>

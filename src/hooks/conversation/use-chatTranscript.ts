@@ -3,14 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { toast } from "sonner";
-import {
-  RefObject,
-  useEffect,
-  useMemo,
-  useCallback,
-  useRef,
-  useState,
-} from "react";
+import { RefObject, useEffect, useCallback, useRef, useState } from "react";
 import { useChatSessionStore } from "@/store";
 import { useSearchParams } from "next/navigation";
 import { languages } from "@/utils/language";
@@ -30,6 +23,7 @@ export default function useChatTranscript() {
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const setChatId = useChatSessionStore((s) => s.setChatId);
+  const [isEnded, setIsEnded] = useState(false);
 
   async function startConversation() {
     const setMessages = useChatSessionStore.getState().setMessages;
@@ -57,13 +51,18 @@ export default function useChatTranscript() {
     ]);
   }
 
-  //TODO: either automatically save convo, or ask user to save or not
-  function restartConversation(
-    textMessageRef: RefObject<HTMLTextAreaElement | null>,
-  ) {
-    (textMessageRef.current as HTMLTextAreaElement).value = "";
-    (textMessageRef.current as HTMLTextAreaElement).focus();
-    startConversation();
+  async function endConversation() {
+    setIsEnded(true);
+    const chatId = useChatSessionStore.getState().chatId;
+    const transcript = useChatSessionStore.getState().messages;
+    const result = await axios.post("/api/conversation/chat/save", {
+      chatId,
+      proficiency: searchValues.proficiency,
+      scenario: searchValues.scenario,
+      formality: searchValues.formality,
+      transcript,
+    });
+    toast("Chat conversation has been saved", { position: "bottom-right" });
   }
 
   async function sendMessage(
@@ -85,7 +84,7 @@ export default function useChatTranscript() {
     (textMessageRef.current as HTMLTextAreaElement).value = "";
     (textMessageRef.current as HTMLTextAreaElement).focus();
 
-    const result = await axios.post("/api/chat", {
+    const result = await axios.post("/api/conversation/chat", {
       message,
       chatId,
     });
@@ -138,18 +137,6 @@ export default function useChatTranscript() {
     };
   }
 
-  async function endConversation() {
-    const chatId = useChatSessionStore.getState().chatId;
-    const transcript = useChatSessionStore.getState().messages;
-    const result = axios.post("/api/conversation/chat/save", {
-      chatId,
-      proficiency: searchValues.proficiency,
-      scenario: searchValues.scenario,
-      formality: searchValues.formality,
-      transcript,
-    });
-  }
-
   useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
@@ -165,7 +152,7 @@ export default function useChatTranscript() {
     handleCopy,
     sendMessage,
     recordMessage,
-    restartConversation,
     endConversation,
+    isEnded,
   };
 }

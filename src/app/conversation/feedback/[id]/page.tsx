@@ -100,8 +100,7 @@ export default function Page() {
         <SessionFeedback
           date={date}
           feedback={session.feedback}
-          role_scenario={session.scenario}
-          title={session.title}
+          scenario={session.scenario}
         />
       </section>
 

@@ -29,7 +29,7 @@ export default function StoryChapterVocabList({
             <Table>
               <TableBody>
                 <TableRow>
-                  <TableCell className="flex gap-1">
+                  <TableCell className="flex items-center gap-1">
                     Text
                     {showPlayButton && (
                       <Button
@@ -52,7 +52,7 @@ export default function StoryChapterVocabList({
                   <TableCell>{vocab.translation}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className="flex gap-1">
+                  <TableCell className="flex items-center gap-1">
                     Context
                     {showPlayButton && (
                       <Button

@@ -43,21 +43,8 @@ export async function POST(req: Request) {
   });
 
   const summary = JSON.parse(chatCompletion.choices[0].message.content!);
-  const title = summary.title;
   const feedback = summary.feedback;
   const vocabulary = summary.vocabulary;
-
-  console.log({
-    session_id: chatId,
-    proficiency,
-    scenario,
-    formality,
-    type: "chat",
-    user_id: user.id,
-    title,
-    feedback,
-    vocabulary,
-  });
 
   const { error } = await supabaseAdmin.from("conversation").insert({
     session_id: chatId,
@@ -66,7 +53,6 @@ export async function POST(req: Request) {
     formality,
     type: "chat",
     user_id: user.id,
-    title,
     feedback,
     vocabulary,
   });

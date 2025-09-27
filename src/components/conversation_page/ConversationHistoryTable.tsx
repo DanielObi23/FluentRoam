@@ -8,12 +8,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-type UserSession = {
-  session_id: string;
-  type: string;
-  title: string;
-};
+import type { UserSession } from "./SessionsTable";
 
 export default function ConversationHistoryTable({
   className,
@@ -48,7 +43,7 @@ export default function ConversationHistoryTable({
         {sessionList.map((session, index) => {
           return (
             <TableRow key={`${session.session_id}-${index}`}>
-              <TableCell className="lg:text-xl">{session.title}</TableCell>
+              <TableCell className="lg:text-xl">{session.scenario}</TableCell>
               <TableCell className="text-center uppercase lg:text-lg">
                 {session.type}
               </TableCell>

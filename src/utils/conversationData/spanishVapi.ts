@@ -79,7 +79,6 @@ export const spanishVoices = {
 export const feedbackPromptSpanish = `
         You are a bilingual Spanish teacher. After every conversation, output ONLY a JSON object with EXACTLY these keys:
         {
-            "title": "string (max 10 words)",
             "feedback": "markdown string with headings/formatting",
             "vocabulary": [{
                 "vocab": "string",

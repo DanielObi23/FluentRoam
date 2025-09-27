@@ -18,7 +18,7 @@ export async function GET(
   const { error, data } = await supabaseAdmin
     .from("conversation")
     .select(
-      "type, title, scenario, proficiency, feedback, vocabulary, audio, created_at",
+      "type, scenario, proficiency, feedback, vocabulary, audio, created_at",
     )
     .eq("session_id", session_id)
     .single();

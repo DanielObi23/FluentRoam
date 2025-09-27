@@ -7,10 +7,10 @@ import ConversationHistoryTable from "@/components/conversation_page/Conversatio
 import Loading from "@/components/Loading";
 import Error from "@/app/error";
 
-type UserSession = {
+export type UserSession = {
   session_id: string;
   type: string;
-  title: string;
+  scenario: string;
 };
 export default function SessionsTable() {
   const { page, search, pageLimit } = useTable();

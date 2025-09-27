@@ -49,7 +49,6 @@ export async function POST(req: Request) {
   });
 
   const summary = JSON.parse(chatCompletion.choices[0].message.content!);
-  const title = summary.title;
   const feedback = summary.feedback;
   const vocabulary = summary.vocabulary;
 
@@ -61,7 +60,6 @@ export async function POST(req: Request) {
     type: "call",
     audio,
     user_id: user.id,
-    title,
     feedback,
     vocabulary,
   });

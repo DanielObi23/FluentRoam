@@ -26,6 +26,7 @@ import {
 import ChatFeatures from "@/components/conversation_page/chat/ChatFeatures";
 import VoiceSelect from "@/components/VoiceSelect";
 import usePlayAudio from "@/hooks/use-playAudio";
+import { cn } from "@/lib/utils";
 
 export default function Page() {
   const search = useSearchParams();
@@ -51,11 +52,11 @@ export default function Page() {
   const {
     sendMessage,
     recordMessage,
-    restartConversation,
     userImage,
     handleCopy,
     translate,
     endConversation,
+    isEnded,
   } = useChatTranscript();
 
   const { voiceList, setSelectedVoice, playAudio, selectedVoiceURI } =
@@ -76,9 +77,8 @@ export default function Page() {
           voiceList={voiceList}
           playAudio={playAudio}
           setSelectedVoice={setSelectedVoice}
-          restartConversation={restartConversation}
+          endConversation={endConversation}
           selectedVoiceURI={selectedVoiceURI}
-          textMessageRef={textMessageRef as RefObject<HTMLTextAreaElement>}
         />
 
         {/* CHAT AREA */}
@@ -100,7 +100,9 @@ export default function Page() {
         </div>
 
         {/* TYPING AREA */}
-        <div className="flex items-center gap-2 p-3">
+        <div
+          className={cn(isEnded ? "hidden" : "flex items-center", "gap-2 p-3")}
+        >
           <Button onClick={() => recordMessage(textMessageRef)}>
             <Mic />
           </Button>
@@ -133,36 +135,6 @@ export default function Page() {
           <Translator playLearningAudio={playAudio} />
           <Dialog>
             <DialogTrigger asChild className="self-end">
-              <Button variant="destructive">Restart Conversation</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Restart Conversation</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to restart conversation?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="flex items-center sm:justify-between">
-                <DialogClose asChild>
-                  <Button type="button" variant="secondary">
-                    Close
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button
-                    variant={"destructive"}
-                    onClick={() => restartConversation(textMessageRef)}
-                    className="self-end"
-                  >
-                    Restart<span className="max-sm:hidden">Conversation</span>
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-
-          <Dialog>
-            <DialogTrigger asChild className="self-start">
               <Button variant="destructive">End Conversation</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">

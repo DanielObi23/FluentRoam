@@ -17,9 +17,9 @@ export async function POST(req: Request) {
 
   const { error, data } = await supabaseAdmin
     .from("conversation")
-    .select("session_id, type, title")
+    .select("session_id, type, scenario")
     .eq("user_id", user?.id)
-    .ilike("title", `%${search}%`)
+    .ilike("scenario", `%${search}%`)
     .range(from, to)
     .order("created_at", { ascending: false });
 

@@ -1,5 +1,5 @@
 interface ChatMessage {
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
 }
 
@@ -22,21 +22,20 @@ interface ChatResponse {
 }
 
 async function sendChatMessage(
-  message: string, 
+  message: string,
   previousChatId?: string,
-
 ): Promise<ChatResponse> {
-  const response = await fetch('https://api.vapi.ai/chat', {
-    method: 'POST',
+  const response = await fetch("https://api.vapi.ai/chat", {
+    method: "POST",
     headers: {
-      'Authorization': process.env.Vapi_API_KEY!,
-      'Content-Type': 'application/json'
+      Authorization: process.env.Vapi_API_KEY!,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       assistantId: "e3fbfb66-b32e-4c74-b456-c6ea5fb15663",
       input: message,
-      ...(previousChatId && { previousChatId })
-    })
+      ...(previousChatId && { previousChatId }),
+    }),
   });
 
   if (!response.ok) {
@@ -47,7 +46,7 @@ async function sendChatMessage(
   return {
     chatId: chat.id,
     response: chat.output[0].content,
-    fullData: chat
+    fullData: chat,
   };
 }
 
@@ -57,13 +56,12 @@ async function startChatMessage(
   response_length: string,
   proficiency: string,
   previousChatId?: string,
-
 ): Promise<ChatResponse> {
-  const response = await fetch('https://api.vapi.ai/chat', {
-    method: 'POST',
+  const response = await fetch("https://api.vapi.ai/chat", {
+    method: "POST",
     headers: {
-      'Authorization': process.env.Vapi_API_KEY!,
-      'Content-Type': 'application/json'
+      Authorization: process.env.Vapi_API_KEY!,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       assistantId: "e3fbfb66-b32e-4c74-b456-c6ea5fb15663",
@@ -78,10 +76,10 @@ async function startChatMessage(
           scenario,
           formality,
           response_length,
-          proficiency
-        }
+          proficiency,
+        },
       },
-    })
+    }),
   });
 
   if (!response.ok) {
@@ -92,31 +90,35 @@ async function startChatMessage(
   return {
     chatId: chat.id,
     response: chat.output[0].content,
-    fullData: chat
+    fullData: chat,
   };
 }
 
-// FIX THE ERROR HANDLING
 export async function POST(req: Request) {
   if (!process.env.VAPI_API_KEY) {
-    throw new Error("Please add missing vapi api key")
+    throw new Error("Please add missing vapi api key");
   }
-  const {chatId, message, scenario, formality, response_length, proficiency} = await req.json()
+  const { chatId, message, scenario, formality, response_length, proficiency } =
+    await req.json();
 
   if ((message.trim().length === 0 || !message) && chatId !== "") {
-    return Response.json({error: "no message given"})
+    return Response.json({ error: "no message given" });
   }
 
   let chat;
   if (chatId === "") {
-    console.log("none, no chat ID")
-    //UPDATE FIRST INPUT BASED OF LANGUAGE
-    chat = await startChatMessage(scenario, formality, response_length, proficiency)
+    chat = await startChatMessage(
+      scenario,
+      formality,
+      response_length,
+      proficiency,
+    );
   } else {
-    console.log(`chat-id: ${chatId}`)
-    chat = await sendChatMessage(message, chatId)
+    chat = await sendChatMessage(message, chatId);
   }
-  console.log(chat.response)
-  return Response.json({chatId: chat.chatId, message: chat.response, data: chat.fullData})
+  return Response.json({
+    chatId: chat.chatId,
+    message: chat.response,
+    data: chat.fullData,
+  });
 }
-
