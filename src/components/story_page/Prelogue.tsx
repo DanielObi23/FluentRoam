@@ -6,19 +6,54 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { useRouter } from "next/navigation";
-import { Story } from "@/story";
 import { ParamValue } from "next/dist/server/request/params";
 import { ArrowBigRight } from "lucide-react";
+import Loading from "@/components/UI_state/Loading";
+import Error from "@/components/UI_state/Error";
+import { Separator } from "../ui/separator";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Prelogue({
-  currentStory,
   id,
+  setCurrentPage,
 }: {
-  currentStory: Story;
   id: ParamValue;
+  setCurrentPage: (number: number) => void;
 }) {
-  const router = useRouter();
+  const [story, setStory] = useState({
+    title: "",
+    type: "",
+    tags: { genre: [], theme: [], tone: [] },
+    plot: "",
+    summary: { text: "", translation: "" },
+  });
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  useEffect(() => {
+    async function getStory() {
+      try {
+        const result = await axios.post("/api/story/read", {
+          id,
+          page: 1,
+        });
+        setStory(result.data);
+        setIsDataLoading(false);
+      } catch (err) {
+        setHasError(true);
+      }
+    }
+    getStory();
+  }, []);
+
+  if (isDataLoading) {
+    return <Loading />;
+  }
+
+  if (hasError) {
+    return <Error />;
+  }
+
   return (
     <Main
       page="Story"
@@ -28,12 +63,12 @@ export default function Prelogue({
         <TableBody>
           <TableRow>
             <TableCell>Title</TableCell>
-            <TableCell>{currentStory.title}</TableCell>
+            <TableCell>{story.title}</TableCell>
           </TableRow>
           <TableRow>
             {/* SEE MORE */}
             <TableCell>Plot</TableCell>
-            <TableCell>{currentStory.storySeed}</TableCell>
+            <TableCell>{story.plot}</TableCell>
           </TableRow>
           <TableRow>
             {/* SEE MORE */}
@@ -48,21 +83,15 @@ export default function Prelogue({
                     <TableBody>
                       <TableRow>
                         <TableCell>Genre</TableCell>
-                        <TableCell>
-                          {currentStory.tags.genre.join(", ")}
-                        </TableCell>
+                        <TableCell>{story.tags.genre.join(", ")}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Theme</TableCell>
-                        <TableCell>
-                          {currentStory.tags.theme.join(", ")}
-                        </TableCell>
+                        <TableCell>{story.tags.theme.join(", ")}</TableCell>
                       </TableRow>
                       <TableRow>
                         <TableCell>Tone</TableCell>
-                        <TableCell>
-                          {currentStory.tags.tone.join(", ")}
-                        </TableCell>
+                        <TableCell>{story.tags.tone.join(", ")}</TableCell>
                       </TableRow>
                     </TableBody>
                   </Table>
@@ -72,12 +101,16 @@ export default function Prelogue({
           </TableRow>
           <TableRow>
             <TableCell>Type</TableCell>
-            <TableCell>{currentStory.storyType}</TableCell>
+            <TableCell>{story.type}</TableCell>
           </TableRow>
           <TableRow>
             {/* SEE MORE */}
             <TableCell>Summary</TableCell>
-            <TableCell>{currentStory.summary.text}</TableCell>
+            <TableCell>
+              <p>{story.summary.text}</p>
+              <Separator className="my-3" />
+              <p>{story.summary.translation}</p>
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>
@@ -85,7 +118,7 @@ export default function Prelogue({
         <Button
           variant={"outline"}
           size={"lg"}
-          onClick={() => router.push(`/story/${id}?page=${2}`)}
+          onClick={() => setCurrentPage(2)}
         >
           <ArrowBigRight className="size-8" />
         </Button>

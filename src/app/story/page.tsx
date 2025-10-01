@@ -1,36 +1,62 @@
 "use client";
 
-import { story, Story } from "@/story";
 import StoryHistoryTable from "@/components/story_page/StoryHistoryTable";
 import Table from "@/components/Table";
 import useTable from "@/hooks/use-table";
 import Main from "@/components/tags/Main";
 import StoryForm from "@/components/story_page/StoryForm";
+import { StoryHistory } from "@/utils/storyData/types";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loading from "@/components/UI_state/Loading";
+import Error from "@/components/UI_state/Error";
 
 export default function Page() {
-  //USE USEMEMO FOR WHEN QUERYING DATABASE
-  const { page, search, pageLimit } = useTable();
-  const storys = [...story, ...story, ...story, ...story];
-  const filteredList = storys.filter((story) =>
-    story.title.toLowerCase().includes(search.toLowerCase()),
-  );
+  const [story, setStory] = useState<StoryHistory[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  const num1 = page * pageLimit - 1;
-  const storyList =
-    page === 1
-      ? (filteredList as Story[]).slice(0, pageLimit)
-      : (filteredList as Story[]).slice(num1, num1 + pageLimit);
+  const { page, search, pageLimit } = useTable();
+
+  useEffect(() => {
+    async function getHistory() {
+      try {
+        const result = await axios.post("/api/story", {
+          page,
+          search,
+          pageLimit,
+        });
+        setStory(result.data);
+      } catch (err) {
+        setHasError(true);
+        console.log(err);
+        console.error("Error getting sessions");
+      }
+
+      setIsDataLoading(false);
+    }
+
+    getHistory();
+  }, [page, search]);
+
+  if (isDataLoading) {
+    return <Loading />;
+  }
+
+  if (hasError) {
+    return <Error />;
+  }
 
   return (
     <Main page="Story" className="flex-col">
       <section aria-labelledby="Story history list" className="w-full p-3">
         <Table
-          tableLength={storyList.length}
+          tableLength={story.length}
           buttonName={["Create", "Story"]}
           buttonClass={"md:flex"}
           form={<StoryForm />}
         >
-          <StoryHistoryTable storyList={storyList} />
+          <StoryHistoryTable storyList={story} />
         </Table>
       </section>
     </Main>

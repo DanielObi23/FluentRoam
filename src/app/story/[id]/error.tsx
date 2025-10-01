@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function Error() {
-    const router = useRouter()
+  const router = useRouter();
 
-    return (
-        <div>
-            Page does not exist, please go background
-            <Button onClick={router.back}>Go back</Button>
-        </div>
-    )
+  return (
+    <div>
+      Page does not exist, please go back
+      <Button onClick={router.back}>Go back</Button>
+    </div>
+  );
 }

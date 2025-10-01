@@ -8,14 +8,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Story } from "@/story";
+import { StoryHistory } from "@/utils/storyData/types";
 
 export default function StoryHistoryTable({
   className,
   storyList,
 }: {
   className?: string;
-  storyList: Story[];
+  storyList: StoryHistory[];
 }) {
   if (storyList.length === 0) {
     return (
@@ -34,7 +34,7 @@ export default function StoryHistoryTable({
       <TableHeader>
         <TableRow>
           <TableHead></TableHead>
-          <TableHead className="min-w-[10rem]">Title</TableHead>
+          <TableHead className="min-w-[10rem]">Plot</TableHead>
           <TableHead>Type</TableHead>
           <TableHead>Proficiency</TableHead>
           <TableHead>Genre</TableHead>
@@ -50,12 +50,14 @@ export default function StoryHistoryTable({
               <TableCell>
                 <Button asChild>
                   <Link href={`/story/${story.id}`}>
-                    View <span className="hidden md:block">Story</span>
+                    <p className="flex gap-0.5">
+                      View <span className="hidden md:block">Story</span>
+                    </p>
                   </Link>
                 </Button>
               </TableCell>
-              <TableCell className="max-w-xs">{story.title}</TableCell>
-              <TableCell>{story.storyType}</TableCell>
+              <TableCell className="max-w-xs">{story.plot}</TableCell>
+              <TableCell>{story.type}</TableCell>
               <TableCell>{story.proficiency}</TableCell>
               <TableCell>{story.tags.genre.join(", ")}</TableCell>
               <TableCell>{story.tags.theme.join(", ")}</TableCell>
@@ -63,7 +65,7 @@ export default function StoryHistoryTable({
               <TableCell>
                 {new Intl.DateTimeFormat("en-GB", {
                   dateStyle: "short",
-                }).format(new Date(story.created_at))}
+                }).format(story.createdAt)}
               </TableCell>
             </TableRow>
           );

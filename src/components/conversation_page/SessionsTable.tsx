@@ -4,8 +4,8 @@ import axios from "axios";
 import Table from "@/components/Table";
 import ConversationForms from "@/components/conversation_page/forms/ConversationForms";
 import ConversationHistoryTable from "@/components/conversation_page/ConversationHistoryTable";
-import Loading from "@/components/Loading";
-import Error from "@/app/error";
+import Loading from "@/components/UI_state/Loading";
+import Error from "@/components/UI_state/Error";
 
 export type UserSession = {
   session_id: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, RefObject } from "react";
+import { useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Mic, SendHorizontal } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,7 +36,6 @@ export default function Page() {
     toast("Please create a scenario to start conversation", {
       position: "top-center",
     });
-    //redirect("/conversation"); for when retrieving call data from backend, remember to pass duration into useTimer when backend is ready
     router.replace("/conversation");
 
     return (

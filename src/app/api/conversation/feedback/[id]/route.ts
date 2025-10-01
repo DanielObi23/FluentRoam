@@ -28,9 +28,7 @@ export async function GET(
   }
 
   if (!data) {
-    return new Response(JSON.stringify({ error: "No session found" }), {
-      status: 404,
-    });
+    return Response.json({ error: "No session found", status: 404 });
   }
 
   return Response.json(data);

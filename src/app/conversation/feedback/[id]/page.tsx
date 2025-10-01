@@ -16,47 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import SessionAddVocab from "@/components/conversation_page/SessionAddVocab";
 import SessionFeedback from "@/components/conversation_page/SessionFeedback";
 import { useEffect, useState } from "react";
-import Loading from "@/components/Loading";
-
-interface RegionalVariation {
-  country: string;
-  word: string;
-  part_of_speech: string;
-  meaning: string[];
-  example: {
-    sentence: string;
-    translation: string;
-  };
-}
-
-interface VocabEntry {
-  vocab: string;
-  part_of_speech: string;
-  meaning: string[];
-  tone: "Casual" | "Neutral" | "Formal" | string;
-  regional_variations: RegionalVariation[];
-  examples: {
-    sentence: string;
-    translation: string;
-  }[];
-  idioms: {
-    phrase: string;
-    meaning: string;
-  }[];
-  synonyms: string[];
-  antonyms: string[];
-}
-
-type UserSession = {
-  session_type: "chat" | "call";
-  title: string;
-  scenario: string;
-  proficiency: "A2" | "B1" | "B2";
-  feedback: string;
-  vocabulary: VocabEntry[];
-  audio: string;
-  created_at: string;
-};
+import Loading from "@/components/UI_state/Loading";
+import type { UserSession } from "@/utils/conversationData/types";
 
 const emptySession: UserSession = {
   session_type: "chat",

@@ -6,7 +6,9 @@ export async function POST(req: Request) {
   const user = await currentUser();
 
   if (!user) {
-    return Response.json({ error: "Unauthorized", status: 401 });
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+    });
   }
 
   // Calculate offset for pagination
@@ -14,10 +16,10 @@ export async function POST(req: Request) {
   const to = from + pageLimit - 1;
 
   const { error, data } = await supabaseAdmin
-    .from("conversation")
-    .select("session_id, type, scenario")
+    .from("story")
+    .select("id, plot, type, proficiency, tags, created_at")
     .eq("user_id", user?.id)
-    .ilike("scenario", `%${search}%`)
+    .ilike("plot", `%${search}%`)
     .range(from, to)
     .order("created_at", { ascending: false });
 

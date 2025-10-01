@@ -11,14 +11,13 @@ export const vapiClient = new VapiClient({ token: process.env.VAPI_API_KEY });
 
 export async function POST(req: Request) {
   const { callId, proficiency, scenario, formality } = await req.json();
-  const user = await currentUser();
-
-  if (!user) {
-    return Response.json({ error: "Unauthorized", status: 401 });
-  }
-
   if (!callId || !proficiency || !scenario || !formality) {
     return Response.json({ error: "missing data", status: 400 });
+  }
+
+  const user = await currentUser();
+  if (!user) {
+    return Response.json({ error: "Unauthorized", status: 401 });
   }
 
   const call: any = await vapiClient.calls.get(callId);
@@ -37,7 +36,7 @@ export async function POST(req: Request) {
       },
       {
         role: "user",
-        content: `Transcript: ${transcript}\n\nOutput ONLY valid JSON:`,
+        content: `Transcript: ${transcript}\n\nOutput ONLY valid JSON`,
       },
     ],
     model: "moonshotai/kimi-k2-instruct",

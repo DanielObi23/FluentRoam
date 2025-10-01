@@ -28,11 +28,21 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
-import { storyType, themes, tones, genres } from "@/utils/storyOptions";
+import {
+  storyType,
+  themes,
+  tones,
+  genres,
+} from "@/utils/storyData/storyOptions";
 import MultipleSelector from "../ui/multi-select";
+import axios from "axios";
+import { toast } from "sonner";
+import { useState } from "react";
+import Image from "next/image";
+import logo from "../../../public/logo/fluentroamTransparent.png";
 
 const formSchema = z.object({
-  storyType: z.string(),
+  type: z.string(),
   pov: z.string(),
   genre: z.array(z.string()).nonempty(),
   theme: z.array(z.string()).nonempty(),
@@ -49,12 +59,12 @@ const formSchema = z.object({
 });
 
 export default function Page() {
-  const router = useRouter();
+  const [showLoader, setShowLoader] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      storyType: "short-story",
+      type: "short-story",
       pov: "third",
       genre: [genres[0].value],
       theme: [themes[0].value],
@@ -64,13 +74,34 @@ export default function Page() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values.genre);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setShowLoader(true);
+      const result = await axios.post("/api/story/create", {
+        plot: values.plot,
+        proficiency: values.proficiency,
+        type: values.type,
+        pov: values.pov + "-person",
+        genre: values.genre,
+        theme: values.theme,
+        tone: values.tone,
+      });
+
+      window.location.reload();
+    } catch (err) {
+      toast("Error uploading file, please try again");
+    }
   }
 
-  //TODO: GENERATE LIST OF VALUES FOR GENRE, THEME AND TONE, use the search one select field
   return (
     <Form {...form}>
+      {showLoader && (
+        <div className="fixed z-50 flex w-full flex-col items-center justify-center gap-4">
+          <div className="flex h-28 w-28 animate-spin items-center justify-center rounded-full border-8 border-gray-300 border-t-blue-400 text-4xl text-blue-400">
+            <Image src={logo} alt="fluentroam logo" />
+          </div>
+        </div>
+      )}
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="bg-background max-w-xl space-y-3 p-4 shadow-2xl shadow-teal-900 md:gap-7"
@@ -130,7 +161,7 @@ export default function Page() {
         {/* STORY TYPE */}
         <FormField
           control={form.control}
-          name="storyType"
+          name="type"
           render={({ field }) => (
             <FormItem className="flex gap-2">
               <FormLabel className="text-xl">Story Type</FormLabel>
@@ -257,7 +288,7 @@ export default function Page() {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={showLoader}>
           CREATE STORY
         </Button>
       </form>

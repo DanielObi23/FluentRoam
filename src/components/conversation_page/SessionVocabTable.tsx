@@ -1,39 +1,5 @@
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-
-interface RegionalVariation {
-  country: string;
-  word: string;
-  part_of_speech: string;
-  meaning: string[];
-  example: {
-    sentence: string;
-    translation: string;
-  };
-}
-
-// Vocabulary entry
-export interface VocabEntry {
-  vocab: string;
-  part_of_speech: string;
-  meaning: string[];
-  tone: "Casual" | "Neutral" | "Formal" | string;
-  regional_variations: RegionalVariation[];
-  examples: {
-    sentence: string;
-    translation: string;
-  }[];
-  idioms: {
-    phrase: string;
-    meaning: string;
-  }[];
-  synonyms: string[];
-  antonyms: string[];
-}
-
-type SessionVocabTable = {
-  vocab: VocabEntry;
-  index: number;
-};
+import type { SessionVocabTable } from "@/utils/conversationData/types";
 
 export default function SessionVocabTable({ vocab, index }: SessionVocabTable) {
   return (

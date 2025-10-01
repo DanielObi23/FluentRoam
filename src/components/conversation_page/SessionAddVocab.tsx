@@ -19,7 +19,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { VocabEntry } from "@/components/conversation_page/SessionVocabTable";
+import type { VocabEntry } from "@/utils/conversationData/types";
 
 const FormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {

@@ -3,9 +3,9 @@ import type { Option } from "@/components/ui/multi-select";
 export const storyType = [
   "ballad",
   "lyric-poem",
-  "novella",
+  //"novella",
   "short-story",
-  "stage-play",
+  //"stage-play",
 ];
 
 export const genres: Option[] = [
