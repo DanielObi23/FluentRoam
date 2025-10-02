@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -8,36 +6,78 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SearchBar from "@/components/Table";
-import useSearchBar from "@/hooks/use-table";
-import { cardList } from "@/dummy_data";
+import HistoryTable from "@/components/HistoryTable";
+import useTable from "@/hooks/use-table";
 import VocabForm from "./VocabForm";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Loading from "@/components/UI_state/Loading";
+import Error from "@/components/UI_state/Error";
+import VocabActions from "./VocabActions";
+
+export type VocabHistory = {
+  id: string;
+  text: string;
+  pos: string;
+  translation: string;
+  context: string;
+  created_at: Date;
+};
 
 export default function VocabTable() {
-  const { page, search, pageLimit } = useSearchBar();
-  const filteredCardList = cardList.filter((card) => {
-    if (
-      card.text.toLowerCase().includes(search.toLowerCase()) ||
-      card.translation.toLowerCase().includes(search.toLowerCase())
-    ) {
-      return card;
-    }
-  });
+  const [vocabList, setVocabList] = useState<VocabHistory[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
 
-  // simulation, query database based of page === 1? query first pageLimit : from (page - 1) * pageLimit
-  // if list return .length < 10, next page === 0
-  // if error return === out of bound, page doesnt exist, show button to relocate to first page
-  // if list returned === 0, show button to add to list
-  const num1 = (page - 1) * pageLimit;
-  const flashCardPage =
-    page === 1
-      ? filteredCardList.slice(0, pageLimit)
-      : filteredCardList.slice(num1, num1 + pageLimit);
+  const { page, search, pageLimit } = useTable();
+
+  function updateVocabList(data: VocabHistory, action: "edit" | "delete") {
+    if (action === "edit") {
+      setVocabList((prev: VocabHistory[]) =>
+        prev.map((v) => (v.id === data.id ? data : v)),
+      );
+      return;
+    }
+
+    if (action === "delete") {
+      setVocabList((prev: VocabHistory[]) =>
+        prev.filter((v) => v.id !== data.id),
+      );
+    }
+  }
+
+  useEffect(() => {
+    async function getHistory() {
+      try {
+        console.log({ page, search, pageLimit });
+        const result = await axios.get("/api/vocabulary", {
+          params: { page, search, pageLimit },
+        });
+        setVocabList(result.data.data);
+      } catch (err) {
+        setHasError(true);
+        console.log(err);
+        console.error("Error getting sessions");
+      }
+
+      setIsDataLoading(false);
+    }
+
+    getHistory();
+  }, [page, search]);
+
+  if (isDataLoading) {
+    return <Loading />;
+  }
+
+  if (hasError) {
+    return <Error />;
+  }
 
   return (
-    <SearchBar
+    <HistoryTable
       buttonName={["Add", "Vocab"]}
-      tableLength={flashCardPage.length}
+      tableLength={vocabList.length}
       form={<VocabForm />}
       buttonClass="md:flex"
     >
@@ -48,32 +88,29 @@ export default function VocabTable() {
             <TableHead>Back</TableHead>
             <TableHead>P.O.S</TableHead>
             <TableHead className="min-w-[15rem] text-center">Context</TableHead>
-            <TableHead>Next Review</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {flashCardPage.map((card, index) => (
-            <TableRow key={`card-id${index}`}>
+          {vocabList.map((card, index) => (
+            <TableRow key={card.id}>
               <TableCell>{card.text}</TableCell>
               <TableCell>{card.translation}</TableCell>
               <TableCell>{card.pos}</TableCell>
-              <TableCell>{card.sentence_context}</TableCell>
-              <TableCell>today</TableCell>
-              <TableCell>yesterday</TableCell>
-              <TableCell className="flex items-center gap-3">
-                <Button>
-                  <Edit /> Edit
-                </Button>
-                <Button variant={"destructive"}>
-                  <Trash /> Delete
-                </Button>
+              <TableCell className="text-center">{card.context}</TableCell>
+              <TableCell>
+                {new Intl.DateTimeFormat("en-GB", {
+                  dateStyle: "short",
+                }).format(new Date(card.created_at))}
+              </TableCell>
+              <TableCell className="flex items-center justify-center gap-3">
+                <VocabActions card={card} updateVocabList={updateVocabList} />
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-    </SearchBar>
+    </HistoryTable>
   );
 }

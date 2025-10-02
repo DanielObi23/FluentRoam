@@ -42,3 +42,9 @@ export type SessionVocabTable = {
   vocab: VocabEntry;
   index: number;
 };
+
+export type UserHistory = {
+  session_id: string;
+  type: string;
+  scenario: string;
+};

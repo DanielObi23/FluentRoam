@@ -29,6 +29,8 @@ import {
 } from "@/components/ui/popover";
 import { Info } from "lucide-react";
 import { Textarea } from "../ui/textarea";
+import axios from "axios";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   text: z
@@ -56,13 +58,24 @@ export default function VocabForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const text = values.text;
     const translation = values.translation;
     const context = values.context;
     const pos = values.pos;
-    // ADD TO DATABASE
-    // IF Successful empty all data in form
+
+    try {
+      const result = await axios.post("/api/vocabulary/", {
+        text,
+        translation,
+        context,
+        pos,
+      });
+      if (result.data.status === 201) window.location.reload();
+    } catch (err) {
+      console.error("error adding vocab", err);
+      toast("Error adding vocab");
+    }
   }
 
   return (

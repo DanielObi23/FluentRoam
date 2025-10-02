@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Home,
-  MessagesSquare,
-  ScrollText,
-  BookA,
-  BookOpenText,
-  Plus,
-} from "lucide-react";
+import { Home, MessagesSquare, ScrollText, BookA, Plus } from "lucide-react";
 
 import {
   Sidebar,
@@ -47,11 +40,6 @@ const items = [
     title: "Story",
     url: "/story",
     icon: ScrollText,
-  },
-  {
-    title: "Grammar",
-    url: "/grammar",
-    icon: BookOpenText,
   },
   {
     title: "Vocabulary list",
@@ -100,22 +88,6 @@ export default function AppSidebar() {
           })}
         </SidebarMenu>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="px-1.5 py-3">
-          {/* Maybe use a selector, then using zustand, make sure that if select value changed, global state is updated, maybe save value in local storage */}
-          <DropdownMenu>
-            <DropdownMenuTrigger>Change Language</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem>ES Spanish</DropdownMenuItem>
-              <DropdownMenuItem>IT Italian</DropdownMenuItem>
-              <DropdownMenuItem>
-                <Plus /> Add language
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button variant={"outline"}>ES Spanish</Button>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   );
 }

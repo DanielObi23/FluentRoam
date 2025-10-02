@@ -20,54 +20,6 @@ export default function Page() {
           <h2 className="text-lg max-md:hidden">
             Manage your flashcard collection
           </h2>
-          <div className="flex items-baseline gap-1 text-center text-lg font-semibold md:hidden">
-            <div className="flex items-center gap-1 border-2 px-2 py-1">
-              {/* <Star /> */}
-              <p>New: 3</p>
-            </div>
-            <div className="flex items-center gap-1 border-2 px-2 py-1">
-              {/* <Clock /> */}
-              <p>Due: 1</p>
-            </div>
-
-            <div className="flex items-center gap-1 border-2 px-2 py-1">
-              {/* Total number of cards users made/has */}
-              <p>Total: 10</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="my-auto flex flex-col items-end gap-2">
-          {/* CARDS DUE AND TO REVIEW */}
-          <div className="flex items-baseline gap-1 max-md:hidden">
-            <div className="flex items-center gap-1 border-2 px-2 py-1">
-              <Star />
-              <p className="text-2xl font-semibold">New: 3</p>
-            </div>
-            <div className="flex items-center gap-1 border-2 px-2 py-1">
-              <Clock />
-              <p className="text-2xl font-semibold">Due: 1</p>
-            </div>
-
-            <div className="flex items-center gap-1 border-2 px-2 py-1">
-              {/* Total number of cards users made/has */}
-              <Table2 />
-              <p className="text-2xl font-semibold">Total: 10</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button
-              variant={"secondary"}
-              size={isMobile ? "sm" : "lg"}
-              className="flex items-center"
-              asChild
-            >
-              <Link href={"/vocabulary/study"}>
-                <Book /> <span>Study now</span>
-              </Link>
-            </Button>
-          </div>
         </div>
       </div>
 

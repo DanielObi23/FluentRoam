@@ -1,4 +1,4 @@
-import { systemContent, userContent } from "@/utils/storyData/groqPrompt";
+import { systemContent } from "@/utils/storyData/groqPrompt";
 import Groq from "groq-sdk";
 import { supabaseAdmin } from "@/lib/supabase-client";
 import { currentUser } from "@clerk/nextjs/server";
@@ -68,5 +68,8 @@ export async function POST(req: Request) {
     return Response.json({ error: "error updating supabase", status: 500 });
   }
 
-  return Response.json({ status: 201 });
+  return Response.json({
+    message: "successsful updated supabase",
+    status: 201,
+  });
 }

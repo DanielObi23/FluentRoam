@@ -8,14 +8,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import type { UserSession } from "./SessionsTable";
+import type { UserHistory } from "@/utils/conversationData/types";
 
 export default function ConversationHistoryTable({
   className,
   sessionList,
 }: {
   className?: string;
-  sessionList: UserSession[];
+  sessionList: UserHistory[];
 }) {
   if (sessionList.length === 0) {
     return (
@@ -34,7 +34,7 @@ export default function ConversationHistoryTable({
     <Table className={className}>
       <TableHeader>
         <TableRow className="text-xl font-semibold lg:text-2xl">
-          <TableHead>Title</TableHead>
+          <TableHead className="min-w-[10rem]">Title</TableHead>
           <TableHead className="text-center">Type</TableHead>
           <TableHead className="text-center">Details</TableHead>
         </TableRow>

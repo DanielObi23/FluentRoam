@@ -19,7 +19,7 @@ import {
 
 import { useIsMobile } from "@/hooks/use-mobile";
 
-export default function Table({
+export default function HistoryTable({
   buttonName,
   buttonClass,
   children,

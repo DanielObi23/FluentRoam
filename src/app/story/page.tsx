@@ -1,7 +1,7 @@
 "use client";
 
 import StoryHistoryTable from "@/components/story_page/StoryHistoryTable";
-import Table from "@/components/Table";
+import HistoryTable from "@/components/HistoryTable";
 import useTable from "@/hooks/use-table";
 import Main from "@/components/tags/Main";
 import StoryForm from "@/components/story_page/StoryForm";
@@ -50,14 +50,14 @@ export default function Page() {
   return (
     <Main page="Story" className="flex-col">
       <section aria-labelledby="Story history list" className="w-full p-3">
-        <Table
+        <HistoryTable
           tableLength={story.length}
           buttonName={["Create", "Story"]}
           buttonClass={"md:flex"}
           form={<StoryForm />}
         >
           <StoryHistoryTable storyList={story} />
-        </Table>
+        </HistoryTable>
       </section>
     </Main>
   );
