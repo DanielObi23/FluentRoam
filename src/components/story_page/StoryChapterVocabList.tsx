@@ -6,8 +6,8 @@ import {
 } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { VocabEntry } from "@/story";
 import { PlayCircle } from "lucide-react";
+import type { VocabEntry } from "@/utils/storyData/types";
 
 export default function StoryChapterVocabList({
   showPlayButton,

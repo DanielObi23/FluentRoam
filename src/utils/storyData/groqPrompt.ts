@@ -120,7 +120,7 @@ export const userContent = `
             "vocab": [
               {
                 "text": "Spanish word",
-                "pos": "English POS tag",
+                "pos": "English POS tag", (if noun then noun (f.) / noun (m.))
                 "translation": "English string",
                 "sentence_context": "Spanish sentence where word appears"
               }

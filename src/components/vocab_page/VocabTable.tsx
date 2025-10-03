@@ -14,15 +14,7 @@ import axios from "axios";
 import Loading from "@/components/UI_state/Loading";
 import Error from "@/components/UI_state/Error";
 import VocabActions from "./VocabActions";
-
-export type VocabHistory = {
-  id: string;
-  text: string;
-  pos: string;
-  translation: string;
-  context: string;
-  created_at: Date;
-};
+import type { VocabHistory } from "@/utils/vocabData/types";
 
 export default function VocabTable() {
   const [vocabList, setVocabList] = useState<VocabHistory[]>([]);

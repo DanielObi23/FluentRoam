@@ -3,7 +3,7 @@ type Text = {
   translation: string;
 };
 
-type VocabEntry = {
+export type VocabEntry = {
   text: string;
   pos: string;
   translation: string;

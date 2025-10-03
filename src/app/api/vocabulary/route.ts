@@ -46,11 +46,22 @@ export async function POST(req: Request) {
     });
   }
 
-  const { error, data } = await supabaseAdmin
-    .from("vocabulary")
-    .insert({ user_id: user.id, text, translation, context, pos });
+  const { error, data } = await supabaseAdmin.from("vocabulary").insert({
+    user_id: user.id,
+    text,
+    translation,
+    context: context === "" ? "No context given" : context,
+    pos,
+  });
 
   if (error) {
+    if (error.code === "23505") {
+      console.log("conflict");
+      return Response.json({
+        error: "This vocab already exists.",
+        status: 409,
+      });
+    }
     console.log(error);
     return Response.json({ error: error.message, status: 500 });
   }

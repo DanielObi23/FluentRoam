@@ -91,8 +91,7 @@ export default function CallSessionForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      scenario:
-        "meeting my mexican girlfriend strict and religious parents to ask for her hand in marriage, i'm from england, visiting them",
+      scenario: "",
       formality: "casual",
       response_length: "detailed",
       proficiency: "B1",

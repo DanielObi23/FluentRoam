@@ -1,18 +1,8 @@
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash } from "lucide-react";
-import type { VocabHistory } from "./VocabTable";
+import { Edit, Trash, X } from "lucide-react";
+import type { VocabHistory } from "@/utils/vocabData/types";
 import {
   Select,
   SelectContent,
@@ -24,10 +14,7 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import { toast } from "sonner";
-import { SetStateAction, useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -42,8 +29,10 @@ export default function VocabActions({
   updateVocabList: ({}: VocabHistory, action: "edit" | "delete") => void;
 }) {
   const [selectedPos, setSelectedPos] = useState(card.pos);
+  const [isSending, setIsSending] = useState(false);
 
   async function editVocab(formData: FormData) {
+    setIsSending(true);
     const cardData = {
       id: card.id,
       text: formData.get("text"),
@@ -54,14 +43,32 @@ export default function VocabActions({
     try {
       const result = await axios.patch("/api/vocabulary", cardData);
       updateVocabList(result.data.data, "edit");
-      toast("Vocabulary updated successfully");
+      toast.success("Vocab added successfully!", {
+        position: "top-center",
+        style: {
+          background: "hsl(142, 76%, 36%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
     } catch (err) {
       console.error(err);
-      toast("Error updating vocab");
+      toast.error("This vocab already exists.", {
+        position: "top-center",
+        style: {
+          background: "hsl(0, 72%, 51%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
     }
+    setIsSending(false);
   }
 
   async function deleteVocab() {
+    setIsSending(true);
     try {
       const result = await axios.delete("/api/vocabulary", {
         params: { id: card.id },
@@ -72,6 +79,7 @@ export default function VocabActions({
       console.error(err);
       toast("Error deleting vocab");
     }
+    setIsSending(false);
   }
 
   return (
@@ -114,7 +122,8 @@ export default function VocabActions({
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Part of Speech</SelectLabel>
-                      <SelectItem value="noun">Noun</SelectItem>
+                      <SelectItem value="noun (m.)">Noun (M.)</SelectItem>
+                      <SelectItem value="noun (f.)">Noun (F.)</SelectItem>
                       <SelectItem value="pronoun">Pronoun</SelectItem>
                       <SelectItem value="verb">Verb</SelectItem>
                       <SelectItem value="adjective">Adjective</SelectItem>
@@ -128,7 +137,9 @@ export default function VocabActions({
                 </Select>
               </div>
             </div>
-            <Button type="submit">Save changes</Button>
+            <Button type="submit" disabled={isSending}>
+              Save changes
+            </Button>
           </form>
         </PopoverContent>
       </Popover>

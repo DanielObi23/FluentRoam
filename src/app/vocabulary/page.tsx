@@ -1,14 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Book, Clock, Star, Table2 } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
-import Link from "next/link";
 import Main from "@/components/tags/Main";
 import VocabTable from "@/components/vocab_page/VocabTable";
 
 export default function Page() {
-  const isMobile = useIsMobile();
   return (
     <Main
       page="Vocabulary"

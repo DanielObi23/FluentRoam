@@ -105,7 +105,7 @@ export default function HistoryTable({
             </DialogTrigger>
           </Button>
 
-          <DialogContent className="h-[calc(100vh-3rem)] overflow-auto">
+          <DialogContent className="max-h-[calc(100vh-3rem)] overflow-auto">
             <DialogHeader>
               <DialogTitle className="sr-only">{buttonName} Form</DialogTitle>
               <DialogDescription className="sr-only">

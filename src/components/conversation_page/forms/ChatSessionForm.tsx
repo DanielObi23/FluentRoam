@@ -54,8 +54,7 @@ export default function ChatSessionForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      scenario:
-        "i, the user, am chatting with you, a female friend about your new boyfriend, after a chance encounter on the street",
+      scenario: "",
       formality: "casual",
       response_length: "detailed",
       proficiency: "B1",

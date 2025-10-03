@@ -69,7 +69,7 @@ export default function Page() {
       genre: [genres[0].value],
       theme: [themes[0].value],
       tone: [tones[0].value],
-      plot: "random plotline",
+      plot: "",
       proficiency: "B1",
     },
   });
@@ -113,7 +113,7 @@ export default function Page() {
           render={({ field }) => (
             <FormItem className="mt-6 sm:mt-0">
               <FormLabel className="text-xl">
-                Plot-Line
+                Plot
                 <Popover>
                   <PopoverTrigger>
                     <Info className="cursor-pointer" />
@@ -125,7 +125,7 @@ export default function Page() {
               </FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="e.g., a sample of a plotline..."
+                  placeholder="e.g., the revenge story of a baron..."
                   {...field}
                 />
               </FormControl>

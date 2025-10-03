@@ -13,11 +13,12 @@ import Audio from "@/components/Audio";
 import Main from "@/components/tags/Main";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import SessionAddVocab from "@/components/conversation_page/SessionAddVocab";
 import SessionFeedback from "@/components/conversation_page/SessionFeedback";
 import { useEffect, useState } from "react";
 import Loading from "@/components/UI_state/Loading";
 import type { UserSession } from "@/utils/conversationData/types";
+import AddVocab from "@/components/AddVocab";
+import { VocabEntry } from "@/utils/vocabData/types";
 
 const emptySession: UserSession = {
   session_type: "chat",
@@ -52,6 +53,14 @@ export default function Page() {
     dateStyle: "medium",
   }).format(new Date(session.created_at));
 
+  // Prop for Add Vocab
+  const vocabulary = session.vocabulary.map((vocab) => ({
+    text: vocab.vocab,
+    translation: vocab.meaning[0],
+    pos: vocab.part_of_speech,
+    context: vocab.examples.at(-1)?.sentence,
+  }));
+
   return (
     <Main
       page="Feedback"
@@ -83,7 +92,7 @@ export default function Page() {
             <p className="text-center text-lg font-semibold underline">
               VOCABULARY
             </p>
-            <SessionAddVocab vocabulary={session.vocabulary} />
+            <AddVocab vocabulary={vocabulary as VocabEntry[]} />
           </div>
 
           {/* VOCAB TABLE */}

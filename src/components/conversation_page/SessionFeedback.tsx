@@ -18,25 +18,9 @@ export default function SessionFeedback({
       <h1 className="text-center text-2xl font-semibold">Scenario</h1>
       <p className="text-center">{scenario}</p>
       <Separator className="my-3 bg-white" />
-      <ScrollArea className="bg-background h-[calc(100vh-21rem)] px-2">
+      <ScrollArea className="bg-background h-[calc(100vh-18rem)] px-2">
         <Markdown>{feedback}</Markdown>
       </ScrollArea>
-
-      <div className="my-4.5 mb-3 grid w-full grid-cols-12 gap-x-4 px-4">
-        <Button className="col-span-6">Export to PDF</Button>
-        <Button
-          className="col-span-6"
-          onClick={() =>
-            console.log(
-              `retrieve all the data from backend, push to form's page,
-                 fill in the forms with the data, to let users update it, 
-                 update the form id, if it's different from previous, else leave it alone`,
-            )
-          }
-        >
-          Redo Scenario
-        </Button>
-      </div>
     </>
   );
 }

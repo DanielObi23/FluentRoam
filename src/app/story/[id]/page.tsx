@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Loading from "@/components/UI_state/Loading";
 import Error from "@/components/UI_state/Error";
+import AddVocab from "@/components/AddVocab";
+import { VocabEntry } from "@/utils/vocabData/types";
 
 export default function Page() {
   const [currentPage, setCurrentPage] = useQueryState(
@@ -55,6 +57,14 @@ export default function Page() {
   if (currentPage === 1) {
     return <Prelogue id={id} setCurrentPage={setCurrentPage} />;
   }
+
+  // Prop for Add Vocab
+  const vocabulary = story?.page.vocab.map((vocab) => ({
+    text: vocab.text,
+    translation: vocab.translation,
+    pos: vocab.pos,
+    context: vocab.sentence_context,
+  }));
 
   return (
     <Main page="Story" className="flex gap-5 max-md:flex-col">
@@ -97,7 +107,7 @@ export default function Page() {
           vocabList={story?.page?.vocab ?? []}
           playAudio={playAudio}
         />
-        <Button className="mx-auto md:ml-auto">ADD TO VOCAB LIST</Button>
+        <AddVocab vocabulary={vocabulary as VocabEntry[]} />
       </section>
     </Main>
   );

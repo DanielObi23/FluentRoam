@@ -31,6 +31,7 @@ import { Info } from "lucide-react";
 import { Textarea } from "../ui/textarea";
 import axios from "axios";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const formSchema = z.object({
   text: z
@@ -46,6 +47,7 @@ const formSchema = z.object({
 });
 
 export default function VocabForm() {
+  const [isSending, setIsSending] = useState(false);
   const formLabelClassName = "font-medium text-lg";
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -54,11 +56,12 @@ export default function VocabForm() {
       text: "",
       translation: "",
       context: "",
-      pos: "noun",
+      pos: "noun (m.)",
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSending(true);
     const text = values.text;
     const translation = values.translation;
     const context = values.context;
@@ -71,11 +74,45 @@ export default function VocabForm() {
         context,
         pos,
       });
-      if (result.data.status === 201) window.location.reload();
+      if (result.data.status === 409)
+        toast.error("This vocab already exists.", {
+          position: "top-center",
+          style: {
+            background: "hsl(0, 72%, 51%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
+        });
+      if (result.data.status === 201) {
+        toast.success("Vocab added successfully!", {
+          position: "top-center",
+          style: {
+            background: "hsl(142, 76%, 36%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
+          description: (
+            <pre>
+              <p>Refresh page to see changes</p>
+            </pre>
+          ),
+        });
+      }
     } catch (err) {
       console.error("error adding vocab", err);
-      toast("Error adding vocab");
+      toast.error("This vocab already exists.", {
+        position: "top-center",
+        style: {
+          background: "hsl(0, 72%, 51%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
     }
+    setIsSending(false);
   }
 
   return (
@@ -165,7 +202,8 @@ export default function VocabForm() {
                   <SelectContent>
                     <SelectGroup>
                       <SelectLabel>Part of Speech</SelectLabel>
-                      <SelectItem value="noun">Noun</SelectItem>
+                      <SelectItem value="noun (m.)">Noun (M.)</SelectItem>
+                      <SelectItem value="noun (f.)">Noun (F.)</SelectItem>
                       <SelectItem value="pronoun">Pronoun</SelectItem>
                       <SelectItem value="verb">Verb</SelectItem>
                       <SelectItem value="adjective">Adjective</SelectItem>
@@ -183,7 +221,7 @@ export default function VocabForm() {
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isSending}>
           ADD VOCAB
         </Button>
       </form>
