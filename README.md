@@ -64,8 +64,6 @@ Built with **Next.js, TypeScript, Supabase, Clerk, and multiple AI/translation A
 
 # Clerk (Auth & Billing)
 
-# =====================
-
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key
 CLERK_SECRET_KEY=your_secret_key
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
@@ -76,13 +74,12 @@ NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL="/home"
 NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL="/home"
 WEBHOOK_SECRET=your_webhook_secret
 
-# ===========
-
 # Supabase
 
 # ===========
 
 SUPABASE_URL=your_supabase_project_url
+
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 
 # ===========
@@ -92,6 +89,7 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 # ===========
 
 NEXT_PUBLIC_VAPI_WEB_TOKEN=your_vapi_web_token
+
 VAPI_API_KEY=your_vapi_api_key
 
 # ==================
@@ -101,6 +99,7 @@ VAPI_API_KEY=your_vapi_api_key
 # ==================
 
 DEEPL_AUTH_KEY=your_deepl_auth_key
+
 AZURE_TRANSLATE_API_KEY=your_azure_translate_key
 
 # ===========
