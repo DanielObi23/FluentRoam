@@ -1,6 +1,0 @@
-# Ignore Next.js build folders
-.next/
-node_modules/
-
-# Ignore vendor JS
-src/assets/portfolio/assets/vendor/
