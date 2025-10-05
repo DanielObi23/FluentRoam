@@ -1,5 +1,4 @@
 "use client";
-// ADD ANIMATION FOR LOADING AND ERROR FOR BOTH INTERNAL ERROR AND NOT FOUND PAGE
 import Navigation from "@/components/app_layout/Navigation";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
@@ -22,11 +21,7 @@ export default function NotFound() {
     <div className="h-screen w-full">
       <Navigation page="Not Found Page" />
       <main className="main flex items-center justify-center overflow-clip">
-        <Lottie
-          //lottieRef={lottieRef}
-          autoPlay={false}
-          animationData={animationData}
-        />
+        <Lottie autoPlay={false} animationData={animationData} />
       </main>
     </div>
   );
