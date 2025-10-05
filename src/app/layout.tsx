@@ -37,6 +37,38 @@ export const metadata: Metadata = {
     template: "%s | FluentRoam",
   },
   description: "AI powered language learning platform",
+  icons: [
+    { rel: "icon", url: "/favicon/favicon.ico" },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "16x16",
+      url: "/favicon/favicon-16x16.png",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "32x32",
+      url: "/favicon/favicon-32x32.png",
+    },
+    {
+      rel: "apple-touch-icon",
+      url: "/favicon/apple-touch-icon.png",
+      sizes: "180x180",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "192x192",
+      url: "/favicon/android-chrome-192x192.png",
+    },
+    {
+      rel: "icon",
+      type: "image/png",
+      sizes: "512x512",
+      url: "/favicon/android-chrome-512x512.png",
+    },
+  ],
 };
 
 export const viewport: Viewport = {
