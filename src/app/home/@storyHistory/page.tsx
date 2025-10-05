@@ -40,7 +40,7 @@ export default function StoryHistory() {
 
   return (
     <StoryHistoryTable
-      className="bg-secondary/70 border-secondary/70 border-2"
+      className="bg-secondary/20 border-secondary/70 border-2"
       storyList={story as StoryHistory[]}
     />
   );

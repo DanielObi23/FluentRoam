@@ -141,9 +141,16 @@ export default function useChatTranscript() {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
     const messages = useChatSessionStore.getState().messages;
+    setIsEnded(false); // endConversation() makes it true
     if (!messages || messages.length === 0) {
       startConversation();
     }
+
+    return () => {
+      (async () => {
+        await endConversation();
+      })();
+    };
   }, []);
 
   return {

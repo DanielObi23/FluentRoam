@@ -212,3 +212,8 @@ audio::-webkit-media-controls-play-button {
   animation: none;
   mix-blend-mode: normal;
 }
+
+th,
+td {
+  @apply text-black dark:text-white;
+}

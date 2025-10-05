@@ -62,7 +62,7 @@ export default function useCall() {
     vapi.setMuted(false);
   }
 
-  function onCallEnd() {
+  async function onCallEnd() {
     updateCallStatus(CallStatus.FINISHED);
     const callId = useCallSessionStore.getState().callId;
     setTimeout(async () => {
@@ -72,7 +72,7 @@ export default function useCall() {
         proficiency: session.proficiency,
         callId,
       });
-    }, 10000); //Time buffer so vapi api can be updated with the new data
+    }, 5000); //Time buffer so vapi api can be updated with the new data
 
     toast("Call ended. Thanks for practicing!", { position: "top-center" });
   }

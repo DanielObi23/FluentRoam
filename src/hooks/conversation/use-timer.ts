@@ -26,21 +26,43 @@ export default function useTimer() {
     //DURATION AND TIME ARE IN SECONDS
     // show toast when half way done
     if (time.current === Math.floor(duration / 2)) {
-      toast(`${Math.floor(time.current / 60)} mins left.`, {
+      toast.info(`${Math.floor(time.current / 60)} mins left.`, {
         position: "top-center",
+        style: {
+          background: "hsl(217, 91%, 60%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
       });
       return;
     }
 
     // show toast when 5 minute left
     if (duration > 5 * 60 && time.current === Math.floor(duration - 5 * 60)) {
-      toast("5 mins left.", { position: "top-center" });
+      toast.info("5 mins left.", {
+        position: "top-center",
+        style: {
+          background: "hsl(217, 91%, 60%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
       return;
     }
 
     // show toast when 1 minute left
     if (time.current === Math.floor(duration - 1 * 60)) {
-      toast("1 min left.", { position: "top-center" });
+      toast.info("1 min left.", {
+        position: "top-center",
+        style: {
+          background: "hsl(217, 91%, 60%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
       vapi.send({
         type: "add-message",
         message: {

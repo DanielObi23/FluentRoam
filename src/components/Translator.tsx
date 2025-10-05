@@ -63,6 +63,49 @@ export function Translator({
     }
   }
 
+  async function addVocab() {
+    try {
+      const result = await axios.post("/api/vocabulary", {
+        text: sourceText,
+        translation: translatedText,
+        pos: "phrase",
+      });
+      if (result.data.status === 201) {
+        toast.success("Vocab added successfully!", {
+          position: "top-center",
+          style: {
+            background: "hsl(142, 76%, 36%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
+        });
+      }
+
+      if (result.data.status === 409) {
+        toast.error("Error adding vocab, vocab already exists.", {
+          position: "top-center",
+          style: {
+            background: "hsl(0, 72%, 51%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
+        });
+      }
+    } catch (err) {
+      toast.error("Error adding vocab", {
+        position: "top-center",
+        style: {
+          background: "hsl(0, 72%, 51%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
+    }
+  }
+
   return (
     <div className="bg-sidebar border-sidebar-border dark:bg-secondary/10 bg-secondary-800/30 flex w-full flex-col border-r">
       {/* Header */}
@@ -199,7 +242,7 @@ export function Translator({
         </div>
 
         <div className="flex w-full flex-wrap items-center justify-between">
-          <Button>Add to vocab</Button>
+          <Button onClick={addVocab}>Add to vocab</Button>
           <Button onClick={translate}>Translate</Button>
         </div>
       </div>

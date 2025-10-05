@@ -43,7 +43,7 @@ export default function VocabActions({
     try {
       const result = await axios.patch("/api/vocabulary", cardData);
       updateVocabList(result.data.data, "edit");
-      toast.success("Vocab added successfully!", {
+      toast.success("Vocab updated successfully!", {
         position: "top-center",
         style: {
           background: "hsl(142, 76%, 36%)",
@@ -74,10 +74,26 @@ export default function VocabActions({
         params: { id: card.id },
       });
       updateVocabList(result.data.data, "delete");
-      toast("Vocabulary deleted successfully");
+      toast.success("Vocab deleted successfully!", {
+        position: "top-center",
+        style: {
+          background: "hsl(142, 76%, 36%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
     } catch (err) {
       console.error(err);
-      toast("Error deleting vocab");
+      toast.error("Error deleting vocab.", {
+        position: "top-center",
+        style: {
+          background: "hsl(0, 72%, 51%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
     }
     setIsSending(false);
   }

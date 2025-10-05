@@ -58,8 +58,10 @@ export default function StoryHistoryTable({
               </TableCell>
               <TableCell className="max-w-xs">{story.plot}</TableCell>
               <TableCell>{story.type}</TableCell>
-              <TableCell>{story.proficiency}</TableCell>
-              <TableCell>{story.tags.genre.join(", ")}</TableCell>
+              <TableCell className="text-center">{story.proficiency}</TableCell>
+              <TableCell className="text-black dark:text-white">
+                {story.tags.genre.join(", ")}
+              </TableCell>
               <TableCell>{story.tags.theme.join(", ")}</TableCell>
               <TableCell>{story.tags.tone.join(", ")}</TableCell>
               <TableCell>

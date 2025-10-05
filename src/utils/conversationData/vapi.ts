@@ -55,8 +55,9 @@ export const vapiPrompt = {
   },
   endCallMessage: "Goodbye.",
   transcriber: {
-    language: "es-ES",
-    provider: "azure",
+    model: "nova-3",
+    language: "es",
+    provider: "deepgram",
   },
   maxDurationSeconds: 600,
   silenceTimeoutSeconds: 60,

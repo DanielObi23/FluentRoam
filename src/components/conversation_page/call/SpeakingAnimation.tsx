@@ -6,10 +6,8 @@ import { useCallSessionStore } from "@/store";
 
 export default function SpeakingAnimation({
   isAISpeaking,
-  //transcript,
 }: {
   isAISpeaking: boolean;
-  //transcript: string;
 }) {
   const lottieRef = useRef<LottieRefCurrentProps>(null);
   const captionIsOn = useCallSessionStore((state) => state.captionIsOn);

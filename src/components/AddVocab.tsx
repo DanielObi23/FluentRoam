@@ -128,8 +128,8 @@ export default function AddVocab({ vocabulary }: { vocabulary: VocabEntry[] }) {
                                   }}
                                 />
                               </FormControl>
-                              <FormLabel className="ml-2 grid text-sm font-normal capitalize">
-                                <p>
+                              <FormLabel className="ml-2 grid text-sm font-normal">
+                                <p className="capitalize">
                                   {vocab.text} | {vocab.translation} --- (
                                   {vocab.pos})
                                 </p>

@@ -40,7 +40,7 @@ export default function ConversationHistory() {
 
   return (
     <ConversationHistoryTable
-      className="bg-secondary/70 border-secondary/70 border-2 p-3"
+      className="bg-secondary/20 border-secondary/70 border-2 p-3"
       sessionList={convo}
     />
   );

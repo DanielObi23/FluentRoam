@@ -119,7 +119,7 @@ export default function Page() {
             }}
           />
 
-          <Button onClick={() => sendMessage(textMessageRef)} className="">
+          <Button onClick={() => sendMessage(textMessageRef)}>
             <SendHorizontal />
           </Button>
         </div>
@@ -132,35 +132,37 @@ export default function Page() {
 
           {/* TRANSLATOR */}
           <Translator playLearningAudio={playAudio} />
-          <Dialog>
-            <DialogTrigger asChild className="self-end">
-              <Button variant="destructive">End Conversation</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>End Conversation</DialogTitle>
-                <DialogDescription>
-                  Are you sure you want to end conversation?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter className="flex items-center sm:justify-between">
-                <DialogClose asChild>
-                  <Button type="button" variant="secondary">
-                    Close
-                  </Button>
-                </DialogClose>
-                <DialogClose asChild>
-                  <Button
-                    variant={"destructive"}
-                    onClick={endConversation}
-                    className="self-end"
-                  >
-                    End<span className="max-sm:hidden">Conversation</span>
-                  </Button>
-                </DialogClose>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          {!isEnded && (
+            <Dialog>
+              <DialogTrigger asChild className="self-end">
+                <Button variant="destructive">End Conversation</Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>End Conversation</DialogTitle>
+                  <DialogDescription>
+                    Are you sure you want to end conversation?
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="flex items-center sm:justify-between">
+                  <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                      Close
+                    </Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button
+                      variant={"destructive"}
+                      onClick={endConversation}
+                      className="self-end"
+                    >
+                      End<span className="max-sm:hidden">Conversation</span>
+                    </Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
       </section>
     </Main>

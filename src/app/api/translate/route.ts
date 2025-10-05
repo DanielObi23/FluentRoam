@@ -1,6 +1,5 @@
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
-import { auth } from "@clerk/nextjs/server";
 import * as deepl from "deepl-node";
 
 if (!process.env.AZURE_TRANSLATE_API_KEY) {
@@ -26,53 +25,38 @@ export async function POST(req: Request) {
     });
   }
 
-  const { has } = await auth();
-  const hasTravellerPack = has({ plan: "traveller_pack" });
-  const hasNativePack = has({ plan: "native_pack" });
-
-  /*---------- TRAVELLER PACK -------- */
-  if (hasTravellerPack) {
-    const params = new URLSearchParams({ "api-version": "3.0", from, to });
-
-    try {
-      const { data } = await axios.post(
-        `${azureEndpoint}/translate`,
-        [{ text }],
-        {
-          params,
-          headers: {
-            "Ocp-Apim-Subscription-Key": azureKey,
-            "Ocp-Apim-Subscription-Region": azureRegion,
-            "Content-Type": "application/json",
-            "X-ClientTraceId": uuidv4().toString(),
-          },
-        },
-      );
-      const translation = data[0].translations[0].text;
-      return Response.json({ status: 200, message: translation });
-    } catch (err: any) {
-      console.error("Azure Translation Error", err);
-      return Response.json({ status: 502, message: "Translation failed" });
-    }
+  try {
+    const result = await deeplClient.translateText(text, from, to);
+    const translatedText = Array.isArray(result)
+      ? result.map((r) => r.text).join(" ")
+      : result.text;
+    return Response.json({ status: 200, message: translatedText });
+  } catch (err) {
+    console.error("Deepl Translation Error", err);
+    return Response.json({ status: 502, message: "error translating" });
   }
 
-  /*---------- NATIVE PACK -------- */
-  if (hasNativePack) {
-    try {
-      const result = await deeplClient.translateText(text, from, to);
-      const translatedText = Array.isArray(result)
-        ? result.map((r) => r.text).join(" ")
-        : result.text;
-      return Response.json({ status: 200, message: translatedText });
-    } catch (err) {
-      console.error("Deepl Translation Error", err);
-      return Response.json({ status: 502, message: "error translating" });
-    }
-  }
+  /*---------- USING AZURE TRANSLATOR INSTEAD -------- */
+  // const params = new URLSearchParams({ "api-version": "3.0", from, to });
 
-  /*---------- HELLO PACK -------- */
-  return Response.json({
-    status: 500,
-    message: "Please subscribe to the Traveller or Native Pack",
-  });
+  // try {
+  //   const { data } = await axios.post(
+  //     `${azureEndpoint}/translate`,
+  //     [{ text }],
+  //     {
+  //       params,
+  //       headers: {
+  //         "Ocp-Apim-Subscription-Key": azureKey,
+  //         "Ocp-Apim-Subscription-Region": azureRegion,
+  //         "Content-Type": "application/json",
+  //         "X-ClientTraceId": uuidv4().toString(),
+  //       },
+  //     },
+  //   );
+  //   const translation = data[0].translations[0].text;
+  //   return Response.json({ status: 200, message: translation });
+  // } catch (err: any) {
+  //   console.error("Azure Translation Error", err);
+  //   return Response.json({ status: 502, message: "Translation failed" });
+  // }
 }

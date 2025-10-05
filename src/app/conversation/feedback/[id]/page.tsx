@@ -101,7 +101,7 @@ export default function Page() {
               {session.vocabulary.map((vocab, index: number) => (
                 <AccordionItem value={`vocab-${index}`} key={`vocab-${index}`}>
                   <AccordionTrigger className="flex justify-center p-3">
-                    {vocab.vocab.toUpperCase()}
+                    {vocab.vocab?.toUpperCase()}
                   </AccordionTrigger>
                   <AccordionContent className="hide-scrollbar max-h-120 overflow-auto">
                     <SessionVocabTable vocab={vocab} index={index} />

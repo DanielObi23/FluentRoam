@@ -86,8 +86,7 @@ export default function Page() {
         theme: values.theme,
         tone: values.tone,
       });
-
-      window.location.reload();
+      if (result.data.status === 201) window.location.reload();
     } catch (err) {
       toast("Error uploading file, please try again");
     }
@@ -96,7 +95,7 @@ export default function Page() {
   return (
     <Form {...form}>
       {showLoader && (
-        <div className="fixed z-50 flex w-full flex-col items-center justify-center gap-4">
+        <div className="fixed z-50 flex h-full w-full flex-col items-center justify-center gap-4">
           <div className="flex h-28 w-28 animate-spin items-center justify-center rounded-full border-8 border-gray-300 border-t-blue-400 text-4xl text-blue-400">
             <Image src={logo} alt="fluentroam logo" />
           </div>

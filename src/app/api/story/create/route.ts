@@ -61,10 +61,11 @@ export async function POST(req: Request) {
     plot,
     proficiency,
     type,
-    num_of_pages: story.pages.length - 1,
+    num_of_pages: Math.max((story?.pages?.length || 1) - 1, 1),
   });
 
   if (error) {
+    console.error("Supabase insert error:", error);
     return Response.json({ error: "error updating supabase", status: 500 });
   }
 
