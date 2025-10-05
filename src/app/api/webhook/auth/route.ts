@@ -40,14 +40,6 @@ export async function POST(req: Request) {
   const eventType = event.type;
   //logs
   if (eventType === "user.created") {
-    // try {
-    //   const { id, email_addresses } = event.data;
-    //   const email = email_addresses[0].email_address;
-    // } catch (err) {
-    //   console.error("error updating database");
-    //   console.log(err);
-    // }
-
     const user = event.data;
     const created_user = {
       id: user.id,
@@ -63,29 +55,17 @@ export async function POST(req: Request) {
     }
   }
 
-  //   if (eventType === "user.deleted") {
-  //     const user = event.data;
-  //     const { error } = await supabaseAdmin
-  //       .from("users")
-  //       .delete()
-  //       .eq("id", user.id);
-  //     if (error) {
-  //       console.error("error deleting user from database", error.message);
-  //       console.log(error);
-  //     }
-  //   }
-
-  //   if (eventType === "user.updated") {
-  //     const user = event.data;
-  //     const created_user = {
-  //       user_id: user.id,
-  //     };
-  //     const { error } = await supabaseAdmin.from("users").insert(created_user);
-  //     if (error) {
-  //       console.error("error updating userbase");
-  //       console.log(error);
-  //     }
-  //   }
+  if (eventType === "user.deleted") {
+    const user = event.data;
+    const { error } = await supabaseAdmin
+      .from("users")
+      .delete()
+      .eq("id", user.id);
+    if (error) {
+      console.error("error deleting user from database", error.message);
+      console.log(error);
+    }
+  }
 
   return new Response("Webhook processed successfully", { status: 200 });
 }
