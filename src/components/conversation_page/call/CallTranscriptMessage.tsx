@@ -1,8 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import defaultProfile from "../../../../public/default_profile.jpg";
-import fluentroam from "../../../../public/logo/fluentroam.jpg";
+import defaultProfile from "@/assets/default_profile.jpg";
+import fluentroam from "@/assets/logo/fluentroam.jpg";
 import { Conversation } from "@/hooks/conversation/use-callTranscript";
 import { memo } from "react";
 import useCallTranscript from "@/hooks/conversation/use-callTranscript";

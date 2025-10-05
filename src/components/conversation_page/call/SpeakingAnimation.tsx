@@ -1,5 +1,5 @@
 import Lottie, { LottieRefCurrentProps } from "lottie-react";
-import animationData from "../../../../public/lottie-animation/Sound Waves.json";
+import animationData from "@/assets/lottie-animation/Sound Waves.json";
 import { useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { useCallSessionStore } from "@/store";
