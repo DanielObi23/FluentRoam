@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -91,7 +90,8 @@ export default function ChatSessionForm() {
                   </PopoverTrigger>
                   <PopoverContent>
                     Just a few words is fine - our AI will create the full
-                    scenario or type "Random" if you want a random scenario
+                    scenario or type `&quot;`Random`&quot;` if you want a random
+                    scenario
                   </PopoverContent>
                 </Popover>
               </FormLabel>
@@ -151,8 +151,8 @@ export default function ChatSessionForm() {
                     <Info className="size-5 cursor-pointer" />
                   </PopoverTrigger>
                   <PopoverContent>
-                    Select "Brief responses" to speak more than you listen and
-                    vice versa
+                    Select `&quot;`Brief responses`&quot;` to speak more than
+                    you listen and vice versa
                   </PopoverContent>
                 </Popover>
               </FormLabel>

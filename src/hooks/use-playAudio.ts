@@ -29,7 +29,7 @@ export default function usePlayAudio() {
       }
       window.speechSynthesis.speak(utterance);
     },
-    [selectedVoiceURI, voiceList],
+    [selectedVoiceURI, voiceList, languageTargetCode],
   );
 
   // useEffect(() => {
@@ -79,7 +79,7 @@ export default function usePlayAudio() {
     return () => {
       window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
     };
-  }, [selectedVoiceURI]);
+  }, [selectedVoiceURI, languageTargetCode, setVoiceURI]);
 
   return { playAudio, voiceList, setSelectedVoice, selectedVoiceURI };
 }

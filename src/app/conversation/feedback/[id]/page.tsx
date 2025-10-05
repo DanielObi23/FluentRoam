@@ -41,11 +41,11 @@ export default function Page() {
         const result = await axios.get(`/api/conversation/feedback/${id}`);
         setSession(result.data);
       } catch (err) {
-        console.error("Error retrieving session");
+        console.error("Error retrieving session", err);
       }
     }
     getFeedback();
-  }, []);
+  }, [id]);
 
   if (session === emptySession) return <Loading />;
 

@@ -9,6 +9,12 @@ if (!process.env.VAPI_API_KEY) {
 }
 export const vapiClient = new VapiClient({ token: process.env.VAPI_API_KEY });
 
+interface VapiCall {
+  transcript?: string;
+  recordingUrl?: string;
+  [key: string]: unknown;
+}
+
 export async function POST(req: Request) {
   const { callId, proficiency, scenario, formality } = await req.json();
   if (!callId || !proficiency || !scenario || !formality) {
@@ -20,7 +26,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "Unauthorized", status: 401 });
   }
 
-  const call: any = await vapiClient.calls.get(callId);
+  const call: VapiCall = await vapiClient.calls.get(callId);
   const transcript = call.transcript;
   const audio = call.recordingUrl;
 

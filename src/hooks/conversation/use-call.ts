@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { vapi } from "@/lib/vapi.sdk";
 import { vapiPrompt } from "@/utils/conversationData/vapi";
 import { useSearchParams } from "next/navigation";
@@ -31,7 +31,7 @@ export default function useCall() {
       speed: Number(search.get("speed") ?? 1),
       voiceId: search.get("voiceId") ?? "bIHbv24MWmeRgasZH58o",
     };
-  }, []);
+  }, [search]);
 
   const assistant = {
     ...vapiPrompt,
@@ -57,16 +57,16 @@ export default function useCall() {
   };
 
   // --- VAPI EVENTS ---
-  function onCallStart() {
+  const onCallStart = useCallback(() => {
     updateCallStatus(CallStatus.ACTIVE);
     vapi.setMuted(false);
-  }
+  }, [updateCallStatus]);
 
-  async function onCallEnd() {
+  const onCallEnd = useCallback(() => {
     updateCallStatus(CallStatus.FINISHED);
     const callId = useCallSessionStore.getState().callId;
     setTimeout(async () => {
-      const result = await axios.post("/api/conversation/call", {
+      await axios.post("/api/conversation/call", {
         scenario: session.scenario,
         formality: session.formality,
         proficiency: session.proficiency,
@@ -75,7 +75,7 @@ export default function useCall() {
     }, 5000); //Time buffer so vapi api can be updated with the new data
 
     toast("Call ended. Thanks for practicing!", { position: "top-center" });
-  }
+  }, [session, updateCallStatus]);
 
   function startSession() {
     // updateClock("00:00");
@@ -122,7 +122,7 @@ export default function useCall() {
       vapi.off("speech-start", () => onSpeechStart);
       vapi.off("speech-end", () => onSpeechEnd);
     };
-  }, [session]); // to prevent recreating event listeners and removing on every render
+  }, [onCallEnd, onCallStart, session]); // to prevent recreating event listeners and removing on every render
 
   return { handleCurrentSession, isAISpeaking };
 }

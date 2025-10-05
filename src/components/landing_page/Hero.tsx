@@ -79,8 +79,10 @@ export default function Hero() {
                 <div className="flex items-center space-x-2 text-sm text-green-700">
                   <CheckCircle className="h-8 w-8" />
                   <span>
-                    Excellent professional vocabulary! Saved: 'encabecer,'
-                    'interdisciplinaria,' 'optimizar,' 'adquisiciones'
+                    Excellent professional vocabulary! Saved:
+                    `&apos;`encabecer,`&apos;`
+                    `&apos;`interdisciplinaria,`&apos;`
+                    `&apos;`optimizar,`&apos;` `&apos;`adquisiciones`&apos;`
                   </span>
                 </div>
               </div>

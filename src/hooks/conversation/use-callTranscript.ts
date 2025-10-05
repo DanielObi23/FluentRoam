@@ -103,7 +103,16 @@ export default function useCallTranscript() {
       newMsgs[index] = { ...newMsgs[index], translation };
       updateMessages(newMsgs);
     } catch (err) {
-      toast("error translating, please try again");
+      toast.error("Error translating text, please try again.", {
+        position: "top-center",
+        style: {
+          background: "hsl(0, 72%, 51%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
+      console.error(err);
     }
   }, []); // being passed into memoised component TranscriptMessages
 

@@ -23,12 +23,13 @@ export default function StoryHistory() {
         setStory(result.data);
       } catch (err) {
         setHasError(true);
+        console.error(err);
       }
       setIsLoading(false);
     }
 
     getHistory();
-  }, []);
+  }, [isMobile]);
 
   if (isLoading) {
     return <Loading />;

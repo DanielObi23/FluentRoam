@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
-import { CircleXIcon, Search, X } from "lucide-react";
+import { CircleXIcon, Search } from "lucide-react";
 import useTable from "@/hooks/use-table";
 import { twMerge } from "tailwind-merge";
 import { Plus } from "lucide-react";

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -26,7 +25,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { useRouter } from "next/navigation";
 import { Info } from "lucide-react";
 import {
   storyType,
@@ -89,6 +87,7 @@ export default function Page() {
       if (result.data.status === 201) window.location.reload();
     } catch (err) {
       toast("Error uploading file, please try again");
+      console.error(err);
     }
   }
 

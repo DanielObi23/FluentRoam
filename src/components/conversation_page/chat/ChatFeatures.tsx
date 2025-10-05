@@ -18,7 +18,6 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Translator } from "@/components/Translator";
-import { RefObject } from "react";
 
 export default function ChatFeatures({
   voiceList,

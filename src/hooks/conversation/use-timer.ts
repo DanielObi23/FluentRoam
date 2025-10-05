@@ -1,5 +1,5 @@
 import { useCallSessionStore, CallStatus } from "@/store";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
 import { vapi } from "@/lib/vapi.sdk";
@@ -11,7 +11,7 @@ export default function useTimer() {
 
   const time = useRef(0);
 
-  function updateTime() {
+  const updateTime = useCallback(() => {
     const mins = Math.floor(time.current / 60);
     const secs = time.current % 60;
     updateClock(
@@ -20,7 +20,7 @@ export default function useTimer() {
     if (callStatus === CallStatus.ACTIVE) {
       time.current += 1;
     }
-  }
+  }, [callStatus, updateClock]);
 
   function timerUpdate(duration: number) {
     //DURATION AND TIME ARE IN SECONDS
@@ -93,11 +93,11 @@ export default function useTimer() {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [callStatus]);
+  }, [search, updateClock, callStatus]);
 
   useEffect(() => {
     if (callStatus !== CallStatus.ACTIVE) return;
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, [callStatus]);
+  }, [updateTime, callStatus]);
 }

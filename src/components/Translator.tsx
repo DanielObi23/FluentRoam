@@ -57,6 +57,7 @@ export function Translator({
       });
       setTranslatedText(response.data.message);
     } catch (err) {
+      console.error(err);
       toast("Error translating text", {
         position: "top-right",
       });
@@ -94,6 +95,7 @@ export function Translator({
         });
       }
     } catch (err) {
+      console.error(err);
       toast.error("Error adding vocab", {
         position: "top-center",
         style: {

@@ -23,10 +23,13 @@ export default function useChatTranscript() {
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const setChatId = useChatSessionStore((s) => s.setChatId);
+  const chatId = useChatSessionStore((s) => s.chatId);
+  const transcript = useChatSessionStore((s) => s.messages);
+  const setMessages = useChatSessionStore((s) => s.setMessages);
+  const addMessage = useChatSessionStore((s) => s.addMessage);
   const [isEnded, setIsEnded] = useState(false);
 
-  async function startConversation() {
-    const setMessages = useChatSessionStore.getState().setMessages;
+  const startConversation = useCallback(async () => {
     setMessages([
       {
         role: "assistant",
@@ -49,13 +52,11 @@ export default function useChatTranscript() {
         text: result.data.message,
       },
     ]);
-  }
+  }, [searchValues, setChatId, setMessages]);
 
-  async function endConversation() {
+  const endConversation = useCallback(async () => {
     setIsEnded(true);
-    const chatId = useChatSessionStore.getState().chatId;
-    const transcript = useChatSessionStore.getState().messages;
-    const result = await axios.post("/api/conversation/chat/save", {
+    await axios.post("/api/conversation/chat/save", {
       chatId,
       proficiency: searchValues.proficiency,
       scenario: searchValues.scenario,
@@ -63,13 +64,11 @@ export default function useChatTranscript() {
       transcript,
     });
     toast("Chat conversation has been saved", { position: "bottom-right" });
-  }
+  }, []);
 
   async function sendMessage(
     textMessageRef: RefObject<HTMLTextAreaElement | null>,
   ) {
-    const chatId = useChatSessionStore.getState().chatId;
-    const addMessage = useChatSessionStore.getState().addMessage;
     (recognitionRef.current as SpeechRecognition).stop();
     const message = (textMessageRef.current as HTMLTextAreaElement).value;
     if (message.trim().length === 0) {
@@ -96,25 +95,35 @@ export default function useChatTranscript() {
   }
 
   // ALL useCallback ARE BEING PASED INTO MEMOISED COMPONENT
-  const translate = useCallback(async (text: string, index: number) => {
-    const messages = useChatSessionStore.getState().messages;
-    const setMessages = useChatSessionStore.getState().setMessages;
-    try {
-      const response = await axios.post("/api/translate", {
-        text,
-        from: languageTargetCode,
-        to: languageSourceCode,
-      });
+  const translate = useCallback(
+    async (text: string, index: number) => {
+      try {
+        const response = await axios.post("/api/translate", {
+          text,
+          from: languageTargetCode,
+          to: languageSourceCode,
+        });
 
-      const translation = response.data.message;
+        const translation = response.data.message;
 
-      const newMsgs = [...messages];
-      newMsgs[index] = { ...newMsgs[index], translation };
-      setMessages(newMsgs);
-    } catch (err) {
-      toast("error translating, please try again");
-    }
-  }, []);
+        const newMsgs = [...transcript];
+        newMsgs[index] = { ...newMsgs[index], translation };
+        setMessages(newMsgs);
+      } catch (err) {
+        toast.error("Error translating text.", {
+          position: "top-center",
+          style: {
+            background: "hsl(0, 72%, 51%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
+        });
+        console.error(err);
+      }
+    },
+    [transcript, languageSourceCode, languageTargetCode, setMessages],
+  );
 
   const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
@@ -140,9 +149,8 @@ export default function useChatTranscript() {
   useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
-    const messages = useChatSessionStore.getState().messages;
     setIsEnded(false); // endConversation() makes it true
-    if (!messages || messages.length === 0) {
+    if (!transcript || transcript.length === 0) {
       startConversation();
     }
 
@@ -151,7 +159,7 @@ export default function useChatTranscript() {
         await endConversation();
       })();
     };
-  }, []);
+  }, [endConversation, startConversation, transcript]);
 
   return {
     userImage: user?.imageUrl,

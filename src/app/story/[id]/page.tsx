@@ -1,6 +1,6 @@
 "use client";
 
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ArrowBigLeft, ArrowBigRight } from "lucide-react";
 import { parseAsInteger, useQueryState } from "nuqs";
@@ -41,10 +41,11 @@ export default function Page() {
         setIsDataLoading(false);
       } catch (err) {
         setHasError(true);
+        console.error(err);
       }
     }
     getStory();
-  }, [currentPage]);
+  }, [currentPage, id]);
 
   if (isDataLoading) {
     return <Loading />;

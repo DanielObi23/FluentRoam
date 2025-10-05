@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, MessagesSquare, ScrollText, BookA, Plus } from "lucide-react";
+import { Home, MessagesSquare, ScrollText, BookA } from "lucide-react";
 
 import {
   Sidebar,
@@ -9,20 +9,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
-  SidebarFooter,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
 import logo from "../../../public/logo/fluentroamTransparent.png";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { Button } from "../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "../ui/dropdown-menu";
-import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 
 // Menu items.
 const items = [

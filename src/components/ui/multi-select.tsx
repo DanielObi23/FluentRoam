@@ -174,11 +174,19 @@ function isOptionsExist(groupOption: GroupOption, targetOption: Option[]) {
   return false;
 }
 
+type CommandState = {
+  filtered: {
+    count: number;
+  };
+};
+
 const CommandEmpty = ({
   className,
   ...props
 }: React.ComponentProps<typeof CommandPrimitive.Empty>) => {
-  const render = useCommandState((state: any) => state.filtered.count === 0);
+  const render = useCommandState(
+    (state: CommandState) => state.filtered.count === 0,
+  );
 
   if (!render) return null;
 

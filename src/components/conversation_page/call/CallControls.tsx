@@ -1,6 +1,5 @@
 import { Mic, MicOff, Captions, CaptionsOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { CallStatus, useCallSessionStore } from "@/store";
 import { vapi } from "@/lib/vapi.sdk";
 import { useState } from "react";

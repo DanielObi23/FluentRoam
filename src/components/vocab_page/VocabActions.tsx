@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Edit, Trash, X } from "lucide-react";
+import { Edit, Trash } from "lucide-react";
 import type { VocabHistory } from "@/utils/vocabData/types";
 import {
   Select,

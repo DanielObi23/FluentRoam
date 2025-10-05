@@ -37,7 +37,7 @@ export default function Page() {
     }
 
     getHistory();
-  }, [page, search]);
+  }, [pageLimit, page, search]);
 
   if (isDataLoading) {
     return <Loading />;

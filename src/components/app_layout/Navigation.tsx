@@ -1,6 +1,5 @@
 import { UserButton } from "@clerk/nextjs";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ModeToggle } from "./ModeToggle";
 import { AnimatedThemeToggler } from "@/components/magicui/animated-theme-toggler";
 
 export default function Navigation({ page }: { page: string }) {

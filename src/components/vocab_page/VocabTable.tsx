@@ -56,7 +56,7 @@ export default function VocabTable() {
     }
 
     getHistory();
-  }, [page, search]);
+  }, [pageLimit, page, search]);
 
   if (isDataLoading) {
     return <Loading />;
@@ -85,7 +85,7 @@ export default function VocabTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {vocabList.map((card, index) => (
+          {vocabList.map((card) => (
             <TableRow key={card.id}>
               <TableCell>{card.text}</TableCell>
               <TableCell>{card.translation}</TableCell>

@@ -16,6 +16,17 @@ import useTimer from "@/hooks/conversation/use-timer";
 
 export default function Session() {
   const search = useSearchParams();
+  const updateCallStatus = useCallSessionStore((s) => s.updateCallStatus);
+
+  useTimer(); //It's here because, putting it in Call > CallSessionStatus, goes to 0 as tab change refreshes the UI & state
+  useEffect(() => {
+    updateCallStatus(CallStatus.INACTIVE);
+    return () => {
+      vapi.stop();
+      updateCallStatus(CallStatus.FINISHED);
+    };
+  }, [updateCallStatus]);
+
   const router = useRouter();
   if (!search.get("scenario")) {
     toast("Please create a scenario to start conversation", {
@@ -29,17 +40,6 @@ export default function Session() {
       </Main>
     );
   }
-
-  const updateCallStatus = useCallSessionStore((s) => s.updateCallStatus);
-
-  useTimer(); //It's here because, putting it in Call > CallSessionStatus, goes to 0 as tab change refreshes the UI & state
-  useEffect(() => {
-    updateCallStatus(CallStatus.INACTIVE);
-    return () => {
-      vapi.stop();
-      updateCallStatus(CallStatus.FINISHED);
-    };
-  }, []);
 
   return (
     <div className="bg-background flex h-screen w-full flex-col">

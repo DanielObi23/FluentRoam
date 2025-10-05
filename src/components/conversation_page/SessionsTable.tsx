@@ -32,7 +32,7 @@ export default function SessionsTable() {
       setIsDataLoading(false);
     }
     getSessionList();
-  }, [page, search]);
+  }, [pageLimit, page, search]);
 
   if (isDataLoading) {
     return <Loading />;

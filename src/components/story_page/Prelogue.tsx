@@ -41,10 +41,11 @@ export default function Prelogue({
         setIsDataLoading(false);
       } catch (err) {
         setHasError(true);
+        console.error(err);
       }
     }
     getStory();
-  }, []);
+  }, [id]);
 
   if (isDataLoading) {
     return <Loading />;

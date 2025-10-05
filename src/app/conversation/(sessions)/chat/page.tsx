@@ -30,24 +30,8 @@ import { cn } from "@/lib/utils";
 
 export default function Page() {
   const search = useSearchParams();
-  const router = useRouter();
-
-  if (!search.get("scenario")) {
-    toast("Please create a scenario to start conversation", {
-      position: "top-center",
-    });
-    router.replace("/conversation");
-
-    return (
-      <Main page="Conversation">
-        <Lottie autoPlay={false} animationData={animationData} />
-      </Main>
-    );
-  }
-
   const messages = useChatSessionStore((s) => s.messages);
   const textMessageRef = useRef<HTMLTextAreaElement>(null);
-
   const {
     sendMessage,
     recordMessage,
@@ -68,6 +52,20 @@ export default function Page() {
       behavior: "smooth",
     });
   }, [messages]);
+  const router = useRouter();
+
+  if (!search.get("scenario")) {
+    toast("Please create a scenario to start conversation", {
+      position: "top-center",
+    });
+    router.replace("/conversation");
+
+    return (
+      <Main page="Conversation">
+        <Lottie autoPlay={false} animationData={animationData} />
+      </Main>
+    );
+  }
 
   return (
     <Main page="Chat" className="flex h-[calc(100vh-5rem)] w-full">

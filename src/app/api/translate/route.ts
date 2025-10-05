@@ -1,14 +1,14 @@
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
+// import axios from "axios";
+// import { v4 as uuidv4 } from "uuid";
 import * as deepl from "deepl-node";
 
 if (!process.env.AZURE_TRANSLATE_API_KEY) {
   throw new Error("Please add missing azure translate api key");
 }
 
-const azureKey = process.env.AZURE_TRANSLATE_API_KEY;
-const azureRegion = "uksouth";
-const azureEndpoint = "https://api.cognitive.microsofttranslator.com";
+// const azureKey = process.env.AZURE_TRANSLATE_API_KEY;
+// const azureRegion = "uksouth";
+// const azureEndpoint = "https://api.cognitive.microsofttranslator.com";
 
 if (!process.env.DEEPL_AUTH_KEY) {
   throw new Error("Please add missing DeepL auth key");
