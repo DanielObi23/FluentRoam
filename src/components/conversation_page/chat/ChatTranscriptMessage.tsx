@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import defaultProfile from "../../../../public/default_profile.jpg";
-import fluentroam from "../../../../public/logo/fluentroam.jpg";
+import defaultProfile from "@/assets/public/default_profile.jpg";
+import fluentroam from "@/assets/logo/fluentroam.jpg";
 import { Button } from "@/components/ui/button";
 import { Volume2, Copy } from "lucide-react";
 import { memo } from "react";
