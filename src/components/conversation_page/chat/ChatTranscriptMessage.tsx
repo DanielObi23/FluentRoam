@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import defaultProfile from "@/assets/public/default_profile.jpg";
+import defaultProfile from "@/assets/default_profile.jpg";
 import fluentroam from "@/assets/logo/fluentroam.jpg";
 import { Button } from "@/components/ui/button";
 import { Volume2, Copy } from "lucide-react";

@@ -37,7 +37,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useState } from "react";
 import Image from "next/image";
-import logo from "../../../public/logo/fluentroamTransparent.png";
+import logo from "@/assets/logo/fluentroamTransparent.png";
 
 const formSchema = z.object({
   type: z.string(),
