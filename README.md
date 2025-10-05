@@ -64,8 +64,6 @@ Built with **Next.js, TypeScript, Supabase, Clerk, and multiple AI/translation A
 
 # Clerk (Auth & Billing)
 
-# =====================
-
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key
 CLERK_SECRET_KEY=your_secret_key
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
@@ -76,7 +74,6 @@ NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL="/home"
 NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL="/home"
 WEBHOOK_SECRET=your_webhook_secret
 
-# ===========
 
 # Supabase
 
