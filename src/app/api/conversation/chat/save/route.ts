@@ -1,13 +1,7 @@
 import Groq from "groq-sdk";
-import { VapiClient } from "@vapi-ai/server-sdk";
 import { feedbackPromptSpanish } from "@/utils/conversationData/spanishVapi";
 import { supabaseAdmin } from "@/lib/supabase-client";
 import { currentUser } from "@clerk/nextjs/server";
-
-if (!process.env.VAPI_API_KEY) {
-  throw new Error("Please add missing vapi api key");
-}
-export const vapiClient = new VapiClient({ token: process.env.VAPI_API_KEY });
 
 export async function POST(req: Request) {
   const { chatId, proficiency, scenario, formality, transcript } =

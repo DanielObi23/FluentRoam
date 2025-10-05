@@ -3,7 +3,14 @@
 import { useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { toast } from "sonner";
-import { RefObject, useEffect, useCallback, useRef, useState } from "react";
+import {
+  RefObject,
+  useEffect,
+  useCallback,
+  useRef,
+  useState,
+  useMemo,
+} from "react";
 import { useChatSessionStore } from "@/store";
 import { useSearchParams } from "next/navigation";
 import { languages } from "@/utils/language";
@@ -14,12 +21,15 @@ export default function useChatTranscript() {
 
   const { user } = useUser();
   const search = useSearchParams();
-  const searchValues = {
-    scenario: search.get("scenario") ?? "",
-    formality: search.get("formality") ?? "casual",
-    response_length: search.get("response_length") ?? "brief",
-    proficiency: search.get("proficiency") ?? "B1",
-  };
+  const searchValues = useMemo(
+    () => ({
+      scenario: search.get("scenario") ?? "",
+      formality: search.get("formality") ?? "casual",
+      response_length: search.get("response_length") ?? "brief",
+      proficiency: search.get("proficiency") ?? "B1",
+    }),
+    [search],
+  );
 
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const setChatId = useChatSessionStore((s) => s.setChatId);
@@ -64,7 +74,7 @@ export default function useChatTranscript() {
       transcript,
     });
     toast("Chat conversation has been saved", { position: "bottom-right" });
-  }, []);
+  }, [chatId, searchValues, transcript]);
 
   async function sendMessage(
     textMessageRef: RefObject<HTMLTextAreaElement | null>,
