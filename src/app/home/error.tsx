@@ -1,6 +1,6 @@
 "use client";
 import Lottie from "lottie-react";
-import animationData from "../../../public/lottie-animation/505_error.json";
+import animationData from "@/assets/lottie-animation/505_error.json";
 
 export default function Error() {
   return (

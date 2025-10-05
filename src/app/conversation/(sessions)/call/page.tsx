@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import Main from "@/components/tags/Main";
 import Lottie from "lottie-react";
-import animationData from "../../../../../public/lottie-animation/loading.json";
+import animationData from "@/assets/lottie-animation/loading.json";
 import useTimer from "@/hooks/conversation/use-timer";
 
 export default function Session() {

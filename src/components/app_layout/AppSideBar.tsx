@@ -11,7 +11,7 @@ import {
   SidebarHeader,
 } from "@/components/ui/sidebar";
 import Image from "next/image";
-import logo from "../../../public/logo/fluentroamTransparent.png";
+import logo from "@/assets/logo/fluentroamTransparent.png";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";

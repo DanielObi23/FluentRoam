@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import Lottie from "lottie-react";
-import animationData from "../../public/lottie-animation/404_error.json";
+import animationData from "@/assets/lottie-animation/404_error.json";
 
 export default function NotFound() {
   const pathname = usePathname();

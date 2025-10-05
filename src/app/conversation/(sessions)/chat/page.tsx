@@ -12,7 +12,7 @@ import useChatTranscript from "@/hooks/conversation/use-chatTranscript";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import Lottie from "lottie-react";
-import animationData from "../../../../../public/lottie-animation/loading.json";
+import animationData from "@/assets/lottie-animation/loading.json";
 import {
   Dialog,
   DialogClose,

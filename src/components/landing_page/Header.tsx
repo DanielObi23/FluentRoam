@@ -1,6 +1,6 @@
 import { SignInButton } from "@clerk/nextjs";
 import Image from "next/image";
-import logo from "../../../public/logo/fluentroamTransparent.png";
+import logo from "@/assets/logo/fluentroamTransparent.png";
 import { Button } from "@/components/ui/button";
 
 export default function Header() {
