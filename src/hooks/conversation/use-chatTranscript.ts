@@ -66,14 +66,16 @@ export default function useChatTranscript() {
 
   const endConversation = useCallback(async () => {
     setIsEnded(true);
-    await axios.post("/api/conversation/chat/save", {
-      chatId,
-      proficiency: searchValues.proficiency,
-      scenario: searchValues.scenario,
-      formality: searchValues.formality,
-      transcript,
-    });
-    toast("Chat conversation has been saved", { position: "bottom-right" });
+    if (isEnded) {
+      await axios.post("/api/conversation/chat/save", {
+        chatId,
+        proficiency: searchValues.proficiency,
+        scenario: searchValues.scenario,
+        formality: searchValues.formality,
+        transcript,
+      });
+      toast("Chat conversation has been saved", { position: "bottom-right" });
+    }
   }, [chatId, searchValues, transcript]);
 
   async function sendMessage(

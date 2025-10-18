@@ -12,6 +12,7 @@ interface VapiCall {
 
 export async function POST(req: Request) {
   const { callId, proficiency, scenario, formality } = await req.json();
+  console.log({ callId, proficiency, scenario, formality });
   if (!callId || !proficiency || !scenario || !formality) {
     return Response.json({ error: "missing data", status: 400 });
   }
@@ -28,6 +29,7 @@ export async function POST(req: Request) {
   if (!transcript)
     return Response.json({ status: 500, error: "no transcript provided" });
 
+  console.log({ transcript, audio });
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const chatCompletion = await groq.chat.completions.create({
     messages: [
@@ -52,7 +54,9 @@ export async function POST(req: Request) {
   const feedback = summary.feedback;
   const vocabulary = summary.vocabulary;
 
-  const { error } = await supabaseAdmin.from("conversation").insert({
+  console.log({ summary, vocabulary });
+
+  const { error, data } = await supabaseAdmin.from("conversation").insert({
     session_id: callId,
     proficiency,
     scenario,
@@ -65,8 +69,14 @@ export async function POST(req: Request) {
   });
 
   if (error) {
+    console.log("Error", error);
     return Response.json({ error: "error updating supabase", status: 500 });
   }
 
-  return Response.json({ status: 201 });
+  console.log(data);
+
+  return Response.json({
+    message: "Conversation created successfully",
+    status: 201,
+  });
 }

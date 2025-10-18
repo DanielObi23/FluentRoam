@@ -117,17 +117,12 @@ export default function useCallTranscript() {
   }, []); // being passed into memoised component TranscriptMessages
 
   useEffect(() => {
-    // if(!user) {
-    //     router.replace('/sign-in')
-    //     return
-    // }
-
     vapi.on("message", onMessage);
 
     return () => {
       vapi.off("message", onMessage);
     };
-  }, [onMessage]); // to prevent recreating event listeners and removing on every render
+  }, [onMessage]);
 
   return { translate, messages, userImage: user?.imageUrl };
 }
