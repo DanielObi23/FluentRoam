@@ -7,7 +7,7 @@ import Footer from "./landing_page/Footer";
 
 export default function LandingPage() {
   return (
-    <div className="from-primary-900 to-secondary-900 flex-1 bg-gradient-to-br via-cyan-300">
+    <div className="from-primary-900 to-secondary-900 hide-scrollbar flex-1 bg-gradient-to-br via-cyan-300">
       <Header />
       <main>
         <Hero />

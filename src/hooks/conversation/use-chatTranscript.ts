@@ -66,25 +66,55 @@ export default function useChatTranscript() {
 
   const endConversation = useCallback(async () => {
     setIsEnded(true);
-    if (isEnded) {
-      try {
-        const result = await axios.post("/api/conversation/chat/save", {
-          chatId,
-          proficiency: searchValues.proficiency,
-          scenario: searchValues.scenario,
-          formality: searchValues.formality,
-          transcript,
+    if (isEnded) return;
+    toast.info("Saving....", {
+      position: "bottom-right",
+      style: {
+        background: "hsl(210, 90%, 55%)",
+        color: "white",
+        borderRadius: "8px",
+        padding: "12px 16px",
+      },
+    });
+    try {
+      const result = await axios.post("/api/conversation/chat/save", {
+        chatId,
+        proficiency: searchValues.proficiency,
+        scenario: searchValues.scenario,
+        formality: searchValues.formality,
+        transcript,
+      });
+      if (result.status !== 201) {
+        toast.error("Error saving chat", {
+          position: "bottom-right",
+          style: {
+            background: "hsl(0, 72%, 51%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
         });
-
-        if (result.status === 201) {
-          toast.error("Error saving chat", { position: "bottom-right" });
-        }
+      } else {
         toast.success("Chat conversation has been saved", {
           position: "bottom-right",
+          style: {
+            background: "hsl(142, 76%, 36%)",
+            color: "white",
+            borderRadius: "8px",
+            padding: "12px 16px",
+          },
         });
-      } catch (err) {
-        toast.error("Error saving chat", { position: "bottom-right" });
       }
+    } catch (err) {
+      toast.error("Error saving chat", {
+        position: "bottom-right",
+        style: {
+          background: "hsl(0, 72%, 51%)",
+          color: "white",
+          borderRadius: "8px",
+          padding: "12px 16px",
+        },
+      });
     }
   }, [chatId, searchValues, transcript]);
 
@@ -149,9 +179,15 @@ export default function useChatTranscript() {
 
   const handleCopy = useCallback((text: string) => {
     navigator.clipboard.writeText(text);
-    toast("Copied to clipboard", {
+    toast.info("Copied to clipboard", {
       description: `"${text}"`,
       position: "top-right",
+      style: {
+        background: "hsl(210, 90%, 55%)",
+        color: "white",
+        borderRadius: "8px",
+        padding: "12px 16px",
+      },
     });
   }, []);
 

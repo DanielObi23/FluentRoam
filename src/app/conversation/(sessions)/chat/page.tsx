@@ -99,46 +99,51 @@ export default function Page() {
         </div>
 
         {/* TYPING AREA */}
-        <div
-          className={cn(isEnded ? "hidden" : "flex items-center", "gap-2 p-3")}
-        >
-          {isRecording ? (
-            <Button
-              onClick={() => {
-                setIsRecording(false);
-                stopRecordingMessage();
-              }}
-            >
-              <StopCircle className="size-5" />
-            </Button>
-          ) : (
-            <Button
-              onClick={() => {
-                setIsRecording(true);
-                recordMessage(textMessageRef);
-              }}
-            >
-              <Mic className="size-5" />
-            </Button>
-          )}
+        {!isEnded && (
+          <div
+            className={cn(
+              isEnded ? "hidden" : "flex items-center",
+              "gap-2 p-3",
+            )}
+          >
+            {isRecording ? (
+              <Button
+                onClick={() => {
+                  setIsRecording(false);
+                  stopRecordingMessage();
+                }}
+              >
+                <StopCircle className="size-5" />
+              </Button>
+            ) : (
+              <Button
+                onClick={() => {
+                  setIsRecording(true);
+                  recordMessage(textMessageRef);
+                }}
+              >
+                <Mic className="size-5" />
+              </Button>
+            )}
 
-          <Textarea
-            ref={textMessageRef}
-            className="scrollbar-hover max-h-24 min-h-10 flex-1 resize-none overflow-y-auto rounded-2xl px-6 text-wrap"
-            placeholder="Type a message"
-            autoFocus
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage(textMessageRef);
-              }
-            }}
-          />
+            <Textarea
+              ref={textMessageRef}
+              className="scrollbar-hover max-h-24 min-h-10 flex-1 resize-none overflow-y-auto rounded-2xl px-6 text-wrap"
+              placeholder="Type a message"
+              autoFocus
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage(textMessageRef);
+                }
+              }}
+            />
 
-          <Button onClick={() => sendMessage(textMessageRef)}>
-            <SendHorizontal />
-          </Button>
-        </div>
+            <Button onClick={() => sendMessage(textMessageRef)}>
+              <SendHorizontal />
+            </Button>
+          </div>
+        )}
       </section>
 
       <section className="scrollbar-hover flex w-2/5 flex-col items-center gap-10 overflow-auto py-10 max-md:hidden">
