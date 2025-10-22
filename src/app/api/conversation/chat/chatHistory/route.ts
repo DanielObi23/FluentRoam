@@ -1,3 +1,4 @@
+//alternative to persisting chat history instead of storing in zustand
 export async function POST(req: Request) {
   if (!process.env.VAPI_API_KEY) {
     throw new Error("Please add missing vapi api key");

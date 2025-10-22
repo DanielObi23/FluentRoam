@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Mic, SendHorizontal } from "lucide-react";
+import { Mic, SendHorizontal, StopCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import Main from "@/components/tags/Main";
 import { Translator } from "@/components/Translator";
@@ -31,10 +31,12 @@ import { cn } from "@/lib/utils";
 export default function Page() {
   const search = useSearchParams();
   const messages = useChatSessionStore((s) => s.messages);
+  const [isRecording, setIsRecording] = useState(false);
   const textMessageRef = useRef<HTMLTextAreaElement>(null);
   const {
     sendMessage,
     recordMessage,
+    stopRecordingMessage,
     userImage,
     handleCopy,
     translate,
@@ -100,9 +102,25 @@ export default function Page() {
         <div
           className={cn(isEnded ? "hidden" : "flex items-center", "gap-2 p-3")}
         >
-          <Button onClick={() => recordMessage(textMessageRef)}>
-            <Mic />
-          </Button>
+          {isRecording ? (
+            <Button
+              onClick={() => {
+                setIsRecording(false);
+                stopRecordingMessage();
+              }}
+            >
+              <StopCircle className="size-5" />
+            </Button>
+          ) : (
+            <Button
+              onClick={() => {
+                setIsRecording(true);
+                recordMessage(textMessageRef);
+              }}
+            >
+              <Mic className="size-5" />
+            </Button>
+          )}
 
           <Textarea
             ref={textMessageRef}
@@ -123,7 +141,7 @@ export default function Page() {
         </div>
       </section>
 
-      <section className="flex w-2/5 flex-col items-center gap-10 py-10 max-md:hidden">
+      <section className="scrollbar-hover flex w-2/5 flex-col items-center gap-10 overflow-auto py-10 max-md:hidden">
         <div className="flex h-4/7 w-full flex-col items-center gap-5">
           {/* VOICE SELECT */}
           <VoiceSelect />

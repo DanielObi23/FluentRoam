@@ -67,14 +67,24 @@ export default function useChatTranscript() {
   const endConversation = useCallback(async () => {
     setIsEnded(true);
     if (isEnded) {
-      await axios.post("/api/conversation/chat/save", {
-        chatId,
-        proficiency: searchValues.proficiency,
-        scenario: searchValues.scenario,
-        formality: searchValues.formality,
-        transcript,
-      });
-      toast("Chat conversation has been saved", { position: "bottom-right" });
+      try {
+        const result = await axios.post("/api/conversation/chat/save", {
+          chatId,
+          proficiency: searchValues.proficiency,
+          scenario: searchValues.scenario,
+          formality: searchValues.formality,
+          transcript,
+        });
+
+        if (result.status === 201) {
+          toast.error("Error saving chat", { position: "bottom-right" });
+        }
+        toast.success("Chat conversation has been saved", {
+          position: "bottom-right",
+        });
+      } catch (err) {
+        toast.error("Error saving chat", { position: "bottom-right" });
+      }
     }
   }, [chatId, searchValues, transcript]);
 
@@ -158,11 +168,16 @@ export default function useChatTranscript() {
     };
   }
 
+  function stopRecordingMessage() {
+    const recognition = recognitionRef.current as SpeechRecognition;
+    recognition.stop();
+  }
+
   useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
     setIsEnded(false); // endConversation() makes it true
-    if (!transcript || transcript.length === 0) {
+    if (transcript.length === 0) {
       startConversation();
     }
 
@@ -181,5 +196,6 @@ export default function useChatTranscript() {
     recordMessage,
     endConversation,
     isEnded,
+    stopRecordingMessage,
   };
 }

@@ -52,8 +52,8 @@ export async function POST(req: Request) {
   });
 
   if (error) {
-    console.log("Supabase Error", error);
-    return Response.json({ error: "error updating supabase", status: 500 });
+    console.log("Error saving chat", error);
+    return Response.json({ error: "error saving chat", status: 500 });
   }
 
   return Response.json({ status: 201 });
