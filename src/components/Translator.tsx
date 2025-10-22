@@ -30,7 +30,7 @@ export function Translator({
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
     toast("Copied to clipboard", {
-      description: "Text has been copied to your clipboard.",
+      description: `"${text}"`,
     });
   };
 

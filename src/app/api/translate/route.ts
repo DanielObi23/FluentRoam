@@ -15,8 +15,7 @@ export async function POST(req: Request) {
     });
   }
 
-  from = from === "en" ? "en-GB" : from;
-  to = to === "en" ? "en-GB" : to;
+  to = to === "en" ? "en-GB" : to; // only accepts en-GB and en-US for target language english
 
   try {
     const result = await deeplClient.translateText(text, from, to);

@@ -52,6 +52,7 @@ export async function POST(req: Request) {
   });
 
   if (error) {
+    console.log("Supabase Error", error);
     return Response.json({ error: "error updating supabase", status: 500 });
   }
 

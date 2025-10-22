@@ -29,7 +29,7 @@ export async function GET(req: Request) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.log(error);
+    console.log("Supabase Error", error);
     return Response.json({ error: error.message, status: 500 });
   }
 
@@ -62,7 +62,7 @@ export async function POST(req: Request) {
         status: 409,
       });
     }
-    console.log(error);
+    console.log("Supabase Error", error);
     return Response.json({ error: error.message, status: 500 });
   }
 
@@ -86,11 +86,10 @@ export async function PATCH(req: Request) {
     .single();
 
   if (error) {
-    console.error(error);
+    console.log("Supabase Error", error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 
-  console.log(data);
   return Response.json({ data, status: 200 });
 }
 
@@ -112,7 +111,7 @@ export async function DELETE(req: Request) {
     .single();
 
   if (error) {
-    console.error(error);
+    console.log("Supabase Error", error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 

@@ -24,6 +24,7 @@ export async function GET(
     .single();
 
   if (error) {
+    console.log("Supabase Error", error);
     console.error("Error retrieving feedback data", error.message);
   }
 

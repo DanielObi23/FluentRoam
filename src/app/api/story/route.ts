@@ -24,7 +24,7 @@ export async function POST(req: Request) {
     .order("created_at", { ascending: false });
 
   if (error) {
-    console.log(error);
+    console.log("Supabase Error", error);
     return Response.json({ error: error.message, status: 500 });
   }
 

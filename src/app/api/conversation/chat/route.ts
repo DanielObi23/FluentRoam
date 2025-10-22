@@ -28,7 +28,7 @@ async function sendChatMessage(
   const response = await fetch("https://api.vapi.ai/chat", {
     method: "POST",
     headers: {
-      Authorization: process.env.Vapi_API_KEY!,
+      Authorization: process.env.VAPI_API_KEY!,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({

@@ -36,6 +36,7 @@ export async function POST(req: Request) {
     .single();
 
   if (error) {
+    console.log("Supabase Error", error);
     return Response.json({ status: 500, error: "error retrieving data" });
   }
 
