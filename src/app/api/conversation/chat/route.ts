@@ -60,19 +60,15 @@ async function startChatMessage(
   const response = await fetch("https://api.vapi.ai/chat", {
     method: "POST",
     headers: {
-      Authorization: process.env.Vapi_API_KEY!,
+      Authorization: process.env.VAPI_API_KEY!,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       assistantId: "e3fbfb66-b32e-4c74-b456-c6ea5fb15663",
       input: "Hola",
       ...(previousChatId && { previousChatId }),
-      // assistant: {
-      //   firstMessageMode: "assistant-speaks-first-with-model-generated-message"
-      // },
       assistantOverrides: {
         variableValues: {
-          //first_message: `Hello`,
           scenario,
           formality,
           response_length,
