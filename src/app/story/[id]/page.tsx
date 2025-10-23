@@ -1,4 +1,5 @@
 "use client";
+export const dynamic = "force-dynamic";
 
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -18,19 +19,12 @@ import Loading from "@/components/UI_state/Loading";
 import Error from "@/components/UI_state/Error";
 import AddVocab from "@/components/AddVocab";
 import { VocabEntry } from "@/utils/vocabData/types";
-import { useSearchParams, useRouter } from "next/navigation";
 
 export default function Page() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const currentPage = Number(searchParams.get("page")) || 1;
-
-  function setCurrentPage(newPage: number) {
-    const params = new URLSearchParams(searchParams);
-    params.set("page", newPage.toString());
-    router.push(`?${params.toString()}`);
-  }
-
+  const [currentPage, setCurrentPage] = useQueryState(
+    "page",
+    parseAsInteger.withDefault(1),
+  );
   const [story, setStory] = useState<CurrentPage>();
   const [isDataLoading, setIsDataLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -38,10 +32,6 @@ export default function Page() {
   const { playAudio, voiceList } = usePlayAudio();
 
   useEffect(() => {
-    if (!id) return;
-
-    setIsDataLoading(true);
-    setHasError(false);
     async function getStory() {
       try {
         const result = await axios.post("/api/story/read", {
@@ -96,13 +86,13 @@ export default function Page() {
         <div className="flex gap-3">
           <Button
             variant={"outline"}
-            onClick={() => setCurrentPage(currentPage - 1)}
+            onClick={() => setCurrentPage((prev) => prev - 1)}
           >
             <ArrowBigLeft className="size-8" />
           </Button>
           <span className="text-lg font-semibold">Page {currentPage}</span>
           <Button
-            onClick={() => setCurrentPage(currentPage + 1)}
+            onClick={() => setCurrentPage((prev) => prev + 1)}
             variant={"outline"}
             disabled={currentPage === story?.numOfPages}
           >
