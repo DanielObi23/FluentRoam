@@ -177,7 +177,8 @@ export default function Page() {
                       onClick={endConversation}
                       className="self-end"
                     >
-                      End<span className="max-sm:hidden">Conversation</span>
+                      End/Save{" "}
+                      <span className="max-sm:hidden">Conversation</span>
                     </Button>
                   </DialogClose>
                 </DialogFooter>

@@ -37,7 +37,8 @@ export default function useChatTranscript() {
   const transcript = useChatSessionStore((s) => s.messages);
   const setMessages = useChatSessionStore((s) => s.setMessages);
   const addMessage = useChatSessionStore((s) => s.addMessage);
-  const [isEnded, setIsEnded] = useState(false);
+  const isEnded = useChatSessionStore((s) => s.isEnded);
+  const setIsEnded = useChatSessionStore((s) => s.setIsEnded);
 
   const startConversation = useCallback(async () => {
     setMessages([
@@ -62,11 +63,11 @@ export default function useChatTranscript() {
         text: result.data.message,
       },
     ]);
+    setIsEnded(false);
   }, [searchValues, setChatId, setMessages]);
 
-  const endConversation = useCallback(async () => {
+  async function endConversation() {
     setIsEnded(true);
-    if (isEnded) return;
     toast.info("Saving....", {
       position: "bottom-right",
       style: {
@@ -84,7 +85,8 @@ export default function useChatTranscript() {
         formality: searchValues.formality,
         transcript,
       });
-      if (result.status !== 201) {
+
+      if (result.data.status !== 201) {
         toast.error("Error saving chat", {
           position: "bottom-right",
           style: {
@@ -116,7 +118,7 @@ export default function useChatTranscript() {
         },
       });
     }
-  }, [chatId, searchValues, transcript]);
+  }
 
   async function sendMessage(
     textMessageRef: RefObject<HTMLTextAreaElement | null>,
@@ -212,16 +214,9 @@ export default function useChatTranscript() {
   useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
-    setIsEnded(false); // endConversation() makes it true
     if (transcript.length === 0) {
       startConversation();
     }
-
-    return () => {
-      (async () => {
-        await endConversation();
-      })();
-    };
   }, [endConversation, startConversation, transcript]);
 
   return {

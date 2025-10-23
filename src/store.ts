@@ -64,12 +64,14 @@ interface ChatMessage {
 const initialChatState = {
   chatId: "",
   messages: [] as ChatMessage[],
+  isEnded: false,
 };
 
 type ChatSessionStore = typeof initialChatState & {
   setChatId: (id: string) => void;
   setMessages: (messages: ChatMessage[]) => void;
   addMessage: (message: ChatMessage) => void;
+  setIsEnded: (bool: boolean) => void;
   reset: () => void;
 };
 
@@ -86,6 +88,7 @@ export const useChatSessionStore = create<ChatSessionStore>()(
         addMessage: (message) =>
           set((state) => ({ messages: [...state.messages, message] })),
 
+        setIsEnded: (bool) => set({ isEnded: bool }),
         reset: () => set(initialChatState, false, "reset"),
       }),
       { name: "chat-session-storage" },
