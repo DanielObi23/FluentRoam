@@ -104,7 +104,7 @@ export const feedbackPromptSpanish = `
 
         RULES:
         - ALWAYS include ALL top-level keys
-        - Arrays must have minimum items (target_vocabulary: 4+, examples: 1+)
+        - Arrays must have minimum items (target_vocabulary: 6+, examples: 1+)
         - For empty arrays, use []
         - NEVER add extra keys or explanations
         - title - short, realistic, instantly-identifiable title for the learner (max 10 words).  
@@ -119,6 +119,7 @@ export const feedbackPromptSpanish = `
             • Pronunciation tips (IPA) only if it changes the meaning of the word/sentence
             • Suggestions for improvement (bullet list)  
             • Must be properly formatted, proper heading, proper spacing and proper highlighting etc
+            • Highlight grammar errors, e.g incorrect use of conjugations, articles etc
         - target_vocabulary - array of 7-20 vocab objects (It must be at least 7, first get from the conversation, which words/phrases are high-utility words or user struggled with); each object must include:
             • vocab (infinitive form) or phrase
             • part_of_speech or write phrase if vocab is a phrase

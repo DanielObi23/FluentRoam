@@ -219,7 +219,7 @@ export function Translator({
                   variant="outline"
                   size="icon"
                   className="ml-1.5 h-6 w-6"
-                  onClick={() => handleCopy(sourceText)}
+                  onClick={() => handleCopy(translatedText)}
                 >
                   <Copy className="h-3 w-3" />
                 </Button>
