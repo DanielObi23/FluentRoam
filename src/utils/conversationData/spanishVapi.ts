@@ -1,5 +1,3 @@
-// El Faraon 3 - Youthful, Fresh & Dynamic = 61Yorma5H9xnZos9rERQ  for stories
-
 const maleVoice = "/spanish_voices/spanish_male";
 const femaleVoice = "/spanish_voices/spanish_female";
 export const spanishVoices = {
@@ -115,6 +113,7 @@ export const feedbackPromptSpanish = `
             • start with a quick encouragement, e.g "You did great but there are key areas you should improve on", 
                 then only talk about mistakes in friendly tone, don't spend time listing what they did write
             • Refer to "the user" as "you"  
+            • Feedback must always be relevant to the transcript
             • Error highlighting (❌ / ✅)  
             • Cultural insights (bullet list)  
             • Pronunciation tips (IPA) only if it changes the meaning of the word/sentence

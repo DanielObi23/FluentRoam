@@ -28,7 +28,7 @@ export async function POST(req: Request) {
         content: `Transcript: ${transcript}\n\nOutput ONLY valid JSON:`,
       },
     ],
-    model: "moonshotai/kimi-k2-instruct",
+    model: "qwen/qwen3-32b",
     temperature: 0.5,
     max_completion_tokens: 4096,
     top_p: 0.9,
