@@ -23,8 +23,7 @@ export async function GET(req: Request) {
     .from("vocabulary")
     .select("*")
     .eq("user_id", user?.id)
-    .ilike("text", `%${search}%`)
-    .ilike("translation", `%${search}%`)
+    .or(`text.ilike.%${search}%,translation.ilike.%${search}%`)
     .range(from, to)
     .order("created_at", { ascending: false });
 
