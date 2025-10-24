@@ -1,5 +1,4 @@
 "use client";
-export const dynamic = "force-dynamic";
 
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,7 @@ export default function Page() {
   const { playAudio, voiceList } = usePlayAudio();
 
   useEffect(() => {
+    setIsDataLoading(true);
     async function getStory() {
       try {
         const result = await axios.post("/api/story/read", {

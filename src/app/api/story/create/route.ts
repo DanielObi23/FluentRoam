@@ -41,7 +41,6 @@ export async function POST(req: Request) {
     ],
     model: "moonshotai/kimi-k2-instruct",
     temperature: 0.5,
-    max_completion_tokens: 4096,
     top_p: 0.9,
     response_format: { type: "json_object" },
     stop: null,
