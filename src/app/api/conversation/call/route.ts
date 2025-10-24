@@ -54,9 +54,7 @@ export async function POST(req: Request) {
   const feedback = summary.feedback;
   const vocabulary = summary.vocabulary;
 
-  console.log({ summary, vocabulary });
-
-  const { error, data } = await supabaseAdmin.from("conversation").insert({
+  const { error } = await supabaseAdmin.from("conversation").insert({
     session_id: callId,
     proficiency,
     scenario,
@@ -72,8 +70,6 @@ export async function POST(req: Request) {
     console.log("Supabase Error", error);
     return Response.json({ error: "error updating supabase", status: 500 });
   }
-
-  console.log(data);
 
   return Response.json({
     message: "Conversation created successfully",

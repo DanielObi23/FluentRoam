@@ -214,7 +214,7 @@ export default function useChatTranscript() {
   useEffect(() => {
     recognitionRef.current =
       new window.SpeechRecognition() || window.webkitSpeechRecognition;
-    if (transcript.length === 0) {
+    if (transcript.length === 0 && chatId === "") {
       startConversation();
     }
   }, [endConversation, startConversation, transcript]);
