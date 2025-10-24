@@ -8,7 +8,7 @@ Built with **Next.js, TypeScript, Supabase, Clerk, and multiple AI/translation A
 
 ## 🚀 Live Demo
 
-🔗 [Try FluentRoam here](https://your-deployment-link.com) _(Coming soon)_
+🔗 [Try FluentRoam here](https://fluentroam.chibuikemonwuobi.co.uk/)
 
 ---
 
