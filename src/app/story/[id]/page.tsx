@@ -31,8 +31,11 @@ export default function Page() {
   const { playAudio, voiceList } = usePlayAudio();
 
   useEffect(() => {
-    setIsDataLoading(true);
+    if (!id || !currentPage) return;
     async function getStory() {
+      setIsDataLoading(true);
+      setHasError(false);
+      setStory(undefined);
       try {
         const result = await axios.post("/api/story/read", {
           id,
